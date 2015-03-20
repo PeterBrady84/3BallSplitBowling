@@ -34,7 +34,7 @@ public class MainScreen extends JFrame implements ActionListener {
         this.stockList = st;
         this.bookingList = b;
 
-        setTitle("3-Ball-Strike Bowling System");
+        setTitle("GIT IS AWESOME");
         setSize(850, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
