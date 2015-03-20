@@ -8,6 +8,7 @@ import model.NumberValidator;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,13 +37,16 @@ public class MemberTab extends JPanel implements ActionListener {
 
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
+        this.setBackground(Color.WHITE);
 
         p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 290));
         p1.setLayout(new BorderLayout());
+        p1.setBackground(Color.WHITE);
         p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
+        p1a.setBackground(Color.WHITE);
         create = new JButton("Create New Member");
         edit = new JButton("Edit Member");
         delete = new JButton("Search For Member");
@@ -64,12 +68,20 @@ public class MemberTab extends JPanel implements ActionListener {
 
         p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));
+        p2.setBackground(Color.WHITE);
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        table = new JTable(model);
+        table = new JTable(model) {
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+            Component comp = super.prepareRenderer(renderer, row, column);
+            comp.setBackground(row % 2 == 0 ? Color.WHITE : Color.LIGHT_GRAY);
+            return comp;
+            }
+        };
         table.getTableHeader().setReorderingAllowed(false);
 
         fillTable(memList);
@@ -82,6 +94,7 @@ public class MemberTab extends JPanel implements ActionListener {
         table.setAutoCreateRowSorter(true);
 
         JScrollPane sp = new JScrollPane();
+        sp.setBackground(Color.WHITE);
         sp.setViewportView(table);
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         sp.setPreferredSize(new Dimension(500, 290));

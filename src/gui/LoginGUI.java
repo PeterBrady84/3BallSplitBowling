@@ -24,6 +24,7 @@ public class LoginGUI extends JFrame implements ActionListener {
     public LoginGUI(MainProgramOperations po) {
         System.out.println("Inside : LoginGUI");
         this.progOps = po;
+        this.setBackground(Color.WHITE);
 
         this.setTitle("3-Ball-Strike Bowling");
         this.setSize(850, 600);
@@ -31,10 +32,12 @@ public class LoginGUI extends JFrame implements ActionListener {
         this.setLayout(new BorderLayout());
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        this.setBackground(Color.WHITE);
 
         p1 = new JPanel();
         p1.setPreferredSize(new Dimension (700, 100));
         p1.setLayout(new BorderLayout());
+        p1.setBackground(Color.WHITE);
         add(p1, BorderLayout.NORTH);
 
         ImageIcon logo = new ImageIcon("src/lib/files/bray_bowl.png");
@@ -52,16 +55,18 @@ public class LoginGUI extends JFrame implements ActionListener {
         //P2
         p2 = new JPanel(new BorderLayout());
         p2.setPreferredSize(new Dimension(300, 430));
-        p2.setBackground(Color.red);
+        p2.setBackground(Color.WHITE);
         p2.setBorder(BorderFactory.createLineBorder(Color.black));
 
         //p2 sub1
         sub1 = new JPanel();
         sub1.setPreferredSize(new Dimension(200, 100));
+        sub1.setBackground(Color.WHITE);
 
         //p2 - sub2
         sub2 = new JPanel();
         sub2.setPreferredSize(new Dimension(300, 330));
+        sub2.setBackground(Color.WHITE);
 
         userLbl = new JLabel("Username:");
         passLbl = new JLabel("Password:");
@@ -100,6 +105,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         sub3.setPreferredSize(new Dimension(300, 100));
         sub3.add(Box.createRigidArea(new Dimension(0,98)));
         sub3.add(Box.createRigidArea(new Dimension(50,0)));
+        sub3.setBackground(Color.WHITE);
 
         // p2 adding sub panels
         p2.add(sub1, BorderLayout.NORTH);
@@ -110,6 +116,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         p3 = new JPanel();
         p3.setPreferredSize(new Dimension(420, 310));
         p3.setBorder(BorderFactory.createLineBorder(Color.black));
+        p3.setBackground(Color.WHITE);
 
         ImageIcon mainImage = new ImageIcon("src/lib/files/bowling.png");
         JLabel bowling = new JLabel(mainImage);
@@ -120,6 +127,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         p4.setLayout(new FlowLayout());
         p4.add(p2, BorderLayout.WEST);
         p4.add(p3, BorderLayout.EAST);
+        p4.setBackground(Color.WHITE);
         this.add(p4);
 
         setVisible(true);

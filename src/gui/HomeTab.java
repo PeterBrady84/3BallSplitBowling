@@ -36,6 +36,7 @@ public class HomeTab extends JPanel {
 
         this.setPreferredSize(new Dimension(780, 300));
         setLayout(new BorderLayout());
+        this.setBackground(Color.WHITE);
 
         TaskSeriesCollection dataset = designChart();
 

@@ -40,12 +40,14 @@ public class MainScreen extends JFrame implements ActionListener {
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
         setResizable(false);
+        setBackground(Color.WHITE);
 
         // Add panels to Frame
         // Add Panel 1
         p1 = new JPanel();
         p1.setPreferredSize(new Dimension(700, 100));
         p1.setLayout(new BorderLayout());
+        p1.setBackground(Color.WHITE);
         add(p1, BorderLayout.NORTH);
 
         ImageIcon logo = new ImageIcon("src/lib/files/bray_bowl.png");
@@ -63,35 +65,42 @@ public class MainScreen extends JFrame implements ActionListener {
         // Add Panel 2
         p2 = new JPanel();
         p2.setPreferredSize(new Dimension(800, 400));
+        p2.setBackground(Color.WHITE);
 
         // Panel for Home Tab
         jp1 = new HomeTab(bookingList, progOps);
         jp1.setPreferredSize(new Dimension(800, 310));
+        jp1.setBackground(Color.WHITE);
 
         // Panel for Book Tab
         jp2 = new JPanel();
         jp2.add(new BookingTab(bookingList, memList, laneList, progOps));
         jp2.setPreferredSize(new Dimension(800, 310));
+        jp2.setBackground(Color.WHITE);
 
         // Panel for Members Tab
         jp3 = new JPanel();
         jp3.add(new MemberTab(memList, progOps));
         jp3.setPreferredSize(new Dimension(800, 310));
+        jp3.setBackground(Color.WHITE);
 
         // Panel for Stock Tab
         jp4 = new JPanel();
         jp4.add(new StockTab(stockList, progOps));
         jp4.setPreferredSize(new Dimension(800, 310));
+        jp4.setBackground(Color.WHITE);
 
         // Panel for Staff Tab
         jp5 = new JPanel();
         jp5.add(new StaffTab(staffList, progOps));
         jp5.setPreferredSize(new Dimension(800, 310));
+        jp5.setBackground(Color.WHITE);
 
         // Panel for Administrator Tab
         jp6 = new JPanel();
         jp6.add(new AdminTab(progOps));
         jp6.setPreferredSize(new Dimension(800, 310));
+        jp6.setBackground(Color.WHITE);
 
         jtp = new JTabbedPane();
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Home</body></html>", jp1);
@@ -105,6 +114,7 @@ public class MainScreen extends JFrame implements ActionListener {
 
         p3 = new JPanel();
         p3.setPreferredSize(new Dimension(800, 100));
+        p3.setBackground(Color.WHITE);
 
         create = new JButton("Create Booking");
         p3.add(create);
