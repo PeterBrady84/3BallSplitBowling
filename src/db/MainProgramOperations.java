@@ -32,21 +32,34 @@ public class MainProgramOperations {
             // Load the Oracle JDBC driver
             OracleDataSource ods = new OracleDataSource();
 
-            System.out.println("Type:\t1 for College\n\t\t2 for Home");
-            int val = in.nextInt();
+            System.out.println("Type Initials:\n(Lowercase. Eg: xy):");
+            String val = in.nextLine();
+            String user = "", pass = "";
 
-            // Tallaght College Connection
-            if (val == 1) {
-                ods.setURL("jdbc:oracle:thin:@//10.10.2.7:1521/global1");
-                ods.setUser("x00115070");
-                ods.setPassword("db29Jun84");
-
-                // Peter's Laptop Connection
-            } else if (val == 2) {
-                ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
-                ods.setUser("Peter");
-                ods.setPassword("database");
+            // Peter Brady Login
+            if (val .equals("pb")) {
+                user = "Peter";
+                pass = "database";
             }
+            // Luke Byrne Login
+            else if (val .equals("lb")) {
+                user = "system";
+                pass = "passhr";
+            }
+            // Peter Connel Login
+            else if (val .equals("pb")) {
+                user = "Peter Connell Username";
+                pass = "Peter Connell Password";
+            }
+            // Dylan Byrne login
+            else if (val .equals("db")) {
+                user = "Dylan Byrne's Username";
+                pass = "Dylan Byrne's Password";
+            }
+
+            ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
+            ods.setUser(user);
+            ods.setPassword(pass);
             conn = ods.getConnection();
             System.out.println("connected.");
         } catch (Exception e) {
@@ -73,7 +86,7 @@ public class MainProgramOperations {
             String queryString = "SELECT * FROM Members ORDER BY memId";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
-            } catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
         return rSet;
@@ -150,14 +163,14 @@ public class MainProgramOperations {
         String sqlStatement = "SELECT * FROM Members WHERE " + s;
         try {
             pStmt = conn.prepareStatement(sqlStatement);
-            rSet = pStmt.executeQuery();;
+            rSet = pStmt.executeQuery();
+            ;
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
         return rSet;
     }
     ///// End of Member Queries ///////////////////////////////////
-
 
 
     ///// Beginning of Staff Queries ///////////////////////////////////
@@ -243,7 +256,8 @@ public class MainProgramOperations {
         String sqlStatement = "SELECT * FROM Staff WHERE " + s;
         try {
             pStmt = conn.prepareStatement(sqlStatement);
-            rSet = pStmt.executeQuery();;
+            rSet = pStmt.executeQuery();
+            ;
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
@@ -257,12 +271,11 @@ public class MainProgramOperations {
         try {
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
-            while(rSet.next()) {
+            while (rSet.next()) {
                 pass.add(rSet.getString(1));
                 pass.add(rSet.getString(2));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
         return pass;
@@ -278,8 +291,7 @@ public class MainProgramOperations {
             while (rSet.next()) {
                 login.add(rSet.getString(1));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
         return login;
@@ -293,11 +305,10 @@ public class MainProgramOperations {
                     + " WHERE login = '" + a + "'";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
-            while(rSet.next()){
+            while (rSet.next()) {
                 question = rSet.getString(1);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
         return question;
@@ -314,11 +325,10 @@ public class MainProgramOperations {
                     + " WHERE login = '" + login + "'";
             pStmt = conn.prepareStatement(query2);
             rSet = pStmt.executeQuery();
-            while(rSet.next()){
+            while (rSet.next()) {
                 ans = rSet.getString(1);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
         return ans;
@@ -370,7 +380,7 @@ public class MainProgramOperations {
     }
 
     public int getNumStock() {
-        int num=0;
+        int num = 0;
         try {
             String queryString = "SELECT count(*) FROM Stock";
             pStmt = conn.prepareStatement(queryString);
@@ -378,8 +388,7 @@ public class MainProgramOperations {
             if (rSet.next()) {
                 num = rSet.getInt(1);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
         return num;
@@ -410,8 +419,7 @@ public class MainProgramOperations {
             pStmt.executeUpdate();
 
             System.out.println("Stock added to DB");
-        }
-        catch (Exception se) {
+        } catch (Exception se) {
             System.out.println(se);
         }
     }
@@ -433,7 +441,8 @@ public class MainProgramOperations {
         String sqlStatement = "SELECT * FROM Stock WHERE " + s;
         try {
             pStmt = conn.prepareStatement(sqlStatement);
-            rSet = pStmt.executeQuery();;
+            rSet = pStmt.executeQuery();
+            ;
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
@@ -522,12 +531,27 @@ public class MainProgramOperations {
         String sqlStatement = "SELECT * FROM Bookings WHERE " + s;
         try {
             pStmt = conn.prepareStatement(sqlStatement);
-            rSet = pStmt.executeQuery();;
+            rSet = pStmt.executeQuery();
+            ;
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
         return rSet;
     }
-    ///// End of Booking Queries ///////////////////////////////////
 
+    public ResultSet checkAvailability(String dateIn, String timeIn) {
+        System.out.println("Inside : checkBookingAvailability() in MainProgramOperations");
+        System.out.println(dateIn + " " + timeIn);
+        String sqlStatement = "SELECT l.lanename FROM lanes l WHERE NOT EXISTS (SELECT 1 FROM bookings b " +
+                "WHERE b.laneId = l.laneId AND b.fromdatetime >= '" + dateIn + " " + timeIn + "') ORDER BY l.laneId";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+            ;
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
 }
+///// End of Booking Queries ///////////////////////////////////

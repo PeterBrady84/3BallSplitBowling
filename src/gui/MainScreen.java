@@ -16,7 +16,7 @@ public class MainScreen extends JFrame implements ActionListener {
 
     private JPanel p1, p2, p3, jp1, jp2, jp3, jp4, jp5, jp6;
     private JLabel bowl, header, help, button, loggedIn;
-    private JButton create, changeUser, logout;
+    private JButton checkAvailability, changeUser, logout;
     private JTabbedPane jtp;
     private MainProgramOperations progOps;
     private ArrayList<Member> memList;
@@ -116,8 +116,9 @@ public class MainScreen extends JFrame implements ActionListener {
         p3.setPreferredSize(new Dimension(800, 100));
         p3.setBackground(Color.WHITE);
 
-        create = new JButton("Create Booking");
-        p3.add(create);
+        checkAvailability = new JButton("Check For Availability");
+        checkAvailability.addActionListener(this);
+        p3.add(checkAvailability);
 
         changeUser = new JButton("Change User");
         p3.add(changeUser);
@@ -149,7 +150,10 @@ public class MainScreen extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == logout) {
+        if (e.getSource() == checkAvailability) {
+            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(progOps);
+        }
+        else if (e.getSource() == logout) {
             LoginGUI ls = new LoginGUI(progOps);
             this.setVisible(false);
         }

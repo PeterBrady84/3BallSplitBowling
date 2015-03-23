@@ -27,21 +27,34 @@ public class SetupOperations {
             // Load the Oracle JDBC driver
             OracleDataSource ods = new OracleDataSource();
 
-            System.out.println("Type:\t1 for College\n\t\t2 for Home");
-            int val = in.nextInt();
+            System.out.println("Type Initials:\n(Lowercase. Eg: xy):");
+            String val = in.nextLine();
+            String user = "", pass = "";
 
-            // Tallaght College Connection
-            if (val == 1) {
-                ods.setURL("jdbc:oracle:thin:@//10.10.2.7:1521/global1");
-                ods.setUser("x00115070");
-                ods.setPassword("db29Jun84");
-
-                // Peter's Laptop Connection
-            } else if (val == 2) {
-                ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
-                ods.setUser("Peter");
-                ods.setPassword("database");
+            // Peter Brady Login
+            if (val .equals("pb")) {
+                user = "Peter";
+                pass = "database";
             }
+            // Luke Byrne Login
+            else if (val .equals("lb")) {
+                user = "system";
+                pass = "passhr";
+            }
+            // Peter Connel Login
+            else if (val .equals("pb")) {
+                user = "Peter Connell Username";
+                pass = "Peter Connell Password";
+            }
+            // Dylan Byrne login
+            else if (val .equals("db")) {
+                user = "Dylan Byrne's Username";
+                pass = "Dylan Byrne's Password";
+            }
+
+            ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
+            ods.setUser(user);
+            ods.setPassword(pass);
             conn = ods.getConnection();
             System.out.println("connected.");
         } catch (Exception e) {

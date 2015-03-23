@@ -19,6 +19,11 @@ public class ModifyDateAndTime {
         return new SimpleDateFormat("HH:mm").format(date);
     }
 
+    public String modifyJDatePickerLayout(String inputDate) throws ParseException{
+        Date date = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy").parse(inputDate);
+        return new SimpleDateFormat("dd-MMM-yy").format(date);
+    }
+
     public String getYear(String inputDate) throws ParseException {
         Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(inputDate);
         return new SimpleDateFormat("yyyy").format(date);
