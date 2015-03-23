@@ -4,11 +4,13 @@ import db.MainProgramOperations;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created by Peter on 06/03/2015.
  */
-public class AdminTab extends JPanel {
+public class AdminTab extends JPanel implements ActionListener {
 
     JButton staff, games, members, accounts;
     private MainProgramOperations progOps;
@@ -28,6 +30,7 @@ public class AdminTab extends JPanel {
         p2.setPreferredSize(new Dimension(300, 200));
         p2.setBackground(Color.WHITE);
         staff = new JButton("Staff Reports");
+        staff.addActionListener(this);
         games = new JButton("Games Played Reports");
         members = new JButton("Membership Reports");
         accounts = new JButton("Financial Reports");
@@ -41,5 +44,17 @@ public class AdminTab extends JPanel {
         p1.add(p3, BorderLayout.NORTH);
         p1.add(p2, BorderLayout.CENTER);
         this.add(p1);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == staff);
+        //this.setVisible(false);
+        StaffReportsGUI sr = new StaffReportsGUI();
+        JPanel staff = sr;
+        this.removeAll();
+        this.add(staff);//Adding to content pane, not to Frame
+        repaint();
+        printAll(getGraphics());//Extort print all content
     }
 }
