@@ -68,10 +68,12 @@ public class UpdateStaffGUI implements ActionListener {
             rSet = progOps.searchStaff(s);
             while (rSet.next()) {
                 ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
-                ge.lNameTxt.setText(rSet.getString(2));
                 ge.fNameTxt.setText(rSet.getString(3));
-                ge.phoneTxt.setText(rSet.getString(4));
-                ge.loginTxt.setText(rSet.getString(5));
+                ge.lNameTxt.setText(rSet.getString(2));
+                ge.phoneTxt.setText(rSet.getString(5));
+                ge.emailTxt.setText(rSet.getString(7));
+                ge.loginTxt.setText(rSet.getString(6));
+                ge.passwordTxt.setText(rSet.getString(8));
             }
         } catch (Exception e) {
         }
@@ -92,7 +94,7 @@ public class UpdateStaffGUI implements ActionListener {
                             "Passwords do not match, please retry", "ERROR", JOptionPane.WARNING_MESSAGE);
                     ge.passwordTxt.setText("");
                     ge.confPassTxt.setText("");
-                } else if (ge.secAnsTxt.getText() != ge.confSecAnsTxt.getText()) {
+                } else if (!ge.secAnsTxt.getText().equals(ge.confSecAnsTxt.getText())) {
                     JOptionPane.showMessageDialog(null,
                             "Security Answers do not match, please retry", "ERROR", JOptionPane.WARNING_MESSAGE);
                     ge.secAnsTxt.setText("");
@@ -101,13 +103,14 @@ public class UpdateStaffGUI implements ActionListener {
                     String fName = ge.fNameTxt.getText();
                     String lName = ge.lNameTxt.getText();
                     String phone = ge.phoneTxt.getText();
+                    String email = ge.emailTxt.getText();
                     String login = ge.loginTxt.getText();
                     String password = ge.passwordTxt.getText();
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
-                    if (numValidator.isNumeric(fName) == false && numValidator.isNumeric(lName) == false && numValidator.isNumeric(phone) == true
-                            && numValidator.isNumeric(login) == false && numValidator.isNumeric(secAnswer)) {
-                        progOps.updateStaff(ge.idTxt.getText(), fName, lName, phone, login, password, secQuestion, secAnswer);
+                    System.out.println("****************************    PHONE = "+phone+"          ***********************");
+                    if (numValidator.isNumeric(phone)==true) {
+                        progOps.updateStaff(ge.idTxt.getText(), fName, lName, phone, email, login, password, secQuestion, secAnswer);
                         Alley a = new Alley(progOps);
                         a.updateStaff(new Staff(fName, lName, phone, login, password, secQuestion, secAnswer));
                         JOptionPane.showMessageDialog(null, "Updated Staff Data Saved");
@@ -115,7 +118,7 @@ public class UpdateStaffGUI implements ActionListener {
                         updateD.setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(null,
-                                "Only Phone Field can be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
+                                "Phone Field must be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
                     }
                 }
             } catch (NumberFormatException nf) {

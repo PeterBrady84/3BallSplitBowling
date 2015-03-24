@@ -104,7 +104,7 @@ public class UpdateStockGUI implements ActionListener {
                     String password = ge.passwordTxt.getText();
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
-                    if (numValidator.isNumeric(fName) == false && numValidator.isNumeric(lName) == false && numValidator.isNumeric(phone) == true
+                    /*if (numValidator.isNumeric(fName) == false && numValidator.isNumeric(lName) == false && numValidator.isNumeric(phone) == true
                             && numValidator.isNumeric(login) == false && numValidator.isNumeric(secAnswer)) {
                         progOps.updateStaff(ge.idTxt.getText(), fName, lName, phone, login, password, secQuestion, secAnswer);
                         Alley a = new Alley(progOps);
@@ -115,7 +115,7 @@ public class UpdateStockGUI implements ActionListener {
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "Only Phone Field can be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
-                    }
+                    }*/
                 }
             } catch (NumberFormatException nf) {
                 JOptionPane.showMessageDialog(null, "Wrong data format", "ERROR", JOptionPane.WARNING_MESSAGE);

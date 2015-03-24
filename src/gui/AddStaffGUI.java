@@ -60,13 +60,14 @@ public class AddStaffGUI implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        System.out.println("Inside : ActionPerformed in AddMemberGUI");
+        System.out.println("Inside : ActionPerformed in AddStaffGUI");
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(addB)) {
             try {
                 if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || ge.phoneTxt.getText().equals("") ||
                         ge.loginTxt.getText().equals("") || ge.passwordTxt.getPassword().equals("") || ge.confPassTxt.getPassword().equals("")) {
-                    JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
+                    JOptionPane.showMessageDialog(null,
+                            "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 } else if (!(Arrays.equals(ge.passwordTxt.getPassword(), ge.confPassTxt.getPassword()))) {
                     JOptionPane.showMessageDialog(null,
@@ -74,7 +75,7 @@ public class AddStaffGUI implements ActionListener {
                     ge.passwordTxt.setText("");
                     ge.confPassTxt.setText("");
                 }
-                else if (ge.secAnsTxt.getText() != ge.confSecAnsTxt.getText()) {
+                else if (!ge.secAnsTxt.getText().equals(ge.confSecAnsTxt.getText())) {
                     JOptionPane.showMessageDialog(null,
                             "Security Answers do not match, please retry", "ERROR", JOptionPane.WARNING_MESSAGE);
                     ge.secAnsTxt.setText("");
@@ -88,12 +89,12 @@ public class AddStaffGUI implements ActionListener {
                     String password = String.valueOf(ge.passwordTxt.getPassword());
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
-                    if (numValidator.isNumeric(fName) == false && numValidator.isNumeric(lName) == false && numValidator.isNumeric(phone) == true &&
-                            numValidator.isNumeric(login) == false && numValidator.isNumeric(secAnswer) == false) {
+                    if (numValidator.isNumeric(phone) == true) {
                         Staff s = new Staff(fName, lName, phone, login, password, secQuestion, secAnswer);
+                        System.out.println("Object Staffs being passed to addStaff method. S fname = "+s.getfName());
                         progOps.addStaff(s);
                         Alley a = new Alley(progOps);
-                        a.addStaff();
+                        a.addStaffLastRow();
                         sTab.refreshTable();
                         JOptionPane.showMessageDialog(null, "New Staff Data Saved");
                         addD.setVisible(false);

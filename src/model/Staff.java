@@ -9,34 +9,92 @@ public class Staff {
     private String fName;
     private String lName;
     private String phone;
-    private String login;
+    private int bookings;
+    private String username;
     private String password;
+    private String email;
     private String secQuestion;
     private String secAnswer;
+    private String start;
+    private String finish;
 
-    public Staff(int i, String f, String l, String p,
-                  String log, String pass, String q, String a) {
-        System.out.println("Inside : StaffModel");
-        this.id = i;
-        this.fName = f;
-        this.lName = l;
-        this.phone = p;
-        this.login = log;
-        this.password = pass;
-        this.secQuestion = q;
-        this.secAnswer = a;
-
+    public Staff(int id, String fName, String lName, int bookings, String start, String finish) {
+        this.id = id;
+        this.fName = fName;
+        this.lName = lName;
+        this.bookings = bookings;
+        this.start = start;
+        this.finish = finish;
     }
 
-    public Staff(String f, String l, String p, String log, String pass, String q, String a) {
+    //constructor for updating Staff
+    public Staff(int id, String fName, String lName, String phone, String email, String login, String password, String secQuestion, String secAnswer) {
+        this.id = id;
+        this.fName = fName;
+        this.lName = lName;
+        this.phone = phone;
+        this.email = email;
+        this.username = login;
+        this.password = password;
+        this.secQuestion = secQuestion;
+        this.secAnswer = secAnswer;
+    }
+
+    // constructor that creates a staff object
+    //used when adding new Staff to the system
+    public Staff(String f, String l,  String p, String log, String pass, String q, String a) {
         System.out.println("Inside : StaffModel");
         this.fName = f;
         this.lName = l;
         this.phone = p;
-        this.login = log;
+        this.username = log;
         this.password = pass;
         this.secQuestion = q;
         this.secAnswer = a;
+    }
+    //Constructor retrieving from DB
+    public Staff(int id, String fName, String lName, int bookings, String start, String finish, String phone, String email) {
+        this.id = id;
+        this.fName = fName;
+        this.lName = lName;
+        this.phone = phone;
+        this.bookings = bookings;
+        this.email = email;
+        this.start = start;
+        this.finish = finish;
+    }
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getFinish() {
+        return finish;
+    }
+
+    public void setFinish(String finish) {
+        this.finish = finish;
     }
 
     public int getId() {
@@ -72,11 +130,11 @@ public class Staff {
     }
 
     public String getLogin() {
-        return login;
+        return username;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
+    public void setLogin(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -101,5 +159,13 @@ public class Staff {
 
     public void setSecAnswer(String secAnswer) {
         this.secAnswer = secAnswer;
+    }
+
+    public int getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(int bookings) {
+        this.bookings = bookings;
     }
 }

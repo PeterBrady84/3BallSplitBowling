@@ -37,7 +37,7 @@ public class Alley {
         rSet = progOps.getStaff();
         try {
             while (rSet.next()) {
-                staffList.add(new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getString(4), rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8)));
+                staffList.add(new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3),  rSet.getInt(4), rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8)));
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -121,13 +121,13 @@ public class Alley {
         }
     }
 
-    public void addStaff()
+    public void addStaffLastRow()
     {
         System.out.println("Inside : addStaff() in AlleyModel");
         rSet = progOps.getStaffLastRow();
         try {
             while (rSet.next()) {
-                staffList.add(new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getString(4), rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8)));
+                staffList.add(new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8)));
             }
         } catch (Exception e) {
             System.out.println(e);

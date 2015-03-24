@@ -5,11 +5,9 @@ import model.Member;
 import model.Staff;
 import model.Stock;
 import oracle.jdbc.pool.OracleDataSource;
+import org.joda.time.DateTime;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,6 +19,8 @@ public class MainProgramOperations {
     private PreparedStatement pStmt;
     private ResultSet rSet;
     private Connection conn;
+    private java.util.Date juDate ;
+    private DateTime dt;
 
     public MainProgramOperations() {
         conn = openDB();
@@ -47,9 +47,9 @@ public class MainProgramOperations {
                 pass = "passhr";
             }
             // Peter Connel Login
-            else if (val .equals("pb")) {
-                user = "Peter Connell Username";
-                pass = "Peter Connell Password";
+            else if (val .equals("pc")) {
+                user = "hr";
+                pass = "passhr";
             }
             // Dylan Byrne login
             else if (val .equals("db")) {
@@ -177,7 +177,9 @@ public class MainProgramOperations {
     public ResultSet getStaff() {
         System.out.println("Inside : getStaff() in MainProgramOperations");
         try {
-            String queryString = "SELECT * FROM Staff ORDER BY staffId";
+            String queryString = "select s.staffId, fname, lname, bookings ,TO_CHAR(starttime, 'HH24:MI') AS STARTTIME"+
+                    ", TO_CHAR(finishtime, 'HH24:MI') AS FINISHTIME, phone, email From staff s ,roster r where s.staffId = r.staffId AND starttime LIKE '%25-MAR-15%'";
+
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
         } catch (Exception e) {
@@ -221,29 +223,73 @@ public class MainProgramOperations {
     public void addStaff(Staff s) {
         System.out.println("Inside : addStaff() in MainProgramOperations");
         try {
-            String addsql = "INSERT INTO staff(staffId, lname, fname, phone, login," +
-                    "password, secQuestion, secAnswer) values(staffId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?)";
+            String addsql = "INSERT INTO staff(staffId, lname, fname, bookings, phone, email, username," +
+                    "password, securityQuestion, securityAnswer) values(staffId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(addsql);
             pStmt.setString(1, s.getlName());
             pStmt.setString(2, s.getfName());
-            pStmt.setString(3, s.getPhone());
-            pStmt.setString(4, s.getLogin());
-            pStmt.setString(5, s.getPassword());
-            pStmt.setString(6, s.getSecQuestion());
-            pStmt.setString(7, s.getSecAnswer());
+            pStmt.setInt(3, 0);// when adding a new staff member they have ZERO bookings
+            pStmt.setString(4, s.getPhone());
+            pStmt.setString(5, s.getEmail());
+            pStmt.setString(6, s.getLogin());
+            pStmt.setString(7, s.getPassword());
+            pStmt.setString(8, s.getSecQuestion());
+            pStmt.setString(9, s.getSecAnswer());
             pStmt.executeUpdate();
 
-            System.out.println("Member added to DB");
+            System.out.println("Staff added to DB");
+
+
+
+            try{
+                rSet = getStaffLastRow();
+                int id  = rSet.getInt("staffid");
+                Timestamp time;
+                final int ONE_WEEK = 7;
+                juDate = new java.util.Date();
+                dt = new DateTime(juDate);
+                //System.out.println("ID IS HERE ============================================" + id);
+                String idIn = Integer.toString(id);
+                //System.out.println("int id = "+id+"======================= Srtring idIN = "+idIn);
+
+                for (int i = 0; i < ONE_WEEK; i++) {
+                    String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(? ,?, ?)";
+                    pStmt = conn.prepareStatement(insertString);
+                    System.out.println("INSIDE WEEK LOOP *********************************************  id = "+id);
+                    pStmt.setInt(1,id);
+                    String now = "";
+                    String b = dt.toString("yyyy-MM-dd ");
+                    now = "11:00:00";
+                    b = b + now;
+                    System.out.print((i + 1) + ". " + b);
+                    time = Timestamp.valueOf(b);
+                    pStmt.setTimestamp(2, time);
+                    //This is setting the finish time
+                    b = dt.toString("yyyy-MM-dd ");
+                    now = "16:00:00";
+                    b = b + now;
+                    time = Timestamp.valueOf(b);
+                    System.out.println("\t        " + b);
+                    pStmt.setTimestamp(3, time);
+                    pStmt.executeQuery();
+                    dt = dt.plusDays(1);
+                }
+
+            }
+            catch (Exception e) {
+                System.out.println("ROSTER NOT FILLING =======================================  " + e);
+            }
         } catch (Exception se) {
-            System.out.println(se);
+            System.out.println("Not adding Staff--------------------------------------------" + se);
         }
     }
 
-    public void updateStaff(String i, String n, String l, String p, String log, String pass, String q, String a) {
+
+    public void updateStaff(String i, String n, String l, String e, String p, String log, String pass, String q, String a) {
         System.out.println("Inside : updateStaff() in MainProgramOperations");
         try {
-            String update = "UPDATE staff SET fName = '" + n + "', lName = '" + l + "', phone = '" + p
-                    + "', login = '" + log + "', password = '" + pass + "', secQuestion = '" + q + "', secAnswer = '" + a + "' WHERE staffId = " + i;
+            String update = "UPDATE staff SET fName = '" + n + "', lName = '" + l + ",email '" + e + "'  =  phone = '" + p
+                    + "', username = '" + log + "', password = '" + pass + "', securityQuestion = '" + q + "', securityAnswer = '" + a + "' WHERE staffId = " + i;
             pStmt = conn.prepareStatement(update);
             pStmt.executeUpdate();
         } catch (Exception ex) {
@@ -256,8 +302,7 @@ public class MainProgramOperations {
         String sqlStatement = "SELECT * FROM Staff WHERE " + s;
         try {
             pStmt = conn.prepareStatement(sqlStatement);
-            rSet = pStmt.executeQuery();
-            ;
+            rSet = pStmt.executeQuery();;
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
@@ -267,15 +312,16 @@ public class MainProgramOperations {
     public ArrayList<String> staffLogin() {
         System.out.println("Inside : staffLogin() in MainProgramOperations");
         ArrayList<String> pass = new ArrayList<String>();
-        String queryString = "SELECT login, password FROM staff order by staffId";
+        String queryString = "SELECT username, password FROM staff order by staffId";
         try {
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
-            while (rSet.next()) {
+            while(rSet.next()) {
                 pass.add(rSet.getString(1));
                 pass.add(rSet.getString(2));
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e);
         }
         return pass;
@@ -285,13 +331,14 @@ public class MainProgramOperations {
         System.out.println("Inside : queryLogin() in MainProgramOperations");
         ArrayList<String> login = new ArrayList<String>();
         try {
-            String queryString = "SELECT login FROM staff";
+            String queryString = "SELECT username FROM staff";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
             while (rSet.next()) {
                 login.add(rSet.getString(1));
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e);
         }
         return login;
@@ -301,34 +348,36 @@ public class MainProgramOperations {
         System.out.println("Inside : getSecQuestion() in MainProgramOperations");
         String question = "";
         try {
-            String queryString = "SELECT secQuestion FROM staff"
-                    + " WHERE login = '" + a + "'";
+            String queryString = "SELECT securityQuestion FROM staff"
+                    + " WHERE username = '" + a + "'";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
-            while (rSet.next()) {
+            while(rSet.next()){
                 question = rSet.getString(1);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e);
         }
         return question;
     }
 
-    public String changePassword(String pw, String login) {
+    public String changePassword(String pw, String username) {
         System.out.println("Inside : changePassword() in MainProgramOperations");
         String ans = "";
         try {
-            String queryString = "UPDATE staff SET password = '" + pw + "' WHERE login = '" + login + "'";
+            String queryString = "UPDATE staff SET password = '" + pw + "' WHERE username = '" + username + "'";
             pStmt = conn.prepareStatement(queryString);
             pStmt.executeUpdate();
-            String query2 = "SELECT secAnswer FROM staff"
-                    + " WHERE login = '" + login + "'";
+            String query2 = "SELECT securityAnswer FROM staff"
+                    + " WHERE username = '" + username + "'";
             pStmt = conn.prepareStatement(query2);
             rSet = pStmt.executeQuery();
-            while (rSet.next()) {
+            while(rSet.next()){
                 ans = rSet.getString(1);
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             System.out.println(e);
         }
         return ans;

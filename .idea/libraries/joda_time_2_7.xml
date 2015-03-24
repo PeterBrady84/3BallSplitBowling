@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="ojdbc61">
+  <library name="joda-time-2.7">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/out/production/3BallSplitBowling/lib/ojdbc6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/lib/joda-time-2.7.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

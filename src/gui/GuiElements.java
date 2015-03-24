@@ -110,7 +110,7 @@ public class GuiElements implements ItemListener {
     public JPanel staffGui() {
         System.out.println("Inside : staffGui() in GuiElements");
         String[] secQs={"Mothers maiden name", "Favourite place", "First pets name"};
-        JLabel idLbl, fNameLbl, lNameLbl, phoneLbl, loginLbl, passLbl, confLbl, secQuestionLbl, secAnsLbl, confSecAnsLbl;
+        JLabel idLbl, fNameLbl, lNameLbl, emailLbl, phoneLbl, loginLbl, passLbl, confLbl, secQuestionLbl, secAnsLbl, confSecAnsLbl;
         JPanel addPanel, topPanel;
 
         addPanel = new JPanel();
@@ -121,7 +121,7 @@ public class GuiElements implements ItemListener {
         addPanel.setBorder(titled);
 
         topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(10, 2));
+        topPanel.setLayout(new GridLayout(11, 2));
         topPanel.setBackground(Color.white);
 
         idLbl = new JLabel("Staff ID No:");
@@ -141,14 +141,22 @@ public class GuiElements implements ItemListener {
         lNameTxt = new JTextField(15);
         topPanel.add(lNameTxt);
 
+
         phoneLbl = new JLabel("Phone No:");
         topPanel.add(phoneLbl);
         phoneTxt = new JTextField(15);
         topPanel.add(phoneTxt);
 
+        emailLbl = new JLabel("Email:");
+        topPanel.add(emailLbl);
+        emailTxt = new JTextField(15);
+        topPanel.add(emailTxt);
+
         loginLbl = new JLabel("Login:");
         topPanel.add(loginLbl);
         loginTxt = new JTextField(15);
+        /*loginTxt.setEditable(false);
+        loginTxt.setBackground(Color.white);*/
         topPanel.add(loginTxt);
 
         passLbl = new JLabel("Password:");
