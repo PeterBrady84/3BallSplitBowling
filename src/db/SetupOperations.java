@@ -3,6 +3,7 @@ package db;
 import oracle.jdbc.pool.OracleDataSource;
 import org.joda.time.DateTime;
 import java.sql.*;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -335,23 +336,33 @@ public class SetupOperations {
             String insertString = "INSERT INTO staff(staffId, lname, fname, bookings, phone, username, email, " +
                     "password, securityQuestion, " +
                     "securityAnswer) values(staffId_seq.NextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            String [] fnames = {"Joe","Mary","Frank","Vera","Barry","Adu","Pablo"};
+            String [] lnames = {"Byrne","Hummins","Hogan","Cooke","Murphy","Panesh","Byrne"};
+            String [] phoneList = {"012457735","087244555","01245741","05422157","01245441","0832454477","085757133"};
+            String [] emailList = {"byrner@hotmail.com","Hummins@gmail.com","Hogan@hotmail.com","Cooke@gmail.com","Murph@hotmail.comt","Panesh@hotmail.com","Byrne@hotmail.com"};
+            Random ran = new Random();
+            int random ;
+
             pStmt = conn.prepareStatement(insertString);
+            for(int i=0;i<fnames.length;i++) {
+                //STAFF NUMBER 1
+                random = ran.nextInt(50);
+                pStmt.setString(1, fnames[i]);
+                pStmt.setString(2, lnames[i]);
+                pStmt.setInt(3, random);
+                pStmt.setString(4, phoneList[i]);
+                pStmt.setString(5, "user");
+                pStmt.setString(6, emailList[i]);
+                pStmt.setString(7, "password");
+                pStmt.setString(8, "who am i");
+                pStmt.setString(9, "Peter");
+                pStmt.executeQuery();
 
-            //STAFF NUMBER 1
-            pStmt.setString(1, "Byrne");
-            pStmt.setString(2, "Joe");
-            pStmt.setInt(3, 17);
-            pStmt.setString(4, "0874569813");
-            pStmt.setString(5, "user");
-            pStmt.setString(6, "byrner@email.com");
-            pStmt.setString(7, "password");
-            pStmt.setString(8, "who am i");
-            pStmt.setString(9, "Peter");
-            pStmt.executeQuery();
+                System.out.println("-----------------Staff "+i+" created");
+            }
 
-            System.out.println("Staff 1 created");
-
-            // STAFF NUMBER  2
+            /*// STAFF NUMBER  2
             pStmt.setString(1, "Hummins");
             pStmt.setString(2, "Lesley");
             pStmt.setInt(3, 36);
@@ -377,7 +388,7 @@ public class SetupOperations {
             pStmt.setString(9, "Peter");
             pStmt.executeQuery();
 
-            System.out.println("Staff 3 created");
+            System.out.println("Staff 3 created");*/
         }
         catch (SQLException e)
         {
@@ -403,32 +414,39 @@ public class SetupOperations {
             pStmt = conn.prepareStatement(createRoster);
 
             pStmt.executeUpdate(createRoster);
+
+            String [] starts = {"10:00:00","11:00:00","12:00:00","13:00:00","14:00:00"};
+            String [] finishes = {"18:00:00","20:00:00","22:00:00","23:00:00","23:30:00"};
             System.out.println("inputting values in roster");
-
             // Insert data into Roster table
+            String [] fnames = {"Joe","Mary","Frank","Vera","Barry","Adu","Pablo"};
 
-            for(int i=0;i<ONE_WEEK;i++) {
-                String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(1, ?, ?)";
-                pStmt = conn.prepareStatement(insertString);
-                String now = "";
-                String b = dt.toString("yyyy-MM-dd ");
-                now = "17:00:00";
-                b = b + now;
-                System.out.print((i+1)+". "+b);
-                time = Timestamp.valueOf(b);
-                pStmt.setTimestamp(1, time);
-                //This is setting the finish time
-                b = dt.toString("yyyy-MM-dd ");
-                now = "23:00:00";
-                b = b + now;
-                time = Timestamp.valueOf(b);
-                System.out.println("\t        "+b);
-                pStmt.setTimestamp(2, time);
-                pStmt.executeQuery();
-                dt = dt.plusDays(1);
+            for (int j = 1; j < fnames.length; j++) {
+                for (int i = 0; i < ONE_WEEK; i++){
+                    String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(?, ?, ?)";
+                    pStmt = conn.prepareStatement(insertString);
+                    String now = "";
+                    String b = dt.toString("yyyy-MM-dd ");
+                    now = starts[new Random().nextInt(starts.length)];
+                    b = b + now;
+                    System.out.print((i + 1) + ". " + b);
+                    time = Timestamp.valueOf(b);
+
+                    pStmt.setInt(1, j);
+                    pStmt.setTimestamp(2, time);
+                    //This is setting the finish time
+                    b = dt.toString("yyyy-MM-dd ");
+                    now = finishes[new Random().nextInt(finishes.length)];
+                    b = b + now;
+                    time = Timestamp.valueOf(b);
+                    System.out.println("\t        " + b);
+                    pStmt.setTimestamp(3, time);
+                    pStmt.executeQuery();
+                    dt = dt.plusDays(1);
+                }
+                System.out.println("Staff "+fnames[j]+" rostered");
             }
-            System.out.println("Staff 1 rostered");
-            juDate = new java.util.Date();
+            /*juDate = new java.util.Date();
             dt = new DateTime(juDate);
             for(int i=0;i<ONE_WEEK;i++) {
                 String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(2, ?, ?)";
@@ -473,7 +491,7 @@ public class SetupOperations {
                 pStmt.executeQuery();
                 dt = dt.plusDays(1);
             }
-            System.out.println("Staff 3 rostered");
+            System.out.println("Staff 3 rostered");*/
 
         }
         catch (SQLException e)

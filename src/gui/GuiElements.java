@@ -109,7 +109,7 @@ public class GuiElements implements ItemListener {
 
     public JPanel staffGui() {
         System.out.println("Inside : staffGui() in GuiElements");
-        String[] secQs={"Mothers maiden name", "Favourite place", "First pets name"};
+        String[] secQs={"Who am i?", "Favourite place?", "First pets name?"};
         JLabel idLbl, fNameLbl, lNameLbl, emailLbl, phoneLbl, loginLbl, passLbl, confLbl, secQuestionLbl, secAnsLbl, confSecAnsLbl;
         JPanel addPanel, topPanel;
 

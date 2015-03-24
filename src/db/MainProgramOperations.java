@@ -178,7 +178,7 @@ public class MainProgramOperations {
         System.out.println("Inside : getStaff() in MainProgramOperations");
         try {
             String queryString = "select s.staffId, fname, lname, bookings ,TO_CHAR(starttime, 'HH24:MI') AS STARTTIME"+
-                    ", TO_CHAR(finishtime, 'HH24:MI') AS FINISHTIME, phone, email From staff s ,roster r where s.staffId = r.staffId AND starttime LIKE '%25-MAR-15%'";
+                    ", TO_CHAR(finishtime, 'HH24:MI') AS FINISHTIME, phone, email From staff s ,roster r where s.staffId = r.staffId AND starttime LIKE '%28-MAR-15%'";
 
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
@@ -239,8 +239,6 @@ public class MainProgramOperations {
 
             System.out.println("Staff added to DB");
 
-
-
             try{
                 rSet = getStaffLastRow();
                 int id  = rSet.getInt("staffid");
@@ -255,7 +253,7 @@ public class MainProgramOperations {
                 for (int i = 0; i < ONE_WEEK; i++) {
                     String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(? ,?, ?)";
                     pStmt = conn.prepareStatement(insertString);
-                    System.out.println("INSIDE WEEK LOOP *********************************************  id = "+id);
+                    //System.out.println("INSIDE WEEK LOOP *********************************************  id = "+id);
                     pStmt.setInt(1,id);
                     String now = "";
                     String b = dt.toString("yyyy-MM-dd ");
