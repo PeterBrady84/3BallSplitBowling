@@ -421,7 +421,9 @@ public class SetupOperations {
             // Insert data into Roster table
             String [] fnames = {"Joe","Mary","Frank","Vera","Barry","Adu","Pablo"};
 
-            for (int j = 1; j < fnames.length; j++) {
+            for (int j = 1; j < fnames.length+1; j++) {
+                juDate = new java.util.Date();
+                dt = new DateTime(juDate);
                 for (int i = 0; i < ONE_WEEK; i++){
                     String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(?, ?, ?)";
                     pStmt = conn.prepareStatement(insertString);
@@ -444,7 +446,7 @@ public class SetupOperations {
                     pStmt.executeQuery();
                     dt = dt.plusDays(1);
                 }
-                System.out.println("Staff "+fnames[j]+" rostered");
+                System.out.println("Staff "+fnames[j-1]+" rostered");
             }
             /*juDate = new java.util.Date();
             dt = new DateTime(juDate);

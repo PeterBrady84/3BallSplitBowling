@@ -246,10 +246,7 @@ public class MainProgramOperations {
                 final int ONE_WEEK = 7;
                 juDate = new java.util.Date();
                 dt = new DateTime(juDate);
-                //System.out.println("ID IS HERE ============================================" + id);
                 String idIn = Integer.toString(id);
-                //System.out.println("int id = "+id+"======================= Srtring idIN = "+idIn);
-
                 for (int i = 0; i < ONE_WEEK; i++) {
                     String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(? ,?, ?)";
                     pStmt = conn.prepareStatement(insertString);
