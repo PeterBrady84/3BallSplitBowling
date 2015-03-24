@@ -5,6 +5,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Arrays;
 
 /**
  * Created by Peter on 10/03/2015.
@@ -15,6 +16,8 @@ public class GuiElements implements ItemListener {
             loginTxt, secAnsTxt, confSecAnsTxt, sizeTxt, detailsTxt, qtyTxt, memIdTxt, nameTxt, laneTxt, dateTxt, startTimeTxt, endTimeTxt;
     public JPasswordField passwordTxt, confPassTxt;
     public JComboBox<String> coCombo, quest, startHr, startMin, endHr, endMin;
+    final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
+
 
     public GuiElements() {
     }
@@ -337,10 +340,8 @@ public class GuiElements implements ItemListener {
     @Override
     public void itemStateChanged(ItemEvent ae) {
         System.out.println("Inside : itemStateChanged() for Bookings in GuiElements");
-        String [] startTime = startHr.getSelectedItem().toString().split(" ");
-        startTimeTxt.setText(startTime[0] + ":" + startMin.getSelectedItem().toString() + " " + startTime[1]);
+        startTimeTxt.setText(HRS24[startHr.getSelectedIndex()] + ":" + startMin.getSelectedItem().toString());
 
-        String [] endTime = endHr.getSelectedItem().toString().split(" ");
-        endTimeTxt.setText(endTime[0] + ":" + endMin.getSelectedItem().toString() + " " + endTime[1]);
+        endTimeTxt.setText(HRS24[endHr.getSelectedIndex()] + ":" + endMin.getSelectedItem().toString());
     }
 }

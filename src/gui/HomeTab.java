@@ -150,14 +150,14 @@ public class HomeTab extends JPanel {
                 int month = Integer.parseInt(mdt.getMonth(fromDate)) - 1;
                 int date = Integer.parseInt(mdt.getDate(fromDate));
                 int startH = Integer.parseInt(mdt.getHour(fromDate));
-                int startM = 00;
+                int startM = Integer.parseInt(mdt.getMinute(fromDate));
                 int endH = Integer.parseInt(mdt.getHour(toDate));
-                int endM = 00;
+                int endM = Integer.parseInt(mdt.getMinute(toDate));
 
                 if (bookingList.get(i).getLaneId() == 1) {
                     lane1.addSubtask(new Task("Booking" + (i + 1),
-                            new GregorianCalendar(year, month, date, startH, 30).getTime(),
-                            new GregorianCalendar(year, month, date, endH, 30).getTime()));
+                            new GregorianCalendar(year, month, date, startH, startM).getTime(),
+                            new GregorianCalendar(year, month, date, endH, endM).getTime()));
                 }
                 else if (bookingList.get(i).getLaneId() == 2) {
                     lane2.addSubtask(new Task("Booking" + (i + 1),
