@@ -142,7 +142,7 @@ public class MainScreen extends JFrame implements ActionListener {
                 if (JOptionPane.showConfirmDialog(null, "Are you sure to exit this program?", "Close Program?",
                         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     progOps.closeDB();
-                    dispose();
+                    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 }
             }
         });
@@ -154,8 +154,11 @@ public class MainScreen extends JFrame implements ActionListener {
             CheckAvailabilityGUI ca = new CheckAvailabilityGUI(progOps);
         }
         else if (e.getSource() == logout) {
-            LoginGUI ls = new LoginGUI(progOps);
-            this.setVisible(false);
+            if (JOptionPane.showConfirmDialog(null, "Are you sure to logout of this program?", "Logout?",
+                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                LoginGUI ls = new LoginGUI(progOps);
+                this.setVisible(false);
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 package gui;
 
 import db.MainProgramOperations;
-import lib.TableColumnAdjuster;
+import controller.TableColumnAdjuster;
 import model.Alley;
 import model.Member;
 import model.NumberValidator;
@@ -12,7 +12,6 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 public class MemberTab extends JPanel implements ActionListener {
 
     private JPanel p1, p2, p1a;
-    private JButton create, edit, delete, refresh;
+    private JButton create, edit, delete;
     private DefaultTableModel model;
     private JTable table;
     private JTextField memId, memName;
@@ -49,8 +48,7 @@ public class MemberTab extends JPanel implements ActionListener {
         p1a.setBackground(Color.WHITE);
         create = new JButton("Create New Member");
         edit = new JButton("Edit Member");
-        delete = new JButton("Search For Member");
-        refresh = new JButton("Refresh Member Table");
+        delete = new JButton("Delete Member");
 
         p1a.add(create);
         create.addActionListener(this);
@@ -61,8 +59,6 @@ public class MemberTab extends JPanel implements ActionListener {
         p1a.add(delete);
         delete.addActionListener(this);
         p1a.add(add(Box.createVerticalStrut(20)));
-        p1a.add(refresh);
-        refresh.addActionListener(this);
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
 
@@ -151,8 +147,8 @@ public class MemberTab extends JPanel implements ActionListener {
                 throw new IllegalArgumentException("String " + memName.getText() + " does not contain a ' ' (space)!");
             }
         }
-        else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
-            this.setVisible(false);
+        else {
+            query = "cancel";
         }
         return query;
     }
@@ -164,10 +160,11 @@ public class MemberTab extends JPanel implements ActionListener {
         }
         else if (ae.getSource() == edit) {
             String s = searchMember();
-            UpdateMemberGUI um = new UpdateMemberGUI(this, progOps, memList, s);
+            if (!s.equals("cancel")) {
+                UpdateMemberGUI um = new UpdateMemberGUI(this, progOps, memList, s);
+            }
         }
-        else if (ae.getSource() == refresh) {
-            refreshTable();
+        else if (ae.getSource() == delete) {
         }
     }
 }

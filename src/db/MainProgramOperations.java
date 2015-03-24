@@ -540,16 +540,17 @@ public class MainProgramOperations {
 
     public void addBooking(Booking b) {
         System.out.println("Inside : addBooking() in MainProgramOperations");
-        String start = b.getFromDateTime();
-        String end = b.getToDateTime();
+        System.out.println(b.getFromDateTime());
+        String start = b.getFromDateTime() + ":00";
+        String end = b.getToDateTime() + ":00";
         try {
             String addsql = "INSERT INTO bookings (bookingId, memId, laneId, fromDateTime, toDateTime)" +
                     "VALUES (bookingId_seq.nextVal, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(addsql);
             pStmt.setInt(1, b.getMemId());
             pStmt.setInt(2, b.getLaneId());
-            pStmt.setString(3, b.getFromDateTime());
-            pStmt.setString(4, b.getToDateTime());
+            pStmt.setString(3, start);
+            pStmt.setString(4, end);
             pStmt.executeUpdate();
 
             System.out.println("Booking added to DB");

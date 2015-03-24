@@ -12,24 +12,20 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 /**
  * Created by Peter on 06/03/2015.
  */
-public class StaffTab extends JPanel implements ActionListener, ItemListener {
+public class StaffTab extends JPanel implements ActionListener{
 
     private JPanel p1, p2, p1a;
     private JButton create, edit, refresh;
-    private JToggleButton toggle;
     private DefaultTableModel model;
     private JTable table;
     private MainProgramOperations progOps;
     private ArrayList<Staff> staffList = new ArrayList<Staff>();
-    private String TimeHeader[] = new String[] { "ID", "Name", "Surname", "Bookings", "Start", "Finish"};
-    private String ContactHeader[] = new String[] { "ID", "Name", "Surname", "Bookings", "Phone", "Email"};
+    private String header[] = new String[] { "Staff Id", "Name", "Surname", "Bookings", "Start", "Finish"};
     private JTextField staffId, staffName;
 
     public StaffTab(ArrayList<Staff> s, MainProgramOperations po) {
@@ -46,14 +42,10 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
-        toggle = new JToggleButton("View Contact details", false);
         create = new JButton("Add Staff");
         edit = new JButton("Update Staff");
         refresh = new JButton("Refresh Staff");
 
-        p1a.add(toggle);
-        toggle.addItemListener(this);
-        p1a.add(add(Box.createVerticalStrut(20)));
         p1a.add(create);
         create.addActionListener(this);
         p1a.add(add(Box.createVerticalStrut(20)));
@@ -74,7 +66,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
             }
         };
         table = new JTable();
-        model.setColumnIdentifiers(TimeHeader);
+        model.setColumnIdentifiers(header);
         table.setModel(model);
         table.getTableHeader().setReorderingAllowed(false);
 
@@ -112,7 +104,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         this.staffList = s;
         for (Staff aStaffList : staffList) {
             model.addRow(new Object[]{aStaffList.getId(), aStaffList.getlName(), aStaffList.getfName(),
-                    aStaffList.getBookings(), aStaffList.getPhone(), aStaffList.getEmail()});
+                    aStaffList.getPhone(), aStaffList.getEmail()});
         }
     }
 
@@ -126,11 +118,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
 
-        if(toggle.isSelected())
-            fillTableContact(staffList);
-        else
-            fillTable(staffList);
-
+        fillTable(staffList);
     }
 
     public String searchStaff() {
@@ -183,18 +171,4 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
             refreshTable();
         }
     }
-
-    public void itemStateChanged(ItemEvent ev) {
-        refreshTable();
-        if (ev.getStateChange() == ItemEvent.SELECTED) {
-            System.out.println("button is selected");
-            model.setColumnIdentifiers(ContactHeader);
-            fillTableContact(staffList);
-        } else if (ev.getStateChange() == ItemEvent.DESELECTED) {
-            System.out.println("button is not selected");
-            model.setColumnIdentifiers(TimeHeader);
-            fillTable(staffList);
-        }
-    }
-
 }

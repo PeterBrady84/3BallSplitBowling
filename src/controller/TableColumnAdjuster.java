@@ -1,4 +1,4 @@
-package lib;
+package controller;
 
 import java.awt.*;
 import java.awt.event.*;
