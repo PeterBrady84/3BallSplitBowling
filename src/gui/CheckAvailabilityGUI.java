@@ -15,7 +15,6 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Properties;
 
 /**
  * Created by Peter on 20/03/2015.

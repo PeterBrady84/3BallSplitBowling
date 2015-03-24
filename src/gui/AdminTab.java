@@ -48,7 +48,7 @@ public class AdminTab extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == staff);
+        if (e.getSource() == staff){
         //this.setVisible(false);
         StaffReportsGUI sr = new StaffReportsGUI();
         JPanel staff = sr;
@@ -56,5 +56,33 @@ public class AdminTab extends JPanel implements ActionListener {
         this.add(staff);//Adding to content pane, not to Frame
         repaint();
         printAll(getGraphics());//Extort print all content
+         }
+        else if(e.getSource() == games){
+            //this.setVisible(false);
+            GamesReportGUI gr = new GamesReportGUI();
+            JPanel staff = gr;
+            this.removeAll();
+            this.add(staff);//Adding to content pane, not to Frame
+            repaint();
+            printAll(getGraphics());//Extort print all content
+        }
+        else if(e.getSource() == members){
+            MembershipReportGUI mr = new MembershipReportGUI();
+            JPanel staff = mr;
+            this.removeAll();
+            this.add(staff);//Adding to content pane, not to Frame
+            repaint();
+            printAll(getGraphics());//Extort print all content
+        }
+        else {
+            FinancialReportsGUI fr = new FinancialReportsGUI();
+            JPanel staff = fr;
+            this.removeAll();
+            this.add(staff);//Adding to content pane, not to Frame
+            repaint();
+            printAll(getGraphics());//Extort print all content
+        }
     }
+
+
 }
