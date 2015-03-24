@@ -1,11 +1,14 @@
 package gui;
 
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Arrays;
 
 /**
  * Created by Peter on 10/03/2015.
@@ -14,7 +17,9 @@ public class GuiElements implements ItemListener {
 
     public JTextField idTxt, fNameTxt, lNameTxt, genTxt, phoneTxt, emailTxt, addTxt, townTxt, visTxt,
             loginTxt, secAnsTxt, confSecAnsTxt, sizeTxt, detailsTxt, qtyTxt, memIdTxt, nameTxt, laneTxt, dateTxt, startTimeTxt, endTimeTxt;
+    public JFormattedTextField dateInTxt;
     public JPasswordField passwordTxt, confPassTxt;
+    public JRadioButton male, female;
     public JComboBox<String> coCombo, quest, startHr, startMin, endHr, endMin;
     final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
 
@@ -29,6 +34,7 @@ public class GuiElements implements ItemListener {
                 "Leitrim", "Limerick", "Longford", "Louth", "Mayo", "Meath", "Monaghan", "Offaly", "Roscommon",
                 "Sligo", "Tipperary", "Tyrone", "Waterford", "Westmeath", "Wexford", "Wicklow"};
         JLabel idLbl, fNameLbl, lNameLbl, genLbl, phoneLbl, emailLbl, addLbl, townLbl, coLbl, visLbl;
+        ButtonGroup genderGroup;
         JPanel addPanel, topPanel;
 
         addPanel = new JPanel();
@@ -39,7 +45,7 @@ public class GuiElements implements ItemListener {
         addPanel.setBorder(titled);
 
         topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(10, 2));
+        topPanel.setLayout(new GridLayout(11, 2));
         topPanel.setBackground(Color.white);
 
         idLbl = new JLabel("Member ID No:");
@@ -61,8 +67,20 @@ public class GuiElements implements ItemListener {
 
         genLbl = new JLabel("Gender:");
         topPanel.add(genLbl);
-        genTxt = new JTextField(15);
-        topPanel.add(genTxt);
+
+        male = new JRadioButton("Male", true);
+        male.setBackground(Color.white);
+        topPanel.add(male);
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        female = new JRadioButton("Female", true);
+        female.setBackground(Color.white);
+        topPanel.add(female);
+
+        genderGroup = new ButtonGroup();
+        genderGroup.add(male);
+        genderGroup.add(female);
 
         phoneLbl = new JLabel("Phone No:");
         topPanel.add(phoneLbl);
@@ -237,6 +255,8 @@ public class GuiElements implements ItemListener {
 
     public JPanel bookingGui() {
         System.out.println("Inside : bookingGui() in GuiElements");
+        JDatePanelImpl datePanel;
+        JDatePickerImpl datePicker;
         JLabel idLbl, memIdLbl, nameLbl, laneLbl, dateLbl, startTime, endTime;
         final String [] HOURS = {"10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
         final String [] MINUTES = {"00", "15", "30", "45"};
@@ -277,8 +297,15 @@ public class GuiElements implements ItemListener {
 
         dateLbl = new JLabel("Dates:");
         topPanel.add(dateLbl);
-        dateTxt = new JTextField(new java.text.SimpleDateFormat("dd-MMM-yy").format(new java.util.Date()), 15);
-        topPanel.add(dateTxt);
+        datePanel = new JDatePanelImpl(new UtilDateModel());
+        datePicker = new JDatePickerImpl(datePanel);
+        dateInTxt = datePicker.getJFormattedTextField();
+        dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yy").format(new java.util.Date()));
+        dateInTxt.setBackground(Color.WHITE);
+        topPanel.add(datePicker);
+
+        //dateTxt = new JTextField(new java.text.SimpleDateFormat("dd-MMM-yy").format(new java.util.Date()), 15);
+        //topPanel.add(dateTxt);
 
         startTime = new JLabel("Start Time:");
         topPanel.add(startTime);
@@ -306,7 +333,7 @@ public class GuiElements implements ItemListener {
 
         topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
 
-        startTimeTxt = new JTextField(new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date()), 15);
+        startTimeTxt = new JTextField(15);
         startTimeTxt.setBackground(Color.WHITE);
         startTimeTxt.setEditable(false);
         topPanel.add(startTimeTxt);
@@ -336,7 +363,9 @@ public class GuiElements implements ItemListener {
 
         topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
 
-        endTimeTxt = new JTextField(new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date()), 15);
+        endTimeTxt = new JTextField(15);
+        endTimeTxt.setBackground(Color.WHITE);
+        endTimeTxt.setEditable(false);
         topPanel.add(endTimeTxt);
 
         addPanel.add(topPanel, BorderLayout.NORTH);
@@ -349,7 +378,6 @@ public class GuiElements implements ItemListener {
     public void itemStateChanged(ItemEvent ae) {
         System.out.println("Inside : itemStateChanged() for Bookings in GuiElements");
         startTimeTxt.setText(HRS24[startHr.getSelectedIndex()] + ":" + startMin.getSelectedItem().toString());
-
         endTimeTxt.setText(HRS24[endHr.getSelectedIndex()] + ":" + endMin.getSelectedItem().toString());
     }
 }

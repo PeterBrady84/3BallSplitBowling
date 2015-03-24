@@ -1,7 +1,7 @@
 package gui;
 
 import db.MainProgramOperations;
-import lib.TableColumnAdjuster;
+import controller.TableColumnAdjuster;
 import model.Alley;
 import model.NumberValidator;
 import model.Stock;

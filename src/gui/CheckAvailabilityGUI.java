@@ -1,7 +1,7 @@
 package gui;
 
 import db.MainProgramOperations;
-import lib.ModifyDateAndTime;
+import controller.ModifyDateAndTime;
 import model.NumberValidator;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -15,7 +15,6 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Properties;
 
 /**
  * Created by Peter on 20/03/2015.
@@ -60,7 +59,8 @@ public class CheckAvailabilityGUI implements ActionListener {
         model = new UtilDateModel();
         datePanel = new JDatePanelImpl(model);
         datePicker = new JDatePickerImpl(datePanel);
-        datePicker.setBackground(Color.WHITE);
+        JFormattedTextField textField = datePicker.getJFormattedTextField();
+        textField.setBackground(Color.WHITE);
         topPanel.add(datePicker);
 
         //dateTxt = new JTextField(15);

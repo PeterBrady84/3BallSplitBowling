@@ -71,7 +71,13 @@ public class UpdateMemberGUI implements ActionListener{
                 ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
                 ge.lNameTxt.setText(rSet.getString(2));
                 ge.fNameTxt.setText(rSet.getString(3));
-                ge.genTxt.setText(rSet.getString(4));
+                String gender = rSet.getString(4);
+                if (gender .equals("M")) {
+                    ge.male.setSelected(true);
+                }
+                else if (gender .equals("F")) {
+                    ge.female.setSelected(true);
+                }
                 ge.phoneTxt.setText(rSet.getString(5));
                 ge.emailTxt.setText(rSet.getString(6));
                 ge.addTxt.setText(rSet.getString(7));
@@ -89,25 +95,30 @@ public class UpdateMemberGUI implements ActionListener{
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(updateB)) {
             try {
-                if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || ge.phoneTxt.getText().equals("") ||
+                String gender = "";
+                if (ge.male.isSelected()) {
+                    gender = "M";
+                }
+                else if (ge.female.isSelected()) {
+                    gender = "F";
+                }
+                if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || gender.equals("") || ge.phoneTxt.getText().equals("") ||
                         ge.emailTxt.getText().equals("") || ge.addTxt.getText().equals("") || ge.townTxt.getText().equals("")) {
                     JOptionPane.showMessageDialog(null,
                             "Fields cannot be blank");
-                } else if (emailValidator.validate(ge.emailTxt.getText()) == false) {
+                } else if (!emailValidator.validate(ge.emailTxt.getText())) {
                     JOptionPane.showMessageDialog(null, "Email address is not valid", "ERROR", JOptionPane.WARNING_MESSAGE);
                 } else {
                     String fName = ge.fNameTxt.getText();
                     String lName = ge.lNameTxt.getText();
-                    String gender = ge.genTxt.getText();
                     String phone = ge.phoneTxt.getText();
                     String email = ge.emailTxt.getText();
                     String add = ge.addTxt.getText();
                     String town = ge.townTxt.getText();
                     String co = ge.coCombo.getSelectedItem().toString();
 
-                    if (numValidator.isNumeric(fName) == false && numValidator.isNumeric(lName) == false && numValidator.isNumeric(gender) == false
-                            && numValidator.isNumeric(phone) == true && numValidator.isNumeric(email) == false && numValidator.isNumeric(add) == false
-                            && numValidator.isNumeric(town) == false) {
+                    if (!numValidator.isNumeric(fName) && !numValidator.isNumeric(lName) && numValidator.isNumeric(phone)
+                            && !numValidator.isNumeric(email) && !numValidator.isNumeric(add) && !numValidator.isNumeric(town)) {
                         progOps.updateMember(ge.idTxt.getText(), fName, lName, gender, phone, email, add, town, co);
                         Alley a = new Alley(progOps);
                         a.updateMember(new Member(fName, lName, gender, phone, email, add, town, co));

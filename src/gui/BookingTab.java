@@ -1,8 +1,8 @@
 package gui;
 
 import db.MainProgramOperations;
-import lib.TableColumnAdjuster;
-import lib.ModifyDateAndTime;
+import controller.TableColumnAdjuster;
+import controller.ModifyDateAndTime;
 import model.*;
 
 import javax.swing.*;
@@ -56,6 +56,7 @@ public class BookingTab extends JPanel implements ActionListener {
         create.addActionListener(this);
         p1a.add(add(Box.createVerticalStrut(20)));
         p1a.add(edit);
+        edit.addActionListener(this);
         p1a.add(add(Box.createVerticalStrut(20)));
         p1a.add(delete);
         p1.add(p1a, BorderLayout.SOUTH);
@@ -138,15 +139,15 @@ public class BookingTab extends JPanel implements ActionListener {
         bookingId = new JTextField();
         bookingName = new JTextField();
         Object[] options = {
-                "Please Enter -\nMember Id:", bookingId,
-                "Or\nMember Name:", bookingName
+                "Please Enter -\nBooking Id:", bookingId,
+                "Or\nBooking Name:", bookingName
         };
 
-        int option = JOptionPane.showConfirmDialog(null, options, "Search Members", JOptionPane.OK_CANCEL_OPTION);
+        int option = JOptionPane.showConfirmDialog(null, options, "Search Bookings", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             if (numValidator.isNumeric(bookingId.getText())) {
-                query = "memId = " + bookingId.getText();
-            } else if (numValidator.isNumeric(bookingName.getText()) == false && bookingName.getText().contains(" ")) {
+                query = "bookingId = " + bookingId.getText();
+            } else if (!numValidator.isNumeric(bookingName.getText()) && bookingName.getText().contains(" ")) {
                 String[] name = bookingName.getText().split(" ");
                 if (name.length < 2) {
                     throw new IllegalArgumentException("String not in correct format");
@@ -157,8 +158,8 @@ public class BookingTab extends JPanel implements ActionListener {
                 throw new IllegalArgumentException("String " + bookingName.getText() + " does not contain a ' ' (space)!");
             }
         }
-        else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
-            System.exit(0);
+        else  {
+            query = "cancel";
         }
         return query;
     }
@@ -170,7 +171,9 @@ public class BookingTab extends JPanel implements ActionListener {
         }
         else if (ae.getSource() == edit) {
             String s = searchBooking();
-            //UpdateMemberGUI um = new UpdateMemberGUI(this, progOps, bookingList, s);
+            if (!s.equals("cancel")) {
+                UpdateBookingGUI ub = new UpdateBookingGUI(this, progOps, bookingList, s);
+            }
         }
     }
 }

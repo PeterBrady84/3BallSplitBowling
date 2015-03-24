@@ -1,7 +1,7 @@
 package gui;
 
 import db.MainProgramOperations;
-import lib.TableColumnAdjuster;
+import controller.TableColumnAdjuster;
 import model.Alley;
 import model.NumberValidator;
 import model.Staff;
@@ -65,7 +65,15 @@ public class StaffTab extends JPanel implements ActionListener{
                 return false;
             }
         };
-        table = new JTable();
+        table = new JTable() {
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component comp = super.prepareRenderer(renderer, row, column);
+                comp.setBackground(row % 2 == 0 ? Color.WHITE : Color.LIGHT_GRAY);
+                return comp;
+            }
+        };
+
         model.setColumnIdentifiers(header);
         table.setModel(model);
         table.getTableHeader().setReorderingAllowed(false);
