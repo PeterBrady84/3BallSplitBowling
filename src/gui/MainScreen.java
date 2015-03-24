@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 /**
@@ -34,9 +36,9 @@ public class MainScreen extends JFrame implements ActionListener {
         this.stockList = st;
         this.bookingList = b;
 
-        setTitle("GIT IS AWESOME");
+        setTitle("3-Ball-Strike Bowling");
         setSize(850, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
         setResizable(false);
@@ -134,15 +136,13 @@ public class MainScreen extends JFrame implements ActionListener {
         add(p3, BorderLayout.SOUTH);
         this.setVisible(true);
 
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
+        addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                if (JOptionPane.showConfirmDialog(getContentPane(),
-                        "Are you sure to close this window?", "Really Closing?",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+            public void windowClosing(WindowEvent e) {
+                if (JOptionPane.showConfirmDialog(null, "Are you sure to exit this program?", "Close Program?",
+                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     progOps.closeDB();
-                    ;
+                    dispose();
                 }
             }
         });

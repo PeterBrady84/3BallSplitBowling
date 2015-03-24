@@ -3,16 +3,18 @@ package gui;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * Created by Peter on 10/03/2015.
  */
-public class GuiElements {
+public class GuiElements implements ItemListener {
 
     public JTextField idTxt, fNameTxt, lNameTxt, genTxt, phoneTxt, emailTxt, addTxt, townTxt, visTxt,
             loginTxt, secAnsTxt, confSecAnsTxt, sizeTxt, detailsTxt, qtyTxt, memIdTxt, nameTxt, laneTxt, dateTxt, startTimeTxt, endTimeTxt;
     public JPasswordField passwordTxt, confPassTxt;
-    public JComboBox<String> coCombo, quest;
+    public JComboBox<String> coCombo, quest, startHr, startMin, endHr, endMin;
 
     public GuiElements() {
     }
@@ -225,6 +227,8 @@ public class GuiElements {
     public JPanel bookingGui() {
         System.out.println("Inside : bookingGui() in GuiElements");
         JLabel idLbl, memIdLbl, nameLbl, laneLbl, dateLbl, startTime, endTime;
+        final String [] HOURS = {"10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
+        final String [] MINUTES = {"00", "15", "30", "45"};
         JPanel addPanel, topPanel;
 
         addPanel = new JPanel();
@@ -235,7 +239,7 @@ public class GuiElements {
         addPanel.setBorder(titled);
 
         topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(8, 2));
+        topPanel.setLayout(new GridLayout(11, 2));
         topPanel.setBackground(Color.white);
 
         idLbl = new JLabel("Booking ID No:");
@@ -267,11 +271,60 @@ public class GuiElements {
 
         startTime = new JLabel("Start Time:");
         topPanel.add(startTime);
+
+        startHr = new JComboBox<String>();
+        startHr.setBackground(Color.white);
+        topPanel.add(startHr);
+        // Populate the hourComboBox list
+        for (int i = 0; i < HOURS.length; i++) {
+            startHr.addItem(HOURS[i]);
+        }
+        startHr.addItemListener(this);
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+        
+        startMin = new JComboBox<String>();
+        startMin.setSize(25, startMin.getPreferredSize().height);
+        startMin.setBackground(Color.white);
+        topPanel.add(startMin);
+        // Populate the hourComboBox list
+        for (int i = 0; i < MINUTES.length; i++) {
+            startMin.addItem(MINUTES[i]);
+        }
+        startMin.addItemListener(this);
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
         startTimeTxt = new JTextField(new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date()), 15);
+        startTimeTxt.setBackground(Color.WHITE);
+        startTimeTxt.setEditable(false);
         topPanel.add(startTimeTxt);
 
         endTime = new JLabel("End Time:");
         topPanel.add(endTime);
+
+        endHr = new JComboBox<String>();
+        endHr.setBackground(Color.white);
+        topPanel.add(endHr);
+        // Populate the hourComboBox list
+        for (int i = 0; i < HOURS.length; i++) {
+            endHr.addItem(HOURS[i]);
+        }
+        endHr.addItemListener(this);
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        endMin = new JComboBox<String>();
+        endMin.setBackground(Color.white);
+        topPanel.add(endMin);
+        // Populate the hourComboBox list
+        for (int i = 0; i < MINUTES.length; i++) {
+            endMin.addItem(MINUTES[i]);
+        }
+        endMin.addItemListener(this);
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
         endTimeTxt = new JTextField(new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date()), 15);
         topPanel.add(endTimeTxt);
 
@@ -279,5 +332,15 @@ public class GuiElements {
         addPanel.setBackground(Color.white);
 
         return addPanel;
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent ae) {
+        System.out.println("Inside : itemStateChanged() for Bookings in GuiElements");
+        String [] startTime = startHr.getSelectedItem().toString().split(" ");
+        startTimeTxt.setText(startTime[0] + ":" + startMin.getSelectedItem().toString() + " " + startTime[1]);
+
+        String [] endTime = endHr.getSelectedItem().toString().split(" ");
+        endTimeTxt.setText(endTime[0] + ":" + endMin.getSelectedItem().toString() + " " + endTime[1]);
     }
 }

@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 
 /**
@@ -19,7 +20,7 @@ public class AddBookingGUI implements ActionListener {
     private GuiElements ge;
     private BookingTab bTab;
     private JPanel addPanel, bottomPanel;
-    private JButton addB, clearB;
+    private JButton addB, clearB, cancel;
 
     public AddBookingGUI(BookingTab bt, MainProgramOperations po, ArrayList<Booking> b) {
         System.out.println("Inside : AddBookingGUI");
@@ -49,6 +50,10 @@ public class AddBookingGUI implements ActionListener {
         clearB.addActionListener(this);
         bottomPanel.add(clearB);
 
+        cancel = new JButton("Cancel");
+        cancel.addActionListener(this);
+        bottomPanel.add(cancel);
+
         addPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         addPanel.setBackground(Color.white);
@@ -58,22 +63,23 @@ public class AddBookingGUI implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in AddBookingGUI");
-        //EmailValidator emailValidator = new EmailValidator();
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(addB)) {
             try {
                 if (ge.memIdTxt.getText().equals("") || ge.laneTxt.getText().equals("") || ge.dateTxt.getText().equals("")
                         || ge.startTimeTxt.getText().equals("") || ge.endTimeTxt.getText().equals("")) {
-                    JOptionPane.showMessageDialog(null,
-                            "Fields cannot be blank!\n" +
+                    JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
-                } else {
+                }
+                else {
                     int memId = Integer.parseInt(ge.memIdTxt.getText()) - 1;
-                    String sName = ge.nameTxt.getText();
                     int lane = Integer.parseInt(ge.laneTxt.getText());
+                    String [] srt = ge.startTimeTxt.getText().split(" ");
+                    String [] en = ge.endTimeTxt.getText().split(" ");
                     String date = ge.dateTxt.getText();
-                    String start = date + " " + ge.startTimeTxt.getText();
-                    String end = date + " " + ge.endTimeTxt.getText();
+                    System.out.println(date + srt[0]);
+                    String start = date + " " + srt[0];
+                    String end = date + " " + en[0];
                     if (numValidator.isNumeric(date) == false && numValidator.isNumeric(start) == false && numValidator.isNumeric(end) == false) {
                         Booking b = new Booking(memId, lane, start, end );
                         progOps.addBooking(b);
@@ -98,6 +104,9 @@ public class AddBookingGUI implements ActionListener {
             ge.dateTxt.setText("");
             ge.startTimeTxt.setText("");
             ge.endTimeTxt.setText("");
+        }
+        else if (e.getSource() .equals(cancel)) {
+            addD.dispose();
         }
     }
 }

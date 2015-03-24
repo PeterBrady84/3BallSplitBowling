@@ -572,36 +572,36 @@ public class SetupOperations {
             // Booking 1
             pStmt.setInt(1, 5);
             pStmt.setInt(2, 1);
-            pStmt.setString(3, "20-MAR-15 10:00:00");
-            pStmt.setString(4, "20-MAR-15 12:00:00");
+            pStmt.setString(3, "20-MAR-15 10:30:00");
+            pStmt.setString(4, "20-MAR-15 12:30:00");
             pStmt.executeQuery();
 
             // Booking 2
             pStmt.setInt(1, 4);
             pStmt.setInt(2, 1);
-            pStmt.setString(3, "20-MAR-15 13:00:00");
-            pStmt.setString(4, "20-MAR-15 15:00:00");
+            pStmt.setString(3, "20-MAR-15 13:30:00");
+            pStmt.setString(4, "20-MAR-15 15:30:00");
             pStmt.executeQuery();
 
             // Booking 3
             pStmt.setInt(1, 2);
             pStmt.setInt(2, 3);
-            pStmt.setString(3, "20-MAR-15 10:00:00");
-            pStmt.setString(4, "20-MAR-15 12:00:00");
+            pStmt.setString(3, "20-MAR-15 10:30:00");
+            pStmt.setString(4, "20-MAR-15 12:30:00");
             pStmt.executeQuery();
 
             // Booking 4
             pStmt.setInt(1, 5);
             pStmt.setInt(2, 4);
-            pStmt.setString(3, "20-MAR-15 18:00:00");
-            pStmt.setString(4, "20-MAR-15 20:00:00");
+            pStmt.setString(3, "20-MAR-15 18:30:00");
+            pStmt.setString(4, "20-MAR-15 20:30:00");
             pStmt.executeQuery();
 
             // Booking 5
             pStmt.setInt(1, 3);
             pStmt.setInt(2, 3);
-            pStmt.setString(3, "20-MAR-15 22:00:00");
-            pStmt.setString(4, "20-MAR-15 23:00:00");
+            pStmt.setString(3, "20-MAR-15 22:30:00");
+            pStmt.setString(4, "20-MAR-15 23:30:00");
             pStmt.executeQuery();
         }
         catch (SQLException e)

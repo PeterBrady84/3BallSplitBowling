@@ -164,7 +164,7 @@ public class BookingTab extends JPanel implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent ae) {
-        System.out.println("Inside : actionPerformed() in MemberTabGUI");
+        System.out.println("Inside : actionPerformed() in BookingTabGUI");
         if (ae.getSource() == create) {
             AddBookingGUI ab = new AddBookingGUI(this, progOps, bookingList);
         }

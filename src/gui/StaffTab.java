@@ -137,7 +137,7 @@ public class StaffTab extends JPanel implements ActionListener{
             if (numValidator.isNumeric(staffId.getText())) {
                 query = "staffId = " + staffId.getText();
             } else if (numValidator.isNumeric(staffName.getText()) == false && staffName.getText().contains(" ")) {
-                String[] name = staffName.getText().split(" ");
+                String [] name = staffName.getText().split(" ");
                 if (name.length < 2) {
                     throw new IllegalArgumentException("String not in correct format");
                 } else {

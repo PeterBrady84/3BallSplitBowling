@@ -15,6 +15,7 @@ import org.jfree.data.time.Month;
 
 import javax.swing.*;
 import java.awt.*;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
@@ -26,7 +27,7 @@ public class HomeTab extends JPanel {
     private ArrayList<Booking> bookingList = new ArrayList<Booking>();
     static String months[] = {null , "JANUARY" , "FEBRUARY" , "MARCH" , "APRIL", "MAY", "JUNE", "JULY",
             "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};
-
+    private ResultSet rSet;
     private MainProgramOperations progOps;
 
     public HomeTab(ArrayList<Booking> b, MainProgramOperations po) {
@@ -153,8 +154,6 @@ public class HomeTab extends JPanel {
                 int endH = Integer.parseInt(mdt.getHour(toDate));
                 int endM = 00;
 
-                System.out.println("Start: " + bookingList.get(i).getLaneId() + " " + year + " " + month + " " + date + " " + startH + " " + 00);
-                System.out.println("End: " + year + " " + month + " " + date + " " + endH + " " + 00);
                 if (bookingList.get(i).getLaneId() == 1) {
                     lane1.addSubtask(new Task("Booking" + (i + 1),
                             new GregorianCalendar(year, month, date, startH, 30).getTime(),

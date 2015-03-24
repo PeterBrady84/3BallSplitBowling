@@ -32,7 +32,7 @@ public class CheckAvailabilityGUI implements ActionListener {
     private JTextField timeTxt;
     private JTextArea display;
     private JPanel addPanel, topPanel, bottomPanel;
-    private JButton checkB, clearB;
+    private JButton checkB, clearB, cancel;
 
     public CheckAvailabilityGUI (MainProgramOperations po) {
         System.out.println("Inside : CheckAvailabilityGUI");
@@ -89,6 +89,10 @@ public class CheckAvailabilityGUI implements ActionListener {
         clearB.addActionListener(this);
         bottomPanel.add(clearB);
 
+        cancel = new JButton("Cancel");
+        cancel.addActionListener(this);
+        bottomPanel.add(cancel);
+
         addPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         addPanel.setBackground(Color.white);
@@ -138,6 +142,9 @@ public class CheckAvailabilityGUI implements ActionListener {
         }
         else if (e.getSource().equals(clearB)) {
             timeTxt.setText("");
+        }
+        else if (e.getSource().equals(cancel)) {
+            addD.dispose();
         }
     }
 }

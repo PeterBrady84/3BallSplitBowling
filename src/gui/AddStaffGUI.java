@@ -66,8 +66,7 @@ public class AddStaffGUI implements ActionListener {
             try {
                 if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || ge.phoneTxt.getText().equals("") ||
                         ge.loginTxt.getText().equals("") || ge.passwordTxt.getPassword().equals("") || ge.confPassTxt.getPassword().equals("")) {
-                    JOptionPane.showMessageDialog(null,
-                            "Fields cannot be blank!\n" +
+                    JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 } else if (!(Arrays.equals(ge.passwordTxt.getPassword(), ge.confPassTxt.getPassword()))) {
                     JOptionPane.showMessageDialog(null,
