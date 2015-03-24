@@ -161,28 +161,28 @@ public class HomeTab extends JPanel {
                 }
                 else if (bookingList.get(i).getLaneId() == 2) {
                     lane2.addSubtask(new Task("Booking" + (i + 1),
-                            new GregorianCalendar(year, month, date, startH, 30).getTime(),
-                            new GregorianCalendar(year, month, date, endH, 30).getTime()));
+                            new GregorianCalendar(year, month, date, startH, startM).getTime(),
+                            new GregorianCalendar(year, month, date, endH, endM).getTime()));
                 }
                 else if (bookingList.get(i).getLaneId() == 3) {
                     lane3.addSubtask(new Task("Booking" + (i + 1),
-                            new GregorianCalendar(year, month, date, startH, 30).getTime(),
-                            new GregorianCalendar(year, month, date, endH, 30).getTime()));
+                            new GregorianCalendar(year, month, date, startH, startM).getTime(),
+                            new GregorianCalendar(year, month, date, endH, endM).getTime()));
                 }
                 else if (bookingList.get(i).getLaneId() == 4) {
                     lane4.addSubtask(new Task("Booking" + (i + 1),
-                            new GregorianCalendar(year, month, date, startH, 30).getTime(),
-                            new GregorianCalendar(year, month, date, endH, 30).getTime()));
+                            new GregorianCalendar(year, month, date, startH, startM).getTime(),
+                            new GregorianCalendar(year, month, date, endH, endM).getTime()));
                 }
                 else if (bookingList.get(i).getLaneId() == 5) {
                     lane5.addSubtask(new Task("Booking" + (i + 1),
-                            new GregorianCalendar(year, month, date, startH, 30).getTime(),
-                            new GregorianCalendar(year, month, date, endH, 30).getTime()));
+                            new GregorianCalendar(year, month, date, startH, startM).getTime(),
+                            new GregorianCalendar(year, month, date, endH, endM).getTime()));
                 }
                 else if (bookingList.get(i).getLaneId() == 6) {
                     lane6.addSubtask(new Task("Booking" + (i + 1),
-                            new GregorianCalendar(year, month, date, startH, 30).getTime(),
-                            new GregorianCalendar(year, month, date, endH, 30).getTime()));
+                            new GregorianCalendar(year, month, date, startH, startM).getTime(),
+                            new GregorianCalendar(year, month, date, endH, endM).getTime()));
                 }
             } catch (Exception e) {
                 System.out.println(e);
