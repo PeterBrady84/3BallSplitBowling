@@ -42,11 +42,12 @@ public class Staff {
 
     // constructor that creates a staff object
     //used when adding new Staff to the system
-    public Staff(String f, String l,  String p, String log, String pass, String q, String a) {
+    public Staff(String f, String l,  String p, String email, String log, String pass, String q, String a) {
         System.out.println("Inside : StaffModel");
         this.fName = f;
         this.lName = l;
         this.phone = p;
+        this.email = email;
         this.username = log;
         this.password = pass;
         this.secQuestion = q;

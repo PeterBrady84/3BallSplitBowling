@@ -12,8 +12,7 @@ public class Booking {
     private String toDateTime;
 
     public Booking(int i, int m, int l, String s, String e) {
-        System.out.println("Inside : BookingModel");
-        this.id = i;
+        //System.out.println("Inside : BookingModel");
         this.memId = m;
         this.laneId = l;
         this.fromDateTime = s;

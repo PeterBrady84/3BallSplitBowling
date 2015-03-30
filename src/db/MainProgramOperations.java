@@ -1,9 +1,7 @@
 package db;
 
-import model.Booking;
-import model.Member;
-import model.Staff;
-import model.Stock;
+import gui.MainScreen;
+import model.*;
 import oracle.jdbc.pool.OracleDataSource;
 import org.joda.time.DateTime;
 
@@ -21,10 +19,13 @@ public class MainProgramOperations {
     private Connection conn;
     private java.util.Date juDate ;
     private DateTime dt;
+    private String dateSelected;
+    //public DateAndCalendar;
 
     public MainProgramOperations() {
         conn = openDB();
     }
+
 
     public Connection openDB() {
         Scanner in = new Scanner(System.in);
@@ -78,6 +79,9 @@ public class MainProgramOperations {
             e.printStackTrace();
         }
     }
+
+
+
 
     ///// Beginning of Member Queries ///////////////////////////////////
     public ResultSet getMembers() {
@@ -174,16 +178,33 @@ public class MainProgramOperations {
 
 
     ///// Beginning of Staff Queries ///////////////////////////////////
+
+    //used to populate the staffList which can be then used to fillTable
     public ResultSet getStaff() {
         System.out.println("Inside : getStaff() in MainProgramOperations");
+
+        dateSelected = MainScreen.calendarSelected;
+
+        if(MainScreen.calendarSelected == null){
+            juDate = new java.util.Date();
+            dt = new DateTime(juDate);
+            dateSelected = dt.toString("dd-MMM-yy");
+            dateSelected = dateSelected.toUpperCase();
+            System.out.println("calendarSelected == null so the date is set as *********************************");
+        }
+        //dateSelected = MainScreen.calendarSelected;
+
+        System.out.println(dateSelected);
         try {
             String queryString = "select s.staffId, fname, lname, bookings ,TO_CHAR(starttime, 'HH24:MI') AS STARTTIME"+
-                    ", TO_CHAR(finishtime, 'HH24:MI') AS FINISHTIME, phone, email From staff s ,roster r where s.staffId = r.staffId AND starttime LIKE '%28-MAR-15%'";
+                    ", TO_CHAR(finishtime, 'HH24:MI') AS FINISHTIME, " +
+                    "phone, email From staff s ,roster r where s.staffId = r.staffId " +
+                    "AND starttime LIKE '%"+dateSelected+"%'";
 
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("getStaff method used to populate the staffList......"+e);
         }
         return rSet;
     }
@@ -280,15 +301,16 @@ public class MainProgramOperations {
     }
 
 
-    public void updateStaff(String i, String n, String l, String e, String p, String log, String pass, String q, String a) {
-        System.out.println("Inside : updateStaff() in MainProgramOperations");
+    public void updateStaffinDB(String i, String n, String l, String e, String p, String log, String pass, String q, String a) {
+        System.out.println("Inside : updateStaffinDB() in MainProgramOperations");
+        System.out.println("Attempting update ---------------------------------------------------------------------------");
         try {
-            String update = "UPDATE staff SET fName = '" + n + "', lName = '" + l + ",email '" + e + "'  =  phone = '" + p
+            String update = "UPDATE staff SET fName = '" + n + "', lName = '" + l + "', email = '" + e + "', phone = '" + p
                     + "', username = '" + log + "', password = '" + pass + "', securityQuestion = '" + q + "', securityAnswer = '" + a + "' WHERE staffId = " + i;
             pStmt = conn.prepareStatement(update);
             pStmt.executeUpdate();
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("STAFF NOT UPDATED====================================            "+ex);
         }
     }
 
@@ -376,6 +398,20 @@ public class MainProgramOperations {
             System.out.println(e);
         }
         return ans;
+    }
+
+    public void deleteStaff(String user, int id){
+        System.out.println("Inside : deleteStaff() in MainProgramOperations");
+        String ans = "";
+        try {
+            String queryString = "DELETE FROM staff WHERE username = '"+user+"' OR staffid = "+id;
+            pStmt = conn.prepareStatement(queryString);
+            pStmt.executeUpdate();
+
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
     }
     ///// End of Staff Queries ///////////////////////////////////
 

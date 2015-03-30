@@ -70,8 +70,8 @@ public class LoginGUI extends JFrame implements ActionListener {
 
         userLbl = new JLabel("Username:");
         passLbl = new JLabel("Password:");
-        userTxt = new JTextField(10);
-        passTxt = new JPasswordField(10);
+        userTxt = new JTextField("user");
+        passTxt = new JPasswordField("password");
 
         login = new JButton("LOGIN");
         login.addActionListener(this);

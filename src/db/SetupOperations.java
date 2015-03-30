@@ -114,7 +114,7 @@ public class SetupOperations {
                 System.out.println("Lane Sequence dropped.");
             }
             catch (SQLException ex) {
-                System.out.println("stock not found.");
+                System.out.println("Lanes not found.");
             }
             // Drop the Staff & Roster table table.
             try {
@@ -146,7 +146,7 @@ public class SetupOperations {
                 System.out.println("Member Sequence dropped.");
             }
             catch (SQLException ex) {
-                System.out.println("Members Sequence not found.");
+                System.out.println("Members Data not found.");
             }
         } catch (SQLException ex) {
             System.out.println("ERROR: " + ex.getMessage());
@@ -312,7 +312,7 @@ public class SetupOperations {
         }
     }
 
-    //Method to create and populate Staff Table
+    //Method to create and populate Staff Table(pc)
     public void createStaff()
     {
         try {
@@ -362,33 +362,7 @@ public class SetupOperations {
                 System.out.println("-----------------Staff "+i+" created");
             }
 
-            /*// STAFF NUMBER  2
-            pStmt.setString(1, "Hummins");
-            pStmt.setString(2, "Lesley");
-            pStmt.setInt(3, 36);
-            pStmt.setString(4, "085214444");
-            pStmt.setString(5, "user");
-            pStmt.setString(6, "lesley@gmail.com");
-            pStmt.setString(7, "password");
-            pStmt.setString(8, "who am i");
-            pStmt.setString(9, "Peter");
-            pStmt.executeQuery();
 
-            System.out.println("Staff 2 created");
-
-            // STAFF NUMBER  2
-            pStmt.setString(1, "Smith");
-            pStmt.setString(2, "Mary");
-            pStmt.setInt(3, 102);
-            pStmt.setString(4, "0831478521");
-            pStmt.setString(5, "user");
-            pStmt.setString(6, "mary@hotmail.com");
-            pStmt.setString(7, "password");
-            pStmt.setString(8, "who am i");
-            pStmt.setString(9, "Peter");
-            pStmt.executeQuery();
-
-            System.out.println("Staff 3 created");*/
         }
         catch (SQLException e)
         {
@@ -398,7 +372,7 @@ public class SetupOperations {
 
     }
 
-    //Create Table Roster
+    //Create Table Roster(PC)
     public void createRosterTable()
     {
         try {
@@ -409,7 +383,8 @@ public class SetupOperations {
             // Create a Table
             String createRoster = "CREATE TABLE roster " +
                     "(staffId NUMBER , startTime DATE, finishTime DATE," +
-                    "PRIMARY KEY (staffId, startTime),FOREIGN KEY (staffId) REFERENCES Staff(staffId))";
+                    "PRIMARY KEY (staffId, startTime),FOREIGN KEY (staffId) REFERENCES Staff(staffId)" +
+                    "ON DELETE CASCADE)";
 
             pStmt = conn.prepareStatement(createRoster);
 
@@ -448,52 +423,7 @@ public class SetupOperations {
                 }
                 System.out.println("Staff "+fnames[j-1]+" rostered");
             }
-            /*juDate = new java.util.Date();
-            dt = new DateTime(juDate);
-            for(int i=0;i<ONE_WEEK;i++) {
-                String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(2, ?, ?)";
-                pStmt = conn.prepareStatement(insertString);
-                String now = "";
-                String b = dt.toString("yyyy-MM-dd ");
-                now = "12:00:00";
-                b = b + now;
-                System.out.print((i+1)+". "+b);
-                time = Timestamp.valueOf(b);
-                pStmt.setTimestamp(1, time);
-                //This is setting the finish time
-                b = dt.toString("yyyy-MM-dd ");
-                now = "19:00:00";
-                b = b + now;
-                time = Timestamp.valueOf(b);
-                System.out.println("\t        "+b);
-                pStmt.setTimestamp(2, time);
-                pStmt.executeQuery();
-                dt = dt.plusDays(1);
-            }
-            System.out.println("Staff 2 rostered");
-            juDate = new java.util.Date();
-            dt = new DateTime(juDate);
-            for(int i=0;i<ONE_WEEK;i++) {
-                String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(3, ?, ?)";
-                pStmt = conn.prepareStatement(insertString);
-                String now = "";
-                String b = dt.toString("yyyy-MM-dd ");
-                now = "12:00:00";
-                b = b + now;
-                System.out.print((i+1)+". "+b);
-                time = Timestamp.valueOf(b);
-                pStmt.setTimestamp(1, time);
-                //This is setting the finish time
-                b = dt.toString("yyyy-MM-dd ");
-                now = "19:00:00";
-                b = b + now;
-                time = Timestamp.valueOf(b);
-                System.out.println("\t        "+b);
-                pStmt.setTimestamp(2, time);
-                pStmt.executeQuery();
-                dt = dt.plusDays(1);
-            }
-            System.out.println("Staff 3 rostered");*/
+
 
         }
         catch (SQLException e)
@@ -502,7 +432,8 @@ public class SetupOperations {
             System.exit(1);
         }
     }
-
+//Does MAX players need to be stored in the DB, should it not just be a final static variable in Lane class?!
+    //also is laneName not pretty much the same thing as laneId.
     public void createLanes() {
         try
         {
