@@ -1,20 +1,23 @@
 package db;
 
 import oracle.jdbc.pool.OracleDataSource;
-
+import org.joda.time.DateTime;
 import java.sql.*;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
  * Created by Peter on 06/03/2015.
  */
 public class SetupOperations {
-
+    private static final int ONE_WEEK = 7;
 
     private Connection conn = null;
     private PreparedStatement pStmt = null;
     private Statement stmt = null;
     private ResultSet rSet;
+    private java.util.Date juDate ;
+    private DateTime dt;
 
     public SetupOperations()
     {
@@ -42,9 +45,9 @@ public class SetupOperations {
                 pass = "passhr";
             }
             // Peter Connel Login
-            else if (val .equals("pb")) {
-                user = "Peter Connell Username";
-                pass = "Peter Connell Password";
+            else if (val .equals("pc")) {
+                user = "hr";
+                pass = "passhr";
             }
             // Dylan Byrne login
             else if (val .equals("db")) {
@@ -80,41 +83,70 @@ public class SetupOperations {
         try {
             // Get a Statement object.
             stmt = conn.createStatement();
-
             try {
-                // Drop the Bookings table
+                // Drop the Staff and Roster table.
                 stmt.execute("DROP TABLE bookings");
                 System.out.println("Bookings table dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("bookings table not found.");
+            }
+            try {
                 stmt.execute("DROP SEQUENCE bookingId_seq");
                 System.out.println("Booking Sequence dropped");
-
-                // Drop the Stock table.
+            }
+            catch (SQLException ex) {
+                System.out.println("Booking Sequence not found.");
+            }
+            try {
                 stmt.execute("DROP TABLE stock");
                 System.out.println("Stock table dropped.");
                 stmt.execute("DROP SEQUENCE stockId_seq");
                 System.out.println("Stock Sequence dropped.");
-
-                // Drop the Lane table.
+            }
+            catch (SQLException ex) {
+                System.out.println("stock not found.");
+            }
+            try {
                 stmt.execute("DROP TABLE lanes");
                 System.out.println("Lanes table dropped.");
                 stmt.execute("DROP SEQUENCE laneId_seq");
                 System.out.println("Lane Sequence dropped.");
-
-                // Drop the Staff table.
+            }
+            catch (SQLException ex) {
+                System.out.println("stock not found.");
+            }
+            // Drop the Staff & Roster table table.
+            try {
+                stmt.execute("DROP TABLE roster");
+                System.out.println("Roster table dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("Roster table not found.");
+            }
+            try {
                 stmt.execute("DROP TABLE staff");
                 System.out.println("Staff table dropped.");
-                stmt.execute("DROP SEQUENCE staffId_seq");
-                System.out.println("Staff Sequence dropped.");
-
+            }
+            catch (SQLException ex) {
+                System.out.println("staff table not found.");
+            }
+            try {
+                stmt.execute("DROP SEQUENCE StaffId_seq");
+                System.out.println("Sequence dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("staff Sequence not found.");
+            }
+            try {
                 // Drop the Members table.
                 stmt.execute("DROP TABLE members");
                 System.out.println("Members table dropped.");
                 stmt.execute("DROP SEQUENCE memId_seq");
                 System.out.println("Member Sequence dropped.");
-
-            } catch (SQLException ex) {
-                // No need to report an error.
-                // The table simply did not exist.
+            }
+            catch (SQLException ex) {
+                System.out.println("Members Sequence not found.");
             }
         } catch (SQLException ex) {
             System.out.println("ERROR: " + ex.getMessage());
@@ -125,6 +157,7 @@ public class SetupOperations {
     public void createTables() {
         createMembers();
         createStaff();
+        createRosterTable();
         createLanes();
         createStock();
         createBookings();
@@ -279,81 +312,189 @@ public class SetupOperations {
         }
     }
 
-    public void createStaff() {
-        try
-        {
-            System.out.println("Inside Create Staff Method");
+    //Method to create and populate Staff Table
+    public void createStaff()
+    {
+        try {
+            System.out.println("Inside createStaff Method");
             // Create a Table
-            String create = "CREATE TABLE staff " +
-                    "(staffId NUMBER PRIMARY KEY, lname VARCHAR(40), fname VARCHAR(40), phone VARCHAR(40)," +
-                    "login VARCHAR(40), password VARCHAR(40), secQuestion VARCHAR(50), secAnswer VARCHAR(40))";
-            pStmt = conn.prepareStatement(create);
-            pStmt.executeUpdate(create);
-
-            // Creating a sequence
+            String createStaff = "CREATE TABLE staff " +
+                    "(staffId NUMBER , lname VARCHAR(40), fname VARCHAR(40), " + "bookings NUMBER(4)," +
+                    "phone VARCHAR(40), username VARCHAR(40),email VARCHAR(40), password VARCHAR(40), " +
+                    "securityQuestion  VARCHAR(40), securityAnswer  VARCHAR(40)," +
+                    "PRIMARY KEY (staffId))";
+            pStmt = conn.prepareStatement(createStaff);
+            System.out.println("Attempting to create staff ");
+            pStmt.executeUpdate(createStaff);
+            System.out.println("staff table created");
+            System.out.println("Attempting to create staffid sequence");
             String createseq = "create sequence staffId_seq increment by 1 start with 1";
             pStmt = conn.prepareStatement(createseq);
             pStmt.executeUpdate(createseq);
+            System.out.println("staffid sequence created");
+            // Insert data into Staff table
+            String insertString = "INSERT INTO staff(staffId, lname, fname, bookings, phone, username, email, " +
+                    "password, securityQuestion, " +
+                    "securityAnswer) values(staffId_seq.NextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            // Insert data into table
-            String insertString = "INSERT INTO staff(staffId, lname, fname, phone, login," +
-                    "password, secQuestion, secAnswer) values(staffId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?)";
+            String [] fnames = {"Joe","Mary","Frank","Vera","Barry","Adu","Pablo"};
+            String [] lnames = {"Byrne","Hummins","Hogan","Cooke","Murphy","Panesh","Byrne"};
+            String [] phoneList = {"012457735","087244555","01245741","05422157","01245441","0832454477","085757133"};
+            String [] emailList = {"byrner@hotmail.com","Hummins@gmail.com","Hogan@hotmail.com","Cooke@gmail.com","Murph@hotmail.comt","Panesh@hotmail.com","Byrne@hotmail.com"};
+            Random ran = new Random();
+            int random ;
+
             pStmt = conn.prepareStatement(insertString);
+            for(int i=0;i<fnames.length;i++) {
+                //STAFF NUMBER 1
+                random = ran.nextInt(50);
+                pStmt.setString(1, fnames[i]);
+                pStmt.setString(2, lnames[i]);
+                pStmt.setInt(3, random);
+                pStmt.setString(4, phoneList[i]);
+                pStmt.setString(5, "user");
+                pStmt.setString(6, emailList[i]);
+                pStmt.setString(7, "password");
+                pStmt.setString(8, "who am i");
+                pStmt.setString(9, "Peter");
+                pStmt.executeQuery();
 
-            // Staff 1
-            pStmt.setString(1, "Byrne");
-            pStmt.setString(2, "Joe");
-            pStmt.setString(3, "0874569813");
-            pStmt.setString(4, "user");
-            pStmt.setString(5, "password");
-            pStmt.setString(6, "Mothers maiden name");
-            pStmt.setString(7, "Brady");
-            //pStmt.setTime(6, Time.valueOf("14.30"));
-            pStmt.executeQuery();
+                System.out.println("-----------------Staff "+i+" created");
+            }
 
-            // Staff 2
+            /*// STAFF NUMBER  2
             pStmt.setString(1, "Hummins");
             pStmt.setString(2, "Lesley");
-            pStmt.setString(3, "0832518754");
-            pStmt.setString(4, "user");
-            pStmt.setString(5, "password");
-            pStmt.setString(6, "Mothers maiden name");
-            pStmt.setString(7, "Brady");
-            //pStmt.setTime(6, Time.valueOf("12.30"));
+            pStmt.setInt(3, 36);
+            pStmt.setString(4, "085214444");
+            pStmt.setString(5, "user");
+            pStmt.setString(6, "lesley@gmail.com");
+            pStmt.setString(7, "password");
+            pStmt.setString(8, "who am i");
+            pStmt.setString(9, "Peter");
             pStmt.executeQuery();
 
-            // Staff 3
-            pStmt.setString(1, "Horan");
-            pStmt.setString(2, "Thomas");
-            pStmt.setString(3, "016584215");
-            pStmt.setString(4, "user");
-            pStmt.setString(5, "password");
-            pStmt.setString(6, "Mothers maiden name");
-            pStmt.setString(7, "Brady");
-            // pStmt.setTime(6, Time.valueOf("12.50"));
+            System.out.println("Staff 2 created");
+
+            // STAFF NUMBER  2
+            pStmt.setString(1, "Smith");
+            pStmt.setString(2, "Mary");
+            pStmt.setInt(3, 102);
+            pStmt.setString(4, "0831478521");
+            pStmt.setString(5, "user");
+            pStmt.setString(6, "mary@hotmail.com");
+            pStmt.setString(7, "password");
+            pStmt.setString(8, "who am i");
+            pStmt.setString(9, "Peter");
             pStmt.executeQuery();
 
-            // Staff 4
-            pStmt.setString(1, "Farrell");
-            pStmt.setString(2, "Harry");
-            pStmt.setString(3, "019856245");
-            pStmt.setString(4, "user");
-            pStmt.setString(5, "password");
-            pStmt.setString(6, "Mothers maiden name");
-            pStmt.setString(7, "Brady");
-            //pStmt.setTime(6, Time.valueOf("1.10"));
-            pStmt.executeQuery();
+            System.out.println("Staff 3 created");*/
+        }
+        catch (SQLException e)
+        {
+            System.out.print("SQL Exception " + e);
+            System.exit(1);
+        }
 
-            // Staff 5
-            pStmt.setString(1, "Brady");
-            pStmt.setString(2, "Peter");
-            pStmt.setString(3, "0871234567");
-            pStmt.setString(4, "peter");
-            pStmt.setString(5, "brady");
-            pStmt.setString(6, "First pets name");
-            pStmt.setString(7, "Scobby");
-            //pStmt.setTime(6, Time.valueOf("2.00"));
-            pStmt.executeQuery();
+    }
+
+    //Create Table Roster
+    public void createRosterTable()
+    {
+        try {
+            Timestamp time;
+            juDate = new java.util.Date();
+            dt = new DateTime(juDate);
+            System.out.println("Inside createRoster Method");
+            // Create a Table
+            String createRoster = "CREATE TABLE roster " +
+                    "(staffId NUMBER , startTime DATE, finishTime DATE," +
+                    "PRIMARY KEY (staffId, startTime),FOREIGN KEY (staffId) REFERENCES Staff(staffId))";
+
+            pStmt = conn.prepareStatement(createRoster);
+
+            pStmt.executeUpdate(createRoster);
+
+            String [] starts = {"10:00:00","11:00:00","12:00:00","13:00:00","14:00:00"};
+            String [] finishes = {"18:00:00","20:00:00","22:00:00","23:00:00","23:30:00"};
+            System.out.println("inputting values in roster");
+            // Insert data into Roster table
+            String [] fnames = {"Joe","Mary","Frank","Vera","Barry","Adu","Pablo"};
+
+            for (int j = 1; j < fnames.length+1; j++) {
+                juDate = new java.util.Date();
+                dt = new DateTime(juDate);
+                for (int i = 0; i < ONE_WEEK; i++){
+                    String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(?, ?, ?)";
+                    pStmt = conn.prepareStatement(insertString);
+                    String now = "";
+                    String b = dt.toString("yyyy-MM-dd ");
+                    now = starts[new Random().nextInt(starts.length)];
+                    b = b + now;
+                    System.out.print((i + 1) + ". " + b);
+                    time = Timestamp.valueOf(b);
+
+                    pStmt.setInt(1, j);
+                    pStmt.setTimestamp(2, time);
+                    //This is setting the finish time
+                    b = dt.toString("yyyy-MM-dd ");
+                    now = finishes[new Random().nextInt(finishes.length)];
+                    b = b + now;
+                    time = Timestamp.valueOf(b);
+                    System.out.println("\t        " + b);
+                    pStmt.setTimestamp(3, time);
+                    pStmt.executeQuery();
+                    dt = dt.plusDays(1);
+                }
+                System.out.println("Staff "+fnames[j-1]+" rostered");
+            }
+            /*juDate = new java.util.Date();
+            dt = new DateTime(juDate);
+            for(int i=0;i<ONE_WEEK;i++) {
+                String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(2, ?, ?)";
+                pStmt = conn.prepareStatement(insertString);
+                String now = "";
+                String b = dt.toString("yyyy-MM-dd ");
+                now = "12:00:00";
+                b = b + now;
+                System.out.print((i+1)+". "+b);
+                time = Timestamp.valueOf(b);
+                pStmt.setTimestamp(1, time);
+                //This is setting the finish time
+                b = dt.toString("yyyy-MM-dd ");
+                now = "19:00:00";
+                b = b + now;
+                time = Timestamp.valueOf(b);
+                System.out.println("\t        "+b);
+                pStmt.setTimestamp(2, time);
+                pStmt.executeQuery();
+                dt = dt.plusDays(1);
+            }
+            System.out.println("Staff 2 rostered");
+            juDate = new java.util.Date();
+            dt = new DateTime(juDate);
+            for(int i=0;i<ONE_WEEK;i++) {
+                String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(3, ?, ?)";
+                pStmt = conn.prepareStatement(insertString);
+                String now = "";
+                String b = dt.toString("yyyy-MM-dd ");
+                now = "12:00:00";
+                b = b + now;
+                System.out.print((i+1)+". "+b);
+                time = Timestamp.valueOf(b);
+                pStmt.setTimestamp(1, time);
+                //This is setting the finish time
+                b = dt.toString("yyyy-MM-dd ");
+                now = "19:00:00";
+                b = b + now;
+                time = Timestamp.valueOf(b);
+                System.out.println("\t        "+b);
+                pStmt.setTimestamp(2, time);
+                pStmt.executeQuery();
+                dt = dt.plusDays(1);
+            }
+            System.out.println("Staff 3 rostered");*/
+
         }
         catch (SQLException e)
         {
@@ -572,36 +713,36 @@ public class SetupOperations {
             // Booking 1
             pStmt.setInt(1, 5);
             pStmt.setInt(2, 1);
-            pStmt.setString(3, "20-MAR-15 10:30:00");
-            pStmt.setString(4, "20-MAR-15 12:30:00");
+            pStmt.setString(3, "20-MAR-15 10:00:00");
+            pStmt.setString(4, "20-MAR-15 12:00:00");
             pStmt.executeQuery();
 
             // Booking 2
             pStmt.setInt(1, 4);
             pStmt.setInt(2, 1);
-            pStmt.setString(3, "20-MAR-15 13:30:00");
-            pStmt.setString(4, "20-MAR-15 15:30:00");
+            pStmt.setString(3, "20-MAR-15 13:00:00");
+            pStmt.setString(4, "20-MAR-15 15:00:00");
             pStmt.executeQuery();
 
             // Booking 3
             pStmt.setInt(1, 2);
             pStmt.setInt(2, 3);
-            pStmt.setString(3, "20-MAR-15 10:30:00");
-            pStmt.setString(4, "20-MAR-15 12:30:00");
+            pStmt.setString(3, "20-MAR-15 10:00:00");
+            pStmt.setString(4, "20-MAR-15 12:00:00");
             pStmt.executeQuery();
 
             // Booking 4
             pStmt.setInt(1, 5);
             pStmt.setInt(2, 4);
-            pStmt.setString(3, "20-MAR-15 18:30:00");
-            pStmt.setString(4, "20-MAR-15 20:30:00");
+            pStmt.setString(3, "20-MAR-15 18:00:00");
+            pStmt.setString(4, "20-MAR-15 20:00:00");
             pStmt.executeQuery();
 
             // Booking 5
             pStmt.setInt(1, 3);
             pStmt.setInt(2, 3);
-            pStmt.setString(3, "20-MAR-15 22:30:00");
-            pStmt.setString(4, "20-MAR-15 23:30:00");
+            pStmt.setString(3, "20-MAR-15 22:00:00");
+            pStmt.setString(4, "20-MAR-15 23:00:00");
             pStmt.executeQuery();
         }
         catch (SQLException e)

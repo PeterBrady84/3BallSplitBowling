@@ -66,21 +66,19 @@ public class AddBookingGUI implements ActionListener {
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(addB)) {
             try {
-                if (ge.memIdTxt.getText().equals("") || ge.laneTxt.getText().equals("") || ge.dateTxt.getText().equals("")
-                        || ge.startTimeTxt.getText().equals("") || ge.endTimeTxt.getText().equals("")) {
+                if (ge.idTxt.getText().equals("") || ge.memIdTxt.getText().equals("") || ge.laneTxt.getText().equals("")
+                        || ge.dateInTxt.getText().equals("") || ge.startTimeTxt.getText().equals("") || ge.endTimeTxt.getText().equals("")) {
                     JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
                 else {
-                    int memId = Integer.parseInt(ge.memIdTxt.getText()) - 1;
-                    int lane = Integer.parseInt(ge.laneTxt.getText());
-                    String [] srt = ge.startTimeTxt.getText().split(" ");
-                    String [] en = ge.endTimeTxt.getText().split(" ");
-                    String date = ge.dateTxt.getText();
-                    System.out.println(date + srt[0]);
-                    String start = date + " " + srt[0];
-                    String end = date + " " + en[0];
-                    if (numValidator.isNumeric(date) == false && numValidator.isNumeric(start) == false && numValidator.isNumeric(end) == false) {
+                    int memId = Integer.parseInt(ge.idTxt.getText()) - 1;
+                    int lane = Integer.parseInt(ge.memIdTxt.getText());
+                    System.out.println(ge.dateInTxt.getText() + "\n" + ge.startTimeTxt.getText() + "\n" + ge.endTimeTxt.getText());
+                    String date = ge.dateInTxt.getText();
+                    String start = date + " " + ge.startTimeTxt.getText();
+                    String end = date + " " + ge.endTimeTxt.getText();
+                    if (!numValidator.isNumeric(date) && !numValidator.isNumeric(start) && !numValidator.isNumeric(end)) {
                         Booking b = new Booking(memId, lane, start, end );
                         progOps.addBooking(b);
                         Alley a = new Alley(progOps);
@@ -98,8 +96,8 @@ public class AddBookingGUI implements ActionListener {
             }
         }
         else if (e.getSource().equals(clearB)) {
+            ge.idTxt.setText("");
             ge.memIdTxt.setText("");
-            ge.nameTxt.setText("");
             ge.laneTxt.setText("");
             ge.dateTxt.setText("");
             ge.startTimeTxt.setText("");

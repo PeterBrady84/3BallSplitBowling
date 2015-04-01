@@ -1,7 +1,7 @@
 package gui;
 
 import db.MainProgramOperations;
-import lib.ModifyDateAndTime;
+import controller.ModifyDateAndTime;
 import model.NumberValidator;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
@@ -50,7 +50,7 @@ public class CheckAvailabilityGUI implements ActionListener {
         addPanel.setBorder(titled);
 
         topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(8, 2));
+        topPanel.setLayout(new GridLayout(5, 2));
         topPanel.setBackground(Color.white);
 
         dateLbl = new JLabel("Enter Date:");
@@ -59,6 +59,8 @@ public class CheckAvailabilityGUI implements ActionListener {
         model = new UtilDateModel();
         datePanel = new JDatePanelImpl(model);
         datePicker = new JDatePickerImpl(datePanel);
+        JFormattedTextField textField = datePicker.getJFormattedTextField();
+        textField.setBackground(Color.WHITE);
         topPanel.add(datePicker);
 
         //dateTxt = new JTextField(15);
@@ -70,13 +72,23 @@ public class CheckAvailabilityGUI implements ActionListener {
         topPanel.add(timeTxt);
 
         display = new JTextArea();
-        topPanel.add(display);
+
+        JPanel midPanel = new JPanel();
+        JScrollPane sp = new JScrollPane();
+        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        sp.setPreferredSize(new Dimension(200, 200));
+        sp.add(display);
+        midPanel.add(sp);
 
         addPanel.add(topPanel, BorderLayout.NORTH);
         addPanel.setBackground(Color.white);
 
+        addPanel.add(midPanel, BorderLayout.CENTER);
+
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
+
+
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.setBackground(Color.white);
 
@@ -119,7 +131,7 @@ public class CheckAvailabilityGUI implements ActionListener {
                             rSet = progOps.checkAvailability(d, t);
                             try {
                                 while (rSet.next()) {
-                                    available += rSet.getString(1);
+                                    available += rSet.getString(1) + "\n";
                                 }
                                 display.setText(available);
                             } catch (SQLException ex) {

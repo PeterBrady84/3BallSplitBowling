@@ -22,7 +22,7 @@ public class AddMemberGUI implements ActionListener {
     private GuiElements ge;
     private MemberTab mTab;
     private JPanel addPanel, bottomPanel;
-    private JButton addB, clearB;
+    private JButton addB, clearB, cancelB;
 
     public AddMemberGUI(MemberTab mt, MainProgramOperations po, ArrayList<Member> m) {
         System.out.println("Inside : AddMemberGUI");
@@ -53,6 +53,10 @@ public class AddMemberGUI implements ActionListener {
         clearB.addActionListener(this);
         bottomPanel.add(clearB);
 
+        cancelB = new JButton("Cancel");
+        cancelB.addActionListener(this);
+        bottomPanel.add(cancelB);
+
         addPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         addPanel.setBackground(Color.white);
@@ -66,26 +70,30 @@ public class AddMemberGUI implements ActionListener {
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(addB)) {
             try {
-                if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || ge.genTxt.getText().equals("")
+                String gender = "";
+                if (ge.male.isSelected()) {
+                    gender = "M";
+                }
+                else if (ge.female.isSelected()) {
+                    gender = "F";
+                }
+                if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || gender.equals("")
                         || ge.phoneTxt.getText().equals("") || ge.emailTxt.getText().equals("") ||
                         ge.addTxt.getText().equals("") || ge.townTxt.getText().equals("")) {
-                    JOptionPane.showMessageDialog(null,
-                            "Fields cannot be blank!\n" +
+                    JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
-                } else if (emailValidator.validate(ge.emailTxt.getText()) == false) {
+                } else if (!emailValidator.validate(ge.emailTxt.getText())) {
                     JOptionPane.showMessageDialog(null, "Email address is not valid", "ERROR", JOptionPane.WARNING_MESSAGE);
                 } else {
                     String fName = ge.fNameTxt.getText();
                     String lName = ge.lNameTxt.getText();
-                    String gender = ge.genTxt.getText();
                     String phone = ge.phoneTxt.getText();
                     String email = ge.emailTxt.getText();
                     String add = ge.addTxt.getText();
                     String town = ge.townTxt.getText();
                     String co = ge.coCombo.getSelectedItem().toString();
-                    if (numValidator.isNumeric(fName) == false && numValidator.isNumeric(lName) == false && numValidator.isNumeric(gender) == false &&
-                            numValidator.isNumeric(phone) == true && numValidator.isNumeric(email) == false && numValidator.isNumeric(add) == false &&
-                            numValidator.isNumeric(town) == false) {
+                    if (!numValidator.isNumeric(fName) && !numValidator.isNumeric(lName) && numValidator.isNumeric(phone)
+                            && !numValidator.isNumeric(email) && !numValidator.isNumeric(add) && !numValidator.isNumeric(town)) {
                         Member m = new Member(fName, lName, gender, phone, email, add, town, co);
                         progOps.addMember(m);
                         Alley a = new Alley(progOps);
@@ -105,12 +113,14 @@ public class AddMemberGUI implements ActionListener {
         else if (e.getSource().equals(clearB)) {
             ge.fNameTxt.setText("");
             ge.lNameTxt.setText("");
-            ge.genTxt.setText("");
             ge.phoneTxt.setText("");
             ge.emailTxt.setText("");
             ge.addTxt.setText("");
             ge.townTxt.setText("");
             ge.coCombo.setSelectedItem(0);
+        }
+        else {
+            addD.dispose();
         }
     }
 }
