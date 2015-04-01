@@ -1,7 +1,10 @@
 package db;
 
+import model.Booking;
 import oracle.jdbc.pool.OracleDataSource;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+
 import java.sql.*;
 import java.util.Random;
 import java.util.Scanner;
@@ -10,7 +13,8 @@ import java.util.Scanner;
  * Created by Peter on 06/03/2015.
  */
 public class SetupOperations {
-    private static final int ONE_WEEK = 7;
+    private final int ONE_WEEK = 7;
+    private final int ONE_MONTH = 30;
 
     private Connection conn = null;
     private PreparedStatement pStmt = null;
@@ -108,10 +112,9 @@ public class SetupOperations {
                 System.out.println("stock not found.");
             }
             try {
-                stmt.execute("DROP TABLE lanes");
+                stmt.execute("DROP TABLE lane");
                 System.out.println("Lanes table dropped.");
-                stmt.execute("DROP SEQUENCE laneId_seq");
-                System.out.println("Lane Sequence dropped.");
+                //
             }
             catch (SQLException ex) {
                 System.out.println("Lanes not found.");
@@ -142,11 +145,18 @@ public class SetupOperations {
                 // Drop the Members table.
                 stmt.execute("DROP TABLE members");
                 System.out.println("Members table dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("Members Data not found.");
+            }
+            try {
+                // Drop the Members table.
+
                 stmt.execute("DROP SEQUENCE memId_seq");
                 System.out.println("Member Sequence dropped.");
             }
             catch (SQLException ex) {
-                System.out.println("Members Data not found.");
+                System.out.println("Members sequence not found.");
             }
         } catch (SQLException ex) {
             System.out.println("ERROR: " + ex.getMessage());
@@ -158,7 +168,7 @@ public class SetupOperations {
         createMembers();
         createStaff();
         createRosterTable();
-        createLanes();
+        //createLanes();
         createStock();
         createBookings();
     }
@@ -434,7 +444,7 @@ public class SetupOperations {
     }
 //Does MAX players need to be stored in the DB, should it not just be a final static variable in Lane class?!
     //also is laneName not pretty much the same thing as laneId.
-    public void createLanes() {
+   /* public void createLanes() {
         try
         {
             System.out.println("Inside Create Lanes Method");
@@ -473,7 +483,7 @@ public class SetupOperations {
             System.out.print("SQL Exception " + e);
             System.exit(1);
         }
-    }
+    }*/
 
     public void createStock() {
         try {
@@ -624,57 +634,210 @@ public class SetupOperations {
         try {
             System.out.println("Inside Create Bookings Method");
             // Create a Table
-            String create = "CREATE TABLE bookings " +
-                    "(bookingId NUMBER(3) PRIMARY KEY NOT NULL, memId NUMBER(5), laneId NUMBER(3)," +
-                    "fromDateTime TIMESTAMP, toDateTime TIMESTAMP, FOREIGN KEY (memId) REFERENCES members (memId)," +
-                    "FOREIGN KEY (laneId) REFERENCES lanes (laneId))";
+            String create = "CREATE TABLE bookings(\n" +
+                    "bookingId NUMBER(3) PRIMARY KEY NOT NULL, \n" +
+                    "memId NUMBER(4), \n" +
+                    "laneId NUMBER(3),\n" +
+                    "staffId NUMBER(2),\n" +
+                    "numlanes NUMBER(2),\n" +
+                    "fromDateTime TIMESTAMP, \n" +
+                    "toDateTime TIMESTAMP, \n" +
+                    "deposit DECIMAL (6,2),\n" +
+                    "totalprice DECIMAL (6,2),\n" +
+                    "games_hours NUMBER(2),\n" +
+                    "numMembers NUMBER(2),\n" +
+                    "numPlayers NUMBER(2),\n" +
+                    "fullypaid CHAR,\n" +
+                    "paymentMethod VARCHAR2(10),\n" +
+                    "pricingPerHour CHAR,\n" +
+                    "bookingtype VARCHAR2(6),\n" +
+                    "FOREIGN KEY (memId) REFERENCES members (memId),\n" +
+                    "FOREIGN KEY (staffId) REFERENCES staff (staffId))";
             pStmt = conn.prepareStatement(create);
             pStmt.executeUpdate(create);
 
-            // Creating a sequence
+            String addLanes = "CREATE TABLE lane(\n" +
+                    "laneNumber NUMBER, \n" +
+                    "bookingId NUMBER(3),\n" +
+                    "today TIMESTAMP,\n" +
+                    "laneName VARCHAR(10), \n" +
+                    "inUse CHAR(2),\n" +
+                    "timeSlot INTEGER, " +
+                    "PRIMARY KEY (laneNumber,timeslot,today)," +
+                    "FOREIGN KEY (bookingId) REFERENCES bookings (bookingId))";
+
+            pStmt = conn.prepareStatement(addLanes);
+            pStmt.executeUpdate(addLanes);
+            System.out.println("past create bookings");
+            // Creating a booking sequence
             String createseq = "create sequence bookingId_seq increment by 1 start with 1";
             pStmt = conn.prepareStatement(createseq);
             pStmt.executeUpdate(createseq);
 
             // Insert data into table
-            String insertString = "INSERT INTO bookings (bookingId, memId, laneId, fromDateTime, toDateTime)" +
-                    "VALUES (bookingId_seq.nextVal, ?, ?, ?, ?)";
+
+            String insertString = "insert into bookings(\n" +
+                    "bookingId , \n" +
+                    "memId ,\n" +
+                    "staffId ,\n" +
+                    "numPlayers ,\n" +
+                    "numlanes,\n" +
+                    "games_hours ,\n" +
+                    "fromDateTime , \n" +
+                    "toDateTime ,\n" +
+                    "numMembers ,\n" +
+                    "paymentMethod,\n" +
+                    "pricingPerHour ,\n" +
+                    "fullypaid ,\n" +
+                    "bookingType ,\n" +
+                    "deposit ,\n" +
+                    "totalprice) VALUES (bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(insertString);
 
-            // Booking 1
-            pStmt.setInt(1, 5);
-            pStmt.setInt(2, 1);
-            pStmt.setString(3, "20-MAR-15 10:00:00");
-            pStmt.setString(4, "20-MAR-15 12:00:00");
-            pStmt.executeQuery();
+            String insertLanes="INSERT INTO lane(lanenumber, bookingid, today, lanename, inuse, timeslot)values(?,?,?,?,?,?)";
 
-            // Booking 2
-            pStmt.setInt(1, 4);
-            pStmt.setInt(2, 1);
-            pStmt.setString(3, "20-MAR-15 13:00:00");
-            pStmt.setString(4, "20-MAR-15 15:00:00");
-            pStmt.executeQuery();
+            PreparedStatement pStmt2 = conn.prepareStatement(insertLanes);
 
-            // Booking 3
-            pStmt.setInt(1, 2);
-            pStmt.setInt(2, 3);
-            pStmt.setString(3, "20-MAR-15 10:00:00");
-            pStmt.setString(4, "20-MAR-15 12:00:00");
-            pStmt.executeQuery();
+            //Inserting values using a loop to populate bookings table for one month
+            String [] startTimes = {":00:00",":15:00",":30:00",":45:00"};
+            //double deposits[] = {5.50,10.0,7.50,20};
+            String [] paymentMethod = {"VISA","Mastercard","cash"};
+            juDate = new java.util.Date();
+            dt = new DateTime(juDate);
+            Timestamp time, bookingDate;
+            Random ran = new Random();
+            int random, numLanes, hours_games, numPlayers, numMembers ;
+            int numBookings;
+            int bookingCounter = 1;
+            int laneNumber = 1;
+            double deposit;
+            double totalPrice;
+            final int MAX_PLAYERS = 6;
+            String fullyPaid , payMethod, pricedPerHour;
+            String bookingType;
+            final int SLOTS_PER_HOUR = 4;
 
-            // Booking 4
-            pStmt.setInt(1, 5);
-            pStmt.setInt(2, 4);
-            pStmt.setString(3, "20-MAR-15 18:00:00");
-            pStmt.setString(4, "20-MAR-15 20:00:00");
-            pStmt.executeQuery();
+            for (int i = 0; i < ONE_MONTH; i++) {
+                //random num of bookings for one day
+                numBookings = ran.nextInt(3)+3;
+                System.out.println("NEW DAY\n==================\nNumber of Bookings for " + dt + " is " + numBookings + "   --------------- \n  ");
+                for (int bookingid = 0; bookingid < numBookings; bookingid++) {
+                    System.out.println("----------------- BOOKING "+(bookingid+1)+ "----------------------------");
 
-            // Booking 5
-            pStmt.setInt(1, 3);
-            pStmt.setInt(2, 3);
-            pStmt.setString(3, "20-MAR-15 22:00:00");
-            pStmt.setString(4, "20-MAR-15 23:00:00");
-            pStmt.executeQuery();
+                    //randomly assign a memid to a booking
+                    random = ran.nextInt(5);
+                    pStmt.setInt(1, random);
+                    //randomly assign a staffid to a booking
+                    random = ran.nextInt(1) + 7;
+                    pStmt.setInt(2, random);
+                    //randomly assign number of players
+                    numPlayers = ran.nextInt(1) + 16;
+                    pStmt.setInt(3, numPlayers);
+                    // assign numLanes according to the number of players
+                    numLanes = ((int) Math.ceil(numPlayers / MAX_PLAYERS))+1;
+                    pStmt.setInt(4, numLanes);
+                    //randomly assign a startTime to a booking
+                    String start = dt.toString("yyyy-MM-dd ");
+                    random = ran.nextInt(12)+11;
+                    String now = random+startTimes[ran.nextInt(startTimes.length)];
+                    bookingDate = Timestamp.valueOf(start+"00:00:00");
+                    start = start + now;
+                    System.out.println("Start time: "+start);
+                    time = Timestamp.valueOf(start);
+                    pStmt.setTimestamp(6, time);
+
+                    //randomly assign how many hours or games the booking will be for
+                    hours_games = ran.nextInt(1) + 3;
+                    pStmt.setInt(5, hours_games);
+
+                    // finishtime will be starttime plus number of hours
+                    dt = DateTime.parse(start,
+                            DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
+                    dt = dt.plusHours(hours_games);
+                    start = dt.toString("yyyy-MM-dd hh:mm:ss");
+                    //System.out.println("Just before the finish timestamp valu = "+start);
+                    time = Timestamp.valueOf(start);
+                    pStmt.setTimestamp(7, time);
+
+                    numMembers = numPlayers/12;
+                    pStmt.setInt(8, numMembers);
+
+                    random = ran.nextInt(1);
+                    if(random == 0)
+                        fullyPaid = "Y";
+                    else
+                        fullyPaid = "N";
+
+
+                    payMethod = paymentMethod[ran.nextInt(paymentMethod.length)];
+                    pStmt.setString(9, payMethod);
+
+                    random = ran.nextInt(1);
+                    if(random == 0)
+                        pricedPerHour = "Y";
+                    else
+                        pricedPerHour = "N";
+                    pStmt.setString(10, pricedPerHour);
+
+                    bookingType = "";
+                    random = ran.nextInt(2);
+                    switch(random){
+                        case 1:  bookingType = "Group";
+                            break;
+                        case 2:  bookingType = "Party";
+                            break;
+                        case 3:  bookingType = "Walkin";
+                            deposit = 0;
+                            fullyPaid = "Y";
+                            break;
+                    }
+                    pStmt.setString(11, fullyPaid);
+                    pStmt.setString(12,bookingType);
+
+                    if(pricedPerHour.equals("Y")) {
+                        totalPrice = Booking.PRICE_HOUR * (numPlayers * numLanes * hours_games);
+                    }
+                    totalPrice = Booking.PRICE_GAME*(numPlayers* hours_games);
+
+                    System.out.println("HOURS_GAMES = "+hours_games);
+                    System.out.print("TOTAL PRICE = " + totalPrice);
+                    pStmt.setDouble(13,totalPrice);
+
+                    deposit = totalPrice/10;
+                    System.out.println("\tdeposit = "+deposit);
+                    pStmt.setDouble(14, deposit);
+
+                    pStmt.executeQuery();
+                    //INSERT INTO lane(lanenumber, bookingid, today, lanename, inuse, timeslot)values(?,?,?,?,?,?)
+                    //Loop to assign lanes to the booking
+                    for(int lanes = 0; lanes<numLanes; lanes++) {
+                        int timeslot = assignTimeSlot(now);
+                        for(int index = 0;index<hours_games*SLOTS_PER_HOUR;index++){
+                            String name = "lane " + laneNumber;
+                            pStmt2.setInt(1, laneNumber);
+                            pStmt2.setInt(2, bookingCounter);
+                            System.out.print("TIMESTamp for today ASSIGNED VALUE: " + bookingDate);
+                            pStmt2.setTimestamp(3, bookingDate);
+                            pStmt2.setString(4, name);
+                            pStmt2.setString(5, "Y");
+                            pStmt2.setInt(6, timeslot);
+                            timeslot++;
+                            if (laneNumber > 16)
+                                laneNumber = 1;
+                            pStmt2.executeQuery();
+                            System.out.println("Lane number: " + laneNumber + "\t timeslot = " + timeslot);
+                        }
+                        laneNumber++;
+                    }
+                    System.out.println("LANES ASSIGNED");
+                    bookingCounter++;
+
+                }
+                dt=dt.plusDays(1);
+            }
+
+
+
         }
         catch (SQLException e)
         {
@@ -682,6 +845,10 @@ public class SetupOperations {
             System.exit(1);
         }
     }
+
+
+
+
 
     public void queryTables() {
         queryMembers();
@@ -772,6 +939,8 @@ public class SetupOperations {
             System.out.println(e);
         }
     }
+
+
 
     public static void main(String args[]) {
         SetupOperations setup = new SetupOperations();

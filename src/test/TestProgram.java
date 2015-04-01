@@ -11,8 +11,8 @@ public class TestProgram {
     public static void main(String[] args) {
         System.out.println("Inside : TestProgram");
 
-
         MainProgramOperations progOps = new MainProgramOperations();
         LoginGUI ls = new LoginGUI(progOps);
+
     }
 }
