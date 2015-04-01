@@ -170,6 +170,50 @@ public class MainProgramOperations {
         }
         return rSet;
     }
+
+    /////////////////For Reports///////////////////////////////////////////////////////
+    public ResultSet getMember() {
+        System.out.println("Inside : getMember() in MainProgramOperations");
+        String sqlStatement = "SELECT fname,lname,numVisits,gender FROM Members ORDER BY numVisits";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+    public ResultSet getMemberPie() {
+        System.out.println("Inside : getMemberPie() in MainProgramOperations");
+        String sqlStatement = "SELECT fname,lname,numVisits FROM Members";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+
+
+    public ResultSet getMemberGender() {
+        System.out.println("Inside : getMemberGender() in MainProgramOperations");
+        String sqlStatement = "SELECT distinct (SELECT COUNT(gender) FROM members WHERE gender='M') as MaleCount,(SELECT COUNT(gender) FROM members WHERE gender='F') as FemaleCount FROM members group by gender" ;
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+
     ///// End of Member Queries ///////////////////////////////////
 
 

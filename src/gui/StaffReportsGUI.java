@@ -13,20 +13,25 @@ import org.jfree.ui.RefineryUtilities;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
  * Created by Peter on 23/03/2015.
  */
-public class StaffReportsGUI extends JPanel {
+public class StaffReportsGUI extends JPanel implements ActionListener {
 
     private JPanel p1, p2, p1a;
-    private JButton staffBookings, staffHours, staffSomething;
+    private JButton staffBookings, staffHours, staffSomething,back;
     private ArrayList<Stock> stockList = new ArrayList<Stock>();
+    private AdminTab aTab;
+    private MainProgramOperations progOps;
     private String header[] = new String[]{"Stock Id", "Shoe Size", "Description", "Quantity"};
     private JTextField stockId, stockName;
 
-    public StaffReportsGUI() {
+    public StaffReportsGUI(MainProgramOperations po) {
+        this.progOps = po;
         System.out.println("Inside : StaffReportsGUI");
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
@@ -46,10 +51,15 @@ public class StaffReportsGUI extends JPanel {
         //staffHours.addActionListener(this);
         staffSomething = new JButton("Staff Something Else");
         //staffSomething.addActionListener(this);
+        back = new JButton("Back");
+        back.addActionListener(this);
 
         p1a.add(staffBookings);
         p1a.add(add(Box.createVerticalStrut(20)));
         p1a.add(staffHours);
+        p1a.add(add(Box.createVerticalStrut(20)));
+        p1a.add(back);
+
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
 
@@ -109,5 +119,18 @@ public class StaffReportsGUI extends JPanel {
     public static JPanel createDemoPanel() {
         JFreeChart chart = createChart(createDataset());
         return new ChartPanel(chart);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == back){
+            //this.setVisible(false);
+            AdminTab at = new AdminTab(progOps);
+            JPanel admin = at;
+            this.removeAll();
+            this.add(admin);//Adding to content pane, not to Frame
+            repaint();
+            printAll(getGraphics());//Extort print all content
+        }
     }
 }
