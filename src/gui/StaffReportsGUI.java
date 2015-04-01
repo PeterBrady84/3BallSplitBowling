@@ -1,20 +1,27 @@
 package gui;
 
+import controller.TableColumnAdjuster;
 import db.MainProgramOperations;
 import model.Stock;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
+import org.jfree.chart.*;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.ui.RefineryUtilities;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 /**
@@ -23,12 +30,16 @@ import java.util.ArrayList;
 public class StaffReportsGUI extends JPanel implements ActionListener {
 
     private JPanel p1, p2, p1a;
-    private JButton staffBookings, staffHours, staffSomething,back;
+    private JButton barCharts, staffHours, staffDetails,back;
     private ArrayList<Stock> stockList = new ArrayList<Stock>();
     private AdminTab aTab;
     private MainProgramOperations progOps;
-    private String header[] = new String[]{"Stock Id", "Shoe Size", "Description", "Quantity"};
-    private JTextField stockId, stockName;
+    private String header[] = new String[]{"Staff ID", "First Name", "Bookings"};
+    private ResultSet rSet;
+    private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
+    private JTable table;
+    private DefaultTableModel model;
+    private DefaultPieDataset pieDataset = new DefaultPieDataset();
 
     public StaffReportsGUI(MainProgramOperations po) {
         this.progOps = po;
@@ -45,18 +56,18 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
-        staffBookings = new JButton("Staff Bookings Taken");
-        //staffBookings.addActionListener(this);
+        staffDetails = new JButton("Staff Details");
+        staffDetails.addActionListener(this);
+        barCharts = new JButton("Bar Charts");
+        barCharts.addActionListener(this);
         staffHours = new JButton("Staff Hours Worked");
         //staffHours.addActionListener(this);
-        staffSomething = new JButton("Staff Something Else");
-        //staffSomething.addActionListener(this);
         back = new JButton("Back");
         back.addActionListener(this);
 
-        p1a.add(staffBookings);
+        p1a.add(staffDetails);
         p1a.add(add(Box.createVerticalStrut(20)));
-        p1a.add(staffHours);
+        p1a.add(barCharts);
         p1a.add(add(Box.createVerticalStrut(20)));
         p1a.add(back);
 
@@ -65,61 +76,101 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
 
 
         p2 = new JPanel();
-        p2 = createDemoPanel();
-        p2.setPreferredSize(new Dimension(520, 295));
-        //p2.setBackground(Color.BLUE);
+        model = new DefaultTableModel(null, header) {
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        table = new JTable(model) {
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component comp = super.prepareRenderer(renderer, row, column);
+                comp.setBackground(row % 2 == 0 ? Color.WHITE : Color.LIGHT_GRAY);
+                return comp;
+            }
+        };
 
+        table.getTableHeader().setReorderingAllowed(false);
+
+        //fillTable();
+
+        //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        TableColumnAdjuster tca = new TableColumnAdjuster(table);
+        tca.adjustColumns();
+
+        table.setColumnSelectionAllowed(true);
+        table.setAutoCreateRowSorter(true);
+
+        JScrollPane sp = new JScrollPane();
+        sp.setViewportView(table);
+        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        sp.setPreferredSize(new Dimension(500, 290));
+        sp.setBackground(Color.WHITE);
+        p2.add(sp);
         add(p2, BorderLayout.EAST);
-        this.setVisible(true);
+    }
 
+    public void fillTableStaff() {
+        System.out.println("Inside : fillTableStaff() in StaffReportGUI");
+
+
+        try {
+            rSet = progOps.getStaffBookings();
+            PrintWriter pw = new PrintWriter(new FileWriter("staff.txt"));
+            while (rSet.next()){
+                int staffId = rSet.getInt(1);
+                String fname = rSet.getString(2);
+                int numBookings = rSet.getInt(3);
+
+                model.addRow(new Object[]{rSet.getInt(1), rSet.getString(2), rSet.getInt(3)});
+                pw.println("----------- " + fname +"--------------------------");
+                pw.println("ID Number: " + staffId);
+                pw.println("Number of Bookings: " + numBookings +"\n");
+
+            }
+            pw.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
 
-    private static PieDataset createDataset() {
-        DefaultPieDataset dataset = new DefaultPieDataset();
-        dataset.setValue("Staff One", new Double(43.2));
-        dataset.setValue("Staff Two", new Double(10.0));
-        dataset.setValue("Staff Three", new Double(27.5));
-        dataset.setValue("Staff Four", new Double(17.5));
-        dataset.setValue("Staff Five", new Double(11.0));
-        dataset.setValue("Staff Six", new Double(19.4));
-        return dataset;
+    public JPanel fillBarChartStaffBookings() {
+        System.out.println("Inside : fillBarChartStaffBookings() in StaffReportsGUI");
+
+        try {
+            rSet = progOps.getStaffMembers();
+            while (rSet.next()){
+                int staffId = rSet.getInt(1);
+                String name = rSet.getString(2);
+                int numBookings = rSet.getInt(3);
+
+                barDataSet.setValue(numBookings,"Number of Bookings Taken",name);
+            }
+            JFreeChart chart = ChartFactory.createBarChart("Bookings","Name","Number of Bookings Taken",barDataSet, PlotOrientation.VERTICAL,false,true,false);
+//
+            CategoryPlot p = chart.getCategoryPlot();
+            p.setRangeGridlinePaint(Color.black);
+            ChartFrame frame = new ChartFrame("Bar Chart for Number of Bookings Taken by each Staff Member",chart);
+            frame.setVisible(true);
+            frame.setSize(400,500);
+
+                /* Specify dimensions and quality factor for Pie Chart */
+            int width=640;
+            int height=480;
+            float quality=1; /* Quality factor */
+                /* Write Bar Chart as a JPEG file */
+            File BarChartStaffBookings=new File("BarChartStaffBookings.png");
+            ChartUtilities.saveChartAsJPEG(BarChartStaffBookings, quality, chart, width, height);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        return null;
     }
 
-    /**
-     * Creates a chart.
-     *
-     * @param dataset the dataset.
-     * @return A chart.
-     */
-    private static JFreeChart createChart(PieDataset dataset) {
 
-        JFreeChart chart = ChartFactory.createPieChart(
-                "Pie Chart Demo 1",  // chart title
-                dataset,             // data
-                true,               // include legend
-                true,
-                false
-        );
-
-        PiePlot plot = (PiePlot) chart.getPlot();
-        plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
-        plot.setNoDataMessage("No data available");
-        plot.setCircular(false);
-        plot.setLabelGap(0.02);
-        return chart;
-
-    }
-
-    /**
-     * Creates a panel for the demo (used by SuperDemo.java).
-     *
-     * @return A panel.
-     */
-    public static JPanel createDemoPanel() {
-        JFreeChart chart = createChart(createDataset());
-        return new ChartPanel(chart);
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -131,6 +182,16 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
             this.add(admin);//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
+        }
+        else if (e.getSource() == staffDetails){
+
+            fillTableStaff();
+
+        }
+        else if (e.getSource() == barCharts){
+
+            fillBarChartStaffBookings();
+
         }
     }
 }
