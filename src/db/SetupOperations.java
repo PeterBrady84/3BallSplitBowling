@@ -637,7 +637,6 @@ public class SetupOperations {
             String create = "CREATE TABLE bookings(\n" +
                     "bookingId NUMBER(3) PRIMARY KEY NOT NULL, \n" +
                     "memId NUMBER(4), \n" +
-                    "laneId NUMBER(3),\n" +
                     "staffId NUMBER(2),\n" +
                     "numlanes NUMBER(2),\n" +
                     "fromDateTime TIMESTAMP, \n" +
@@ -668,14 +667,21 @@ public class SetupOperations {
 
             pStmt = conn.prepareStatement(addLanes);
             pStmt.executeUpdate(addLanes);
-            System.out.println("past create bookings");
+            //System.out.println("past create bookings");
             // Creating a booking sequence
             String createseq = "create sequence bookingId_seq increment by 1 start with 1";
             pStmt = conn.prepareStatement(createseq);
             pStmt.executeUpdate(createseq);
 
-            // Insert data into table
+        }
+        catch (SQLException e)
+        {
+            System.out.print("Problem creating the booking table: " + e);
+            //System.exit(1);
+        }
 
+            // Insert data into table
+        try {
             String insertString = "insert into bookings(\n" +
                     "bookingId , \n" +
                     "memId ,\n" +
@@ -690,84 +696,81 @@ public class SetupOperations {
                     "pricingPerHour ,\n" +
                     "fullypaid ,\n" +
                     "bookingType ,\n" +
-                    "deposit ,\n" +
-                    "totalprice) VALUES (bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "totalprice ,\n" +
+                    "deposit) VALUES (bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(insertString);
 
-            String insertLanes="INSERT INTO lane(lanenumber, bookingid, today, lanename, inuse, timeslot)values(?,?,?,?,?,?)";
+
+
+            String insertLanes = "INSERT INTO lane(lanenumber, bookingid, today, lanename, inuse, timeslot)values(?,?,?,?,?,?)";
 
             PreparedStatement pStmt2 = conn.prepareStatement(insertLanes);
 
             //Inserting values using a loop to populate bookings table for one month
-            String [] startTimes = {":00:00",":15:00",":30:00",":45:00"};
+            String[] startTimes = {":00:00", ":15:00", ":30:00", ":45:00"};
             //double deposits[] = {5.50,10.0,7.50,20};
-            String [] paymentMethod = {"VISA","Mastercard","cash"};
+            String[] paymentMethod = {"VISA", "Mastercard", "cash"};
             juDate = new java.util.Date();
             dt = new DateTime(juDate);
             Timestamp time, bookingDate;
             Random ran = new Random();
-            int random, numLanes, hours_games, numPlayers, numMembers ;
-            int numBookings;
+            int random, memberID, numLanes, hours_games, numPlayers, numMembers, staffID;
+            int numBookingsForToday;
             int bookingCounter = 1;
             int laneNumber = 1;
             double deposit;
             double totalPrice;
             final int MAX_PLAYERS = 6;
-            String fullyPaid , payMethod, pricedPerHour;
+            String fullyPaid, payMethod, pricedPerHour;
             String bookingType;
             final int SLOTS_PER_HOUR = 4;
 
+            //loop to fill table for one month
             for (int i = 0; i < ONE_MONTH; i++) {
                 //random num of bookings for one day
-                numBookings = ran.nextInt(3)+3;
-                System.out.println("NEW DAY\n==================\nNumber of Bookings for " + dt + " is " + numBookings + "   --------------- \n  ");
-                for (int bookingid = 0; bookingid < numBookings; bookingid++) {
-                    System.out.println("----------------- BOOKING "+(bookingid+1)+ "----------------------------");
+                numBookingsForToday = ran.nextInt(3)+3;
+                //System.out.println("\n\nNEW DAY "+(i+1)+"    =======================\n==================\nNumber of Bookings for " + dt + " is " + numBookingsForToday + "   --------------- \n  ");
+                //loop to add a booking to a day
+                for (int bookingsMadeToday = 0; bookingsMadeToday < numBookingsForToday; bookingsMadeToday++) {
+                    //System.out.println("----------------- BOOKING "+ bookingCounter + "----------------------------");
 
                     //randomly assign a memid to a booking
-                    random = ran.nextInt(5);
-                    pStmt.setInt(1, random);
+                    memberID = ran.nextInt(5)+1;
+                    pStmt.setInt(1, memberID);
                     //randomly assign a staffid to a booking
-                    random = ran.nextInt(1) + 7;
-                    pStmt.setInt(2, random);
+                    staffID = ran.nextInt(5) + 1;
+                    pStmt.setInt(2, 1);
                     //randomly assign number of players
-                    numPlayers = ran.nextInt(1) + 16;
+                    numPlayers = ran.nextInt(16) + 1;
                     pStmt.setInt(3, numPlayers);
                     // assign numLanes according to the number of players
                     numLanes = ((int) Math.ceil(numPlayers / MAX_PLAYERS))+1;
                     pStmt.setInt(4, numLanes);
                     //randomly assign a startTime to a booking
                     String start = dt.toString("yyyy-MM-dd ");
+                    bookingDate = Timestamp.valueOf(start+"00:00:00");
                     random = ran.nextInt(12)+11;
                     String now = random+startTimes[ran.nextInt(startTimes.length)];
-                    bookingDate = Timestamp.valueOf(start+"00:00:00");
                     start = start + now;
-                    System.out.println("Start time: "+start);
+                    //System.out.println("Start time: "+start);
                     time = Timestamp.valueOf(start);
                     pStmt.setTimestamp(6, time);
 
                     //randomly assign how many hours or games the booking will be for
-                    hours_games = ran.nextInt(1) + 3;
+                    hours_games = ran.nextInt(3) + 1;
                     pStmt.setInt(5, hours_games);
 
                     // finishtime will be starttime plus number of hours
                     dt = DateTime.parse(start,
                             DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
                     dt = dt.plusHours(hours_games);
-                    start = dt.toString("yyyy-MM-dd hh:mm:ss");
-                    //System.out.println("Just before the finish timestamp valu = "+start);
+                    start = dt.toString("yyyy-MM-dd HH:mm:ss");
+                    //System.out.println("finishtime: "+start);
                     time = Timestamp.valueOf(start);
                     pStmt.setTimestamp(7, time);
 
                     numMembers = numPlayers/12;
                     pStmt.setInt(8, numMembers);
-
-                    random = ran.nextInt(1);
-                    if(random == 0)
-                        fullyPaid = "Y";
-                    else
-                        fullyPaid = "N";
-
 
                     payMethod = paymentMethod[ran.nextInt(paymentMethod.length)];
                     pStmt.setString(9, payMethod);
@@ -779,8 +782,15 @@ public class SetupOperations {
                         pricedPerHour = "N";
                     pStmt.setString(10, pricedPerHour);
 
+                    random = ran.nextInt(1);
+
+                    if(random == 0)
+                        fullyPaid = "N";
+                    else
+                        fullyPaid = "Y";
+
                     bookingType = "";
-                    random = ran.nextInt(2);
+                    random = ran.nextInt(2)+1;
                     switch(random){
                         case 1:  bookingType = "Group";
                             break;
@@ -791,24 +801,28 @@ public class SetupOperations {
                             fullyPaid = "Y";
                             break;
                     }
+                    //System.out.println("BOOKING TYPE = "+bookingType);
                     pStmt.setString(11, fullyPaid);
+                    //System.out.println("FULLY PAID = "+fullyPaid);
                     pStmt.setString(12,bookingType);
 
                     if(pricedPerHour.equals("Y")) {
                         totalPrice = Booking.PRICE_HOUR * (numPlayers * numLanes * hours_games);
-                    }
-                    totalPrice = Booking.PRICE_GAME*(numPlayers* hours_games);
+                    }else
+                        totalPrice = Booking.PRICE_GAME*(numPlayers* hours_games);
 
-                    System.out.println("HOURS_GAMES = "+hours_games);
-                    System.out.print("TOTAL PRICE = " + totalPrice);
+                   // System.out.println("Number of lanes = "+numLanes+"\nHOURS_GAMES = "+hours_games);
+                    //System.out.println("TOTAL PRICE = " + totalPrice);
                     pStmt.setDouble(13,totalPrice);
 
                     deposit = totalPrice/10;
-                    System.out.println("\tdeposit = "+deposit);
+                    //System.out.println("\tdeposit = "+deposit);
                     pStmt.setDouble(14, deposit);
 
                     pStmt.executeQuery();
-                    //INSERT INTO lane(lanenumber, bookingid, today, lanename, inuse, timeslot)values(?,?,?,?,?,?)
+
+                    System.out.println("Booking created now adding lanes to booking");
+
                     //Loop to assign lanes to the booking
                     for(int lanes = 0; lanes<numLanes; lanes++) {
                         int timeslot = assignTimeSlot(now);
@@ -816,38 +830,186 @@ public class SetupOperations {
                             String name = "lane " + laneNumber;
                             pStmt2.setInt(1, laneNumber);
                             pStmt2.setInt(2, bookingCounter);
-                            System.out.print("TIMESTamp for today ASSIGNED VALUE: " + bookingDate);
+                            System.out.print("\t"+name);
                             pStmt2.setTimestamp(3, bookingDate);
                             pStmt2.setString(4, name);
-                            pStmt2.setString(5, "Y");
+                            pStmt2.setString(5, "N");
                             pStmt2.setInt(6, timeslot);
                             timeslot++;
                             if (laneNumber > 16)
                                 laneNumber = 1;
+
                             pStmt2.executeQuery();
-                            System.out.println("Lane number: " + laneNumber + "\t timeslot = " + timeslot);
+
+                            //System.out.println("\tLane number: " + laneNumber + "\t timeslot = " + timeslot);
                         }
                         laneNumber++;
                     }
                     System.out.println("LANES ASSIGNED");
+                    System.out.println(bookingCounter);
                     bookingCounter++;
+                    System.out.println(bookingCounter);
 
                 }
                 dt=dt.plusDays(1);
             }
-
-
-
-        }
-        catch (SQLException e)
+        }catch (SQLException e)
         {
-            System.out.print("SQL Exception " + e);
-            System.exit(1);
+            System.out.print("DID NOT CREATE A BOOKING :  SQL Exception " + e);
         }
+
     }
+    // I know this seems a ridiciously long method that does feck all but i couldnt find a think of a more straightforward
+    //way of assigning a time slot to a time
+    public int assignTimeSlot(String time){
+        int timeslot = 0;
+        if (time.equals("12:00:00")) {
+            timeslot = 1;
 
+        } else if (time.equals("12:15:00")) {
+            timeslot = 2;
 
+        } else if (time.equals("12:30:00")) {
+            timeslot = 3;
 
+        } else if (time.equals("12:45:00")) {
+            timeslot = 4;
+
+        } else if (time.equals("13:00:00")) {
+            timeslot = 5;
+
+        } else if (time.equals("13:15:00")) {
+            timeslot = 6;
+
+        } else if (time.equals("13:30:00")) {
+            timeslot = 7;
+
+        } else if (time.equals("13:45:00")) {
+            timeslot = 8;
+
+        } else if (time.equals("14:00:00")) {
+            timeslot = 9;
+
+        } else if (time.equals("14:15:00")) {
+            timeslot = 10;
+
+        } else if (time.equals("14:30:00")) {
+            timeslot = 11;
+
+        } else if (time.equals("14:45:00")) {
+            timeslot = 12;
+
+        } else if (time.equals("15:00:00")) {
+            timeslot = 13;
+
+        } else if (time.equals("15:15:00")) {
+            timeslot = 14;
+
+        } else if (time.equals("15:30:00")) {
+            timeslot = 15;
+
+        } else if (time.equals("15:45:00")) {
+            timeslot = 16;
+
+        } else if (time.equals("16:00:00")) {
+            timeslot = 17;
+
+        } else if (time.equals("16:15:00")) {
+            timeslot = 18;
+
+        } else if (time.equals("16:30:00")) {
+            timeslot = 19;
+
+        } else if (time.equals("16:45:00")) {
+            timeslot = 20;
+
+        } else if (time.equals("17:00:00")) {
+            timeslot = 21;
+
+        } else if (time.equals("17:15:00")) {
+            timeslot = 21;
+
+        } else if (time.equals("17:30:00")) {
+            timeslot = 23;
+
+        } else if (time.equals("17:45:00")) {
+            timeslot = 24;
+
+        } else if (time.equals("18:00:00")) {
+            timeslot = 25;
+
+        } else if (time.equals("18:15:00")) {
+            timeslot = 26;
+
+        } else if (time.equals("18:30:00")) {
+            timeslot = 27;
+
+        } else if (time.equals("18:45:00")) {
+            timeslot = 28;
+
+        } else if (time.equals("19:00:00")) {
+            timeslot = 29;
+
+        } else if (time.equals("19:15:00")) {
+            timeslot = 30;
+
+        } else if (time.equals("19:30:00")) {
+            timeslot = 31;
+
+        } else if (time.equals("19:45:00")) {
+            timeslot = 32;
+
+        } else if (time.equals("20:00:00")) {
+            timeslot = 33;
+
+        } else if (time.equals("20:15:00")) {
+            timeslot = 34;
+
+        } else if (time.equals("20:30:00")) {
+            timeslot = 35;
+
+        } else if (time.equals("20:45:00")) {
+            timeslot = 36;
+
+        } else if (time.equals("21:00:00")) {
+            timeslot = 37;
+
+        } else if (time.equals("21:15:00")) {
+            timeslot = 38;
+
+        } else if (time.equals("21:30:00")) {
+            timeslot = 39;
+
+        } else if (time.equals("21:45:00")) {
+            timeslot = 40;
+
+        } else if (time.equals("22:00:00")) {
+            timeslot = 41;
+
+        } else if (time.equals("22:15:00")) {
+            timeslot = 42;
+
+        } else if (time.equals("22:30:00")) {
+            timeslot = 43;
+
+        } else if (time.equals("22:45:00")) {
+            timeslot = 44;
+
+        } else if (time.equals("23:00:00")) {
+            timeslot = 45;
+
+        } else if (time.equals("23:15:00")) {
+            timeslot = 46;
+
+        } else if (time.equals("23:30:00")) {
+            timeslot = 47;
+
+        } else if (time.equals("23:45:00")) {
+            timeslot = 48;
+
+        }
+        return timeslot;
+    }
 
 
     public void queryTables() {
@@ -895,7 +1057,7 @@ public class SetupOperations {
 
     public void queryLanes() {
         try {
-            String queryString = "SELECT * FROM lanes";
+            String queryString = "SELECT * FROM lane";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
             System.out.println("Lanes Table");
