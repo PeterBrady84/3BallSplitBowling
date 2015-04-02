@@ -32,8 +32,11 @@ public class AdminTab extends JPanel implements ActionListener {
         staff = new JButton("Staff Reports");
         staff.addActionListener(this);
         games = new JButton("Games Played Reports");
+        games.addActionListener(this);
         members = new JButton("Membership Reports");
+        members.addActionListener(this);
         accounts = new JButton("Financial Reports");
+        accounts.addActionListener(this);
         p2.add(staff);
         p2.add(games);
         p2.add(members);
@@ -48,13 +51,41 @@ public class AdminTab extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == staff);
+        if (e.getSource() == staff){
         //this.setVisible(false);
-        StaffReportsGUI sr = new StaffReportsGUI();
+        StaffReportsGUI sr = new StaffReportsGUI(progOps);
         JPanel staff = sr;
         this.removeAll();
         this.add(staff);//Adding to content pane, not to Frame
         repaint();
         printAll(getGraphics());//Extort print all content
+         }
+        else if(e.getSource() == games){
+            //this.setVisible(false);
+            GamesReportGUI gr = new GamesReportGUI(progOps);
+            JPanel staff = gr;
+            this.removeAll();
+            this.add(staff);//Adding to content pane, not to Frame
+            repaint();
+            printAll(getGraphics());//Extort print all content
+        }
+        else if(e.getSource() == members){
+            MembershipReportGUI mr = new MembershipReportGUI(progOps);
+            JPanel staff = mr;
+            this.removeAll();
+            this.add(staff);//Adding to content pane, not to Frame
+            repaint();
+            printAll(getGraphics());//Extort print all content
+        }
+        else {
+            FinancialReportsGUI fr = new FinancialReportsGUI(progOps);
+            JPanel staff = fr;
+            this.removeAll();
+            this.add(staff);//Adding to content pane, not to Frame
+            repaint();
+            printAll(getGraphics());//Extort print all content
+        }
     }
+
+
 }

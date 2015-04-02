@@ -174,6 +174,65 @@ public class MainProgramOperations {
         }
         return rSet;
     }
+
+    /////////////////For Reports///////////////////////////////////////////////////////
+    public ResultSet getMember() {
+        System.out.println("Inside : getMemberNumVisits() in MainProgramOperations");
+        String sqlStatement = "SELECT fname,lname,numVisits,gender FROM Members ORDER BY numVisits";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+
+    public ResultSet getMemberGender() {
+        System.out.println("Inside : getMemberGender() in MainProgramOperations");
+        String sqlStatement = "select gender,count(*), sum(case when gender = 'M' then 1 else 0 end) MaleCount, sum(case when gender = 'F' then 1 else 0 end) FemaleCount from members group by gender";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+    public ResultSet getStaffBookings() {
+        System.out.println("Inside : getStaffBookings() in MainProgramOperations");
+        String sqlStatement = "select staffId,lname,bookings from staff order by BOOKINGS desc";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+    public ResultSet getStaffMembers() {
+        System.out.println("Inside : getStaffBookings() in MainProgramOperations");
+        String sqlStatement = "select staffId, lname,bookings from staff order by BOOKINGS desc";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+
+
+
+
     ///// End of Member Queries ///////////////////////////////////
 
 
@@ -267,7 +326,10 @@ public class MainProgramOperations {
                 final int ONE_WEEK = 7;
                 juDate = new java.util.Date();
                 dt = new DateTime(juDate);
+                //System.out.println("ID IS HERE ============================================" + id);
                 String idIn = Integer.toString(id);
+                //System.out.println("int id = "+id+"======================= Srtring idIN = "+idIn);
+
                 for (int i = 0; i < ONE_WEEK; i++) {
                     String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(? ,?, ?)";
                     pStmt = conn.prepareStatement(insertString);

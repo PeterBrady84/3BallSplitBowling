@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="lib1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/production/3BallSplitBowling/lib/jcommon-1.0.23.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/3BallSplitBowling/lib/ojdbc6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/3BallSplitBowling/lib/jfreechart-1.0.19.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
