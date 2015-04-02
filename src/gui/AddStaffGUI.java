@@ -86,11 +86,12 @@ public class AddStaffGUI implements ActionListener {
                     String lName = ge.lNameTxt.getText();
                     String phone = ge.phoneTxt.getText();
                     String login = ge.loginTxt.getText();
+                    String email = ge.emailTxt.getText();
                     String password = String.valueOf(ge.passwordTxt.getPassword());
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
                     if (numValidator.isNumeric(phone) == true) {
-                        Staff s = new Staff(fName, lName, phone, login, password, secQuestion, secAnswer);
+                        Staff s = new Staff(fName, lName, phone, email, login,  password, secQuestion, secAnswer);
                         System.out.println("Object Staffs being passed to addStaff method. S fname = "+s.getfName());
                         progOps.addStaff(s);
                         Alley a = new Alley(progOps);

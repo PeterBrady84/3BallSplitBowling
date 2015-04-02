@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class StaffTab extends JPanel implements ActionListener, ItemListener {
 
     private JPanel p1, p2, p1a;
-    private JButton create, edit, refresh;
+    private JButton create, edit, delete;
     private JToggleButton toggle;
     private DefaultTableModel model;
     private JTable table;
@@ -32,7 +32,10 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
     private String ContactHeader[] = new String[] { "ID", "Name", "Surname", "Bookings", "Phone", "Email"};
     private JTextField staffId, staffName;
 
+
+
     public StaffTab(ArrayList<Staff> s, MainProgramOperations po) {
+        System.out.println("-------------------------------------Inside the staff tab dateselected = "+MainScreen.calendarSelected);
         System.out.println("Inside : StaffTabGUI");
         this.progOps = po;
         this.staffList = s;
@@ -49,7 +52,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         toggle = new JToggleButton("View Contact details", false);
         create = new JButton("Add Staff");
         edit = new JButton("Update Staff");
-        refresh = new JButton("Refresh Staff");
+        delete = new JButton("Delete Staff");
 
         p1a.add(toggle);
         toggle.addItemListener(this);
@@ -60,8 +63,8 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         p1a.add(edit);
         edit.addActionListener(this);
         p1a.add(add(Box.createVerticalStrut(20)));
-        p1a.add(refresh);
-        refresh.addActionListener(this);
+        p1a.add(delete);
+        delete.addActionListener(this);
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
 
@@ -73,12 +76,18 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
                 return false;
             }
         };
-        table = new JTable();
-        model.setColumnIdentifiers(TimeHeader);
-        table.setModel(model);
+        table = new JTable(model) {
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component comp = super.prepareRenderer(renderer, row, column);
+                comp.setBackground(row % 2 == 0 ? Color.WHITE : Color.LIGHT_GRAY);
+                return comp;
+            }
+        };
         table.getTableHeader().setReorderingAllowed(false);
 
-        fillTable(staffList);
+        refreshTable();
+        //fillTable(staffList);
 
         //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
@@ -88,6 +97,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         table.setAutoCreateRowSorter(true);
 
         JScrollPane sp = new JScrollPane();
+        sp.setBackground(Color.WHITE);
         sp.setViewportView(table);
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         sp.setPreferredSize(new Dimension(500, 290));
@@ -95,16 +105,18 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         add(p2, BorderLayout.EAST);
     }
 
+    public StaffTab(){
 
+    }
 
     public void fillTable(ArrayList<Staff> s) {
         System.out.println("Inside : fillTable() in StaffTabGUI");
         this.staffList = s;
-        System.out.println("staff list no. "+staffList.size());
         for (int i = 0; i < staffList.size(); i ++) {
             model.addRow(new Object[]{staffList.get(i).getId(), staffList.get(i).getlName(), staffList.get(i).getfName(), staffList.get(i).getBookings(),
                     staffList.get(i).getStart(), staffList.get(i).getFinish()});
         }
+        System.out.println("staff list amount ==================== "+staffList.size());
     }
     // this is to display contact details
     public void fillTableContact(ArrayList<Staff> s) {
@@ -114,6 +126,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
             model.addRow(new Object[]{aStaffList.getId(), aStaffList.getlName(), aStaffList.getfName(),
                     aStaffList.getBookings(), aStaffList.getPhone(), aStaffList.getEmail()});
         }
+        System.out.println("staff list amount ==================== "+staffList.size());
     }
 
     public void refreshTable () {
@@ -130,8 +143,9 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
             fillTableContact(staffList);
         else
             fillTable(staffList);
-
     }
+
+
 
     public String searchStaff() {
         System.out.println("Inside : searchStaff() in StaffTabGUI");
@@ -179,8 +193,9 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
             String str = searchStaff();
             updateStaff(str);
         }
-        else if (ae.getSource() == refresh) {
-            refreshTable();
+        else if (ae.getSource() == delete) {
+            String str = searchStaff();
+            //progOps.deleteStaff(user, id);
         }
     }
 
@@ -189,11 +204,11 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         if (ev.getStateChange() == ItemEvent.SELECTED) {
             System.out.println("button is selected");
             model.setColumnIdentifiers(ContactHeader);
-            fillTableContact(staffList);
+            //fillTableContact(staffList);
         } else if (ev.getStateChange() == ItemEvent.DESELECTED) {
             System.out.println("button is not selected");
             model.setColumnIdentifiers(TimeHeader);
-            fillTable(staffList);
+            //fillTable(staffList);
         }
     }
 

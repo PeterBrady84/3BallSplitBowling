@@ -2,14 +2,18 @@ package gui;
 
 import db.MainProgramOperations;
 import model.*;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
+import org.joda.time.DateTime;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Date;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by Peter on 06/03/2015.
@@ -26,12 +30,25 @@ public class MainScreen extends JFrame implements ActionListener {
     private ArrayList<Stock> stockList;
     private ArrayList<Lane> laneList;
     private ArrayList<Booking> bookingList = new ArrayList<Booking>();
+    public JDatePanelImpl mainDatePanel;
+    public JDatePickerImpl mainDatePicker;
+    public JFormattedTextField dateInTxt;
+    public static String calendarSelected;
+    private java.util.Date juDate ;
+    private DateTime dt;
+    private Format formatter;
+    private Alley list;
+    private StaffTab staffTable;
 
     public MainScreen(ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b, ArrayList<Lane> l, MainProgramOperations po) {
         System.out.println("Inside : MainScreenGUI");
+
+
         this.progOps = po;
+
         this.memList = m;
-        this.staffList = s;
+        list = new Alley(progOps);
+        this.staffList = list.getStaffList();
         this.laneList = l;
         this.stockList = st;
         this.bookingList = b;
@@ -54,7 +71,35 @@ public class MainScreen extends JFrame implements ActionListener {
 
         ImageIcon logo = new ImageIcon("src/lib/files/bray_bowl.png");
         bowl = new JLabel(logo);
-        p1.add(bowl, BorderLayout.WEST);
+
+        //This the calendar panel for the mainscreen which sets a date in dd-MMM-yy format
+        //String dateSelected can be used by all the tabs for all DB queries.
+        UtilDateModel model=new UtilDateModel();
+        mainDatePanel = new JDatePanelImpl(model);
+        mainDatePicker = new JDatePickerImpl(mainDatePanel);
+        juDate = (Date) mainDatePicker.getModel().getValue();
+        dt = new DateTime(juDate);
+        calendarSelected = dt.toString("dd-MMM-yy");
+        calendarSelected = calendarSelected.toUpperCase();
+        mainDatePicker.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                juDate = (Date) mainDatePicker.getModel().getValue();
+                dt = new DateTime(juDate);
+                calendarSelected = dt.toString("dd-MMM-yy");
+                calendarSelected = calendarSelected.toUpperCase();
+                System.out.println("______________%%%%%%%%%%    DATE  =    "+calendarSelected+"      ________________");
+            }
+        });
+        dateInTxt = mainDatePicker.getJFormattedTextField();
+        dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yy").format(new java.util.Date()));
+        formatter = new SimpleDateFormat("dd-MMM-yy");
+
+        dateInTxt.addActionListener(this);
+
+        dateInTxt.setBackground(Color.WHITE);
+        //p1.add(bowl, BorderLayout.WEST);
+        p1.add(mainDatePicker, BorderLayout.WEST);
 
         header = new JLabel("3-Ball-Strike Bowling System", SwingConstants.CENTER);
         header.setFont(header.getFont().deriveFont(40.0f));
@@ -161,4 +206,6 @@ public class MainScreen extends JFrame implements ActionListener {
             }
         }
     }
+
+
 }

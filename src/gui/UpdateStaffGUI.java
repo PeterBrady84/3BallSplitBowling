@@ -94,12 +94,14 @@ public class UpdateStaffGUI implements ActionListener {
                             "Passwords do not match, please retry", "ERROR", JOptionPane.WARNING_MESSAGE);
                     ge.passwordTxt.setText("");
                     ge.confPassTxt.setText("");
-                } else if (!ge.secAnsTxt.getText().equals(ge.confSecAnsTxt.getText())) {
+                }
+                else if (!ge.secAnsTxt.getText().equals(ge.confSecAnsTxt.getText())) {
                     JOptionPane.showMessageDialog(null,
                             "Security Answers do not match, please retry", "ERROR", JOptionPane.WARNING_MESSAGE);
                     ge.secAnsTxt.setText("");
                     ge.confSecAnsTxt.setText("");
-                } else {
+                }
+                else {
                     String fName = ge.fNameTxt.getText();
                     String lName = ge.lNameTxt.getText();
                     String phone = ge.phoneTxt.getText();
@@ -108,12 +110,12 @@ public class UpdateStaffGUI implements ActionListener {
                     String password = ge.passwordTxt.getText();
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
-                    System.out.println("****************************    PHONE = "+phone+"          ***********************");
                     if (numValidator.isNumeric(phone)==true) {
-                        progOps.updateStaff(ge.idTxt.getText(), fName, lName, phone, email, login, password, secQuestion, secAnswer);
+                        progOps.updateStaffinDB(ge.idTxt.getText(), fName, lName, phone, email, login, password, secQuestion, secAnswer);
                         Alley a = new Alley(progOps);
-                        a.updateStaff(new Staff(fName, lName, phone, login, password, secQuestion, secAnswer));
+                        a.updateStaff(new Staff(fName, lName, phone, email,  login,  password, secQuestion, secAnswer));
                         JOptionPane.showMessageDialog(null, "Updated Staff Data Saved");
+                        progOps.getStaff();
                         sTab.refreshTable();
                         updateD.setVisible(false);
                     } else {

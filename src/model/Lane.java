@@ -7,18 +7,18 @@ public class Lane {
 
     private int id;
     private String laneName;
-    private int maxPlayers;
+    private final static int maxPlayers = 6;
 
     public Lane(int i, String l,int p) {
-        System.out.println("Inside : LaneModel");
+        //System.out.println("Inside : LaneModel");
         this.id = i;
         this.laneName = l;
-        this.maxPlayers = p;
+        //this.maxPlayers = p;
     }
 
     public Lane(String l,int p) {
         this.laneName = l;
-        this.maxPlayers = p;
+        //this.maxPlayers = p;
     }
 
     public int getId() {
@@ -41,7 +41,5 @@ public class Lane {
         return maxPlayers;
     }
 
-    public void setMaxPlayers(int maxPlayers) {
-        this.maxPlayers = maxPlayers;
-    }
+
 }
