@@ -38,12 +38,15 @@ public class MainScreen extends JFrame implements ActionListener {
     private DateTime dt;
     private Format formatter;
     private Alley list;
-    private StaffTab staffTable;
+    protected static Staff UserLogged;
+    protected static boolean administrator;
 
-    public MainScreen(ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b, ArrayList<Lane> l, MainProgramOperations po) {
+    public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b, ArrayList<Lane> l, MainProgramOperations po) {
         System.out.println("Inside : MainScreenGUI");
 
-
+        UserLogged = user;
+        if (user.isAdmin()) administrator = true;
+        else administrator = false;
         this.progOps = po;
 
         this.memList = m;
@@ -163,6 +166,10 @@ public class MainScreen extends JFrame implements ActionListener {
         p3.setPreferredSize(new Dimension(800, 100));
         p3.setBackground(Color.WHITE);
 
+        String userID = "USERNAME: "+user.getUsername();
+        System.out.println(userID);
+        loggedIn = new JLabel(userID);
+        p3.add(loggedIn);
         checkAvailability = new JButton("Check For Availability");
         checkAvailability.addActionListener(this);
         p3.add(checkAvailability);

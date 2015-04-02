@@ -2,6 +2,7 @@ package gui;
 
 import db.MainProgramOperations;
 import model.Alley;
+import model.Staff;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,7 @@ public class LoginGUI extends JFrame implements ActionListener {
     private JButton login, forgot, exit;
     private JTextField userTxt;
     private JPasswordField passTxt;
+    protected static Staff user;
 
     public LoginGUI(MainProgramOperations po) {
         System.out.println("Inside : LoginGUI");
@@ -70,7 +72,7 @@ public class LoginGUI extends JFrame implements ActionListener {
 
         userLbl = new JLabel("Username:");
         passLbl = new JLabel("Password:");
-        userTxt = new JTextField("user");
+        userTxt = new JTextField("user1");
         passTxt = new JPasswordField("password");
 
         login = new JButton("LOGIN");
@@ -151,8 +153,15 @@ public class LoginGUI extends JFrame implements ActionListener {
         if(ae.getSource()==login) {
             if(login()==true) {
                 Alley a = new Alley(progOps);
-                MainScreen ms = new MainScreen(a.getMemberList(), a.getStaffList(), a.getStockList(), a.getBookingList(), a.getLaneList(), progOps);
+                Staff user = progOps.createUser(userTxt.getText());
+                MainScreen ms = new MainScreen(user, a.getMemberList(), a.getStaffList(), a.getStockList(), a.getBookingList(), a.getLaneList(), progOps);
                 this.setVisible(false);
+                System.out.println("USER SIGNED IS STAFF NUMBER: "+user.getId()+"\tusername: " +
+                        " "+user.getLogin() +"\tfname: "+user.getfName()+"lname: "+user.getlName()+"\tbookings : "+user.getBookings());
+                if(user.isAdmin())
+                    System.out.println("ADMIN ACCESS ALLOWED");
+                else
+                    System.out.println("ADMIN ACCESS DENIED");
             }
             else {
                 JOptionPane.showMessageDialog(null, "ACCESS DENIED\nIncorrect username or password!", "ERROR",

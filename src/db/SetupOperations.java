@@ -331,7 +331,7 @@ public class SetupOperations {
             String createStaff = "CREATE TABLE staff " +
                     "(staffId NUMBER , lname VARCHAR(40), fname VARCHAR(40), " + "bookings NUMBER(4)," +
                     "phone VARCHAR(40), username VARCHAR(40),email VARCHAR(40), password VARCHAR(40), " +
-                    "securityQuestion  VARCHAR(40), securityAnswer  VARCHAR(40)," +
+                    "securityQuestion  VARCHAR(40), securityAnswer  VARCHAR(40), admin CHAR," +
                     "PRIMARY KEY (staffId))";
             pStmt = conn.prepareStatement(createStaff);
             System.out.println("Attempting to create staff ");
@@ -345,7 +345,7 @@ public class SetupOperations {
             // Insert data into Staff table
             String insertString = "INSERT INTO staff(staffId, lname, fname, bookings, phone, username, email, " +
                     "password, securityQuestion, " +
-                    "securityAnswer) values(staffId_seq.NextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "securityAnswer, admin) values(staffId_seq.NextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             String [] fnames = {"Joe","Mary","Frank","Vera","Barry","Adu","Pablo"};
             String [] lnames = {"Byrne","Hummins","Hogan","Cooke","Murphy","Panesh","Byrne"};
@@ -362,11 +362,14 @@ public class SetupOperations {
                 pStmt.setString(2, lnames[i]);
                 pStmt.setInt(3, random);
                 pStmt.setString(4, phoneList[i]);
-                pStmt.setString(5, "user");
+                pStmt.setString(5, "user"+(i+1));
                 pStmt.setString(6, emailList[i]);
                 pStmt.setString(7, "password");
                 pStmt.setString(8, "who am i");
                 pStmt.setString(9, "Peter");
+                pStmt.setString(10, "N");
+                if(i==0)
+                    pStmt.setString(10, "Y");
                 pStmt.executeQuery();
 
                 System.out.println("-----------------Staff "+i+" created");
@@ -442,48 +445,7 @@ public class SetupOperations {
             System.exit(1);
         }
     }
-//Does MAX players need to be stored in the DB, should it not just be a final static variable in Lane class?!
-    //also is laneName not pretty much the same thing as laneId.
-   /* public void createLanes() {
-        try
-        {
-            System.out.println("Inside Create Lanes Method");
-            // Create a Table
-            String create = "CREATE TABLE lanes " +
-                    "(laneId NUMBER PRIMARY KEY NOT NULL, laneName VARCHAR(10), maxPlayers NUMBER(1))";
-            pStmt = conn.prepareStatement(create);
-            pStmt.executeUpdate(create);
 
-            // Creating a sequence
-            String createseq = "create sequence laneId_seq increment by 1 start with 1";
-            pStmt = conn.prepareStatement(createseq);
-            pStmt.executeUpdate(createseq);
-
-            // Insert data into table
-            String insertString = "INSERT INTO lanes (laneId, laneName, maxPlayers)" +
-                    "VALUES (laneId_seq.nextVal, ?, ?)";
-            pStmt = conn.prepareStatement(insertString);
-
-            // Create 16 Lanes
-            for (int i = 0; i < 16; i ++) {
-                try {
-                    String lane = "Lane " + (i + 1);
-                    pStmt.setString(1, lane);
-                    pStmt.setInt(2, 6);
-                    pStmt.executeQuery();
-                }
-                catch (SQLException e) {
-                    System.out.print("SQL Exception " + e);
-                    System.exit(1);
-                }
-            }
-        }
-        catch (SQLException e)
-        {
-            System.out.print("SQL Exception " + e);
-            System.exit(1);
-        }
-    }*/
 
     public void createStock() {
         try {
@@ -735,11 +697,11 @@ public class SetupOperations {
                     //System.out.println("----------------- BOOKING "+ bookingCounter + "----------------------------");
 
                     //randomly assign a memid to a booking
-                    memberID = ran.nextInt(5)+1;
+                    memberID = ran.nextInt(9)+1;
                     pStmt.setInt(1, memberID);
                     //randomly assign a staffid to a booking
-                    staffID = ran.nextInt(5) + 1;
-                    pStmt.setInt(2, 1);
+                    staffID = ran.nextInt(6) + 1;
+                    pStmt.setInt(2, staffID);
                     //randomly assign number of players
                     numPlayers = ran.nextInt(16) + 1;
                     pStmt.setInt(3, numPlayers);
@@ -776,27 +738,29 @@ public class SetupOperations {
                     pStmt.setString(9, payMethod);
 
                     random = ran.nextInt(1);
-                    if(random == 0)
+                    if(random == 0) {
                         pricedPerHour = "Y";
+                    }
                     else
                         pricedPerHour = "N";
                     pStmt.setString(10, pricedPerHour);
 
                     random = ran.nextInt(1);
 
-                    if(random == 0)
+                    if(random == 0) {
                         fullyPaid = "N";
+                    }
                     else
                         fullyPaid = "Y";
 
                     bookingType = "";
-                    random = ran.nextInt(2)+1;
+                    random = ran.nextInt(2);
                     switch(random){
-                        case 1:  bookingType = "Group";
+                        case 0:  bookingType = "Group";
                             break;
-                        case 2:  bookingType = "Party";
+                        case 1:  bookingType = "Party";
                             break;
-                        case 3:  bookingType = "Walkin";
+                        case 2:  bookingType = "Walkin";
                             deposit = 0;
                             fullyPaid = "Y";
                             break;

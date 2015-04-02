@@ -17,14 +17,21 @@ public class Staff {
     private String secAnswer;
     private String start;
     private String finish;
+    private boolean admin;
 
-    public Staff(int id, String fName, String lName, int bookings, String start, String finish) {
+
+    public Staff(int id, String fName, String lName, int bookings, String access, String username) {
         this.id = id;
         this.fName = fName;
         this.lName = lName;
         this.bookings = bookings;
-        this.start = start;
-        this.finish = finish;
+//        this.start = start;
+//        this.finish = finish;
+        admin = false;
+
+        if(access.equals("Y"))
+            admin = true;
+        this.username = username;
     }
 
     //constructor for updating Staff
@@ -64,6 +71,7 @@ public class Staff {
         this.start = start;
         this.finish = finish;
     }
+
 
 
     public String getUsername() {
@@ -166,7 +174,11 @@ public class Staff {
         return bookings;
     }
 
-    public void setBookings(int bookings) {
-        this.bookings = bookings;
+    public void increaseBookings() {
+        this.bookings++;
+    }
+
+    public boolean isAdmin() {
+        return admin;
     }
 }

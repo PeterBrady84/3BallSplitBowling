@@ -20,6 +20,7 @@ public class MainProgramOperations {
     private java.util.Date juDate ;
     private DateTime dt;
     private String dateSelected;
+    public static Staff user;
     //public DateAndCalendar;
 
     public MainProgramOperations() {
@@ -318,7 +319,7 @@ public class MainProgramOperations {
             pStmt.executeUpdate();
 
             System.out.println("Staff added to DB");
-
+            //after a staff member is added to the database they are assigned a roster for the week
             try{
                 rSet = getStaffLastRow();
                 int id  = rSet.getInt("staffid");
@@ -387,6 +388,21 @@ public class MainProgramOperations {
         }
         return rSet;
     }
+    public Staff createUser(String s) {
+        System.out.println("Inside : searchStaff() in MainProgramOperations");
+        String sqlStatement = "SELECT staffid, fname, lname, bookings,admin, username  FROM Staff WHERE username = '" + s + "'";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+            if (rSet != null && rSet.next()) {
+                Staff user = new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6));
+                return user;
+            }
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return null;
+    }
 
     public ArrayList<String> staffLogin() {
         System.out.println("Inside : staffLogin() in MainProgramOperations");
@@ -398,6 +414,7 @@ public class MainProgramOperations {
             while(rSet.next()) {
                 pass.add(rSet.getString(1));
                 pass.add(rSet.getString(2));
+                pass.add(rSet.getString(10));
             }
         }
         catch (Exception e) {
@@ -481,7 +498,7 @@ public class MainProgramOperations {
     public ResultSet getLanes() {
         System.out.println("Inside : getLanes() in MainProgramOperations");
         try {
-            String queryString = "SELECT * FROM lanes ORDER BY laneId";
+            String queryString = "SELECT * FROM lane ORDER BY lanenumber";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
         } catch (Exception e) {
@@ -494,7 +511,7 @@ public class MainProgramOperations {
         System.out.println("Inside : getNumLaness() in MainProgramOperations");
         int num = 0;
         try {
-            String queryString = "SELECT count(*) FROM Lanes";
+            String queryString = "SELECT count(*) FROM Lane";
 
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
