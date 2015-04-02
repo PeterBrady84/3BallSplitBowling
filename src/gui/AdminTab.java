@@ -61,25 +61,25 @@ public class AdminTab extends JPanel implements ActionListener {
         printAll(getGraphics());//Extort print all content
          }
         else if(e.getSource() == games){
-            //this.setVisible(false);
-            /*GamesReportGUI gr = new GamesReportGUI(progOps);
-            JPanel staff = gr;*/
+            this.setVisible(false);
+            GamesReportGUI gr = new GamesReportGUI(progOps);
+            JPanel staff = gr;
             this.removeAll();
             this.add(staff);//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
         }
         else if(e.getSource() == members){
-            /*MembershipReportGUI mr = new MembershipReportGUI(progOps);
-            JPanel staff = mr;*/
+            MembershipReportGUI mr = new MembershipReportGUI(progOps);
+            JPanel staff = mr;
             this.removeAll();
             this.add(staff);//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
         }
         else {
-           /* FinancialReportsGUI fr = new FinancialReportsGUI(progOps);
-            JPanel staff = fr;*/
+           FinancialReportsGUI fr = new FinancialReportsGUI(progOps);
+            JPanel staff = fr;
             this.removeAll();
             this.add(staff);//Adding to content pane, not to Frame
             repaint();
