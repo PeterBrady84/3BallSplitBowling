@@ -158,6 +158,10 @@ public class MainScreen extends JFrame implements ActionListener {
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Members</body></html>", jp3);
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Stock</body></html>", jp4);
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Staff</body></html>", jp5);
+        if(!MainScreen.administrator){
+            jtp.setEnabled(false);
+            jtp.setBackgroundAt(5,Color.RED);
+        }
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Administrator</body></html>", jp6);
         p2.add(jtp, BorderLayout.CENTER);
         add(p2);

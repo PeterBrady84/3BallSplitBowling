@@ -323,8 +323,7 @@ public class SetupOperations {
     }
 
     //Method to create and populate Staff Table(pc)
-    public void createStaff()
-    {
+    public void createStaff() {
         try {
             System.out.println("Inside createStaff Method");
             // Create a Table
@@ -347,41 +346,59 @@ public class SetupOperations {
                     "password, securityQuestion, " +
                     "securityAnswer, admin) values(staffId_seq.NextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            String [] fnames = {"Joe","Mary","Frank","Vera","Barry","Adu","Pablo"};
-            String [] lnames = {"Byrne","Hummins","Hogan","Cooke","Murphy","Panesh","Byrne"};
-            String [] phoneList = {"012457735","087244555","01245741","05422157","01245441","0832454477","085757133"};
-            String [] emailList = {"byrner@hotmail.com","Hummins@gmail.com","Hogan@hotmail.com","Cooke@gmail.com","Murph@hotmail.comt","Panesh@hotmail.com","Byrne@hotmail.com"};
+            String[] fnames = {"Joe", "Mary", "Frank", "Vera", "Barry", "Adu", "Pablo"};
+            String[] lnames = {"Byrne", "Hummins", "Hogan", "Cooke", "Murphy", "Panesh", "Byrne"};
+            String[] phoneList = {"012457735", "087244555", "01245741", "05422157", "01245441", "0832454477", "085757133"};
+            String[] emailList = {"byrner@hotmail.com", "Hummins@gmail.com", "Hogan@hotmail.com", "Cooke@gmail.com", "Murph@hotmail.comt", "Panesh@hotmail.com", "Byrne@hotmail.com"};
             Random ran = new Random();
-            int random ;
+            int random;
 
             pStmt = conn.prepareStatement(insertString);
-            for(int i=0;i<fnames.length;i++) {
+            for (int i = 0; i < fnames.length; i++) {
                 //STAFF NUMBER 1
                 random = ran.nextInt(50);
                 pStmt.setString(1, fnames[i]);
                 pStmt.setString(2, lnames[i]);
-                pStmt.setInt(3, random);
+                pStmt.setInt(3, 0);
                 pStmt.setString(4, phoneList[i]);
-                pStmt.setString(5, "user"+(i+1));
+                pStmt.setString(5, "user" + (i + 1));
                 pStmt.setString(6, emailList[i]);
                 pStmt.setString(7, "password");
                 pStmt.setString(8, "who am i");
                 pStmt.setString(9, "Peter");
                 pStmt.setString(10, "N");
-                if(i==0)
+                if (i == 0)
                     pStmt.setString(10, "Y");
                 pStmt.executeQuery();
 
-                System.out.println("-----------------Staff "+i+" created");
+                System.out.println("-----------------Staff " + (i + 1) + " created");
             }
-
-
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             System.out.print("SQL Exception " + e);
             System.exit(1);
         }
+        //getBookingCount();
+    }
+
+    public void setBookingCount(){
+    try {
+                String countBookings = "UPDATE staff SET bookings = ? WHERE staffid = ?";
+                String getCount = "select count(staffid), staffid from bookings group by staffid";
+
+                pStmt = conn.prepareStatement(getCount);
+                PreparedStatement pStmtUpdate = conn.prepareStatement(countBookings);
+                rSet = pStmt.executeQuery();
+                while (rSet.next()) {
+                    pStmtUpdate.setInt(1, rSet.getInt(1));
+                    pStmtUpdate.setString(2, rSet.getString(2));
+                    System.out.println("OUTPUT RESULT SET WHEN COUNTING BOOKINGS      ========----------------");
+                    pStmtUpdate.executeQuery();
+                }
+        }
+            catch (SQLException e) {
+                System.out.print("NOT UPDATING STAFF BOOKINGS : SQL Exception " + e);
+                System.exit(1);
+            }
 
     }
 
@@ -697,10 +714,10 @@ public class SetupOperations {
                     //System.out.println("----------------- BOOKING "+ bookingCounter + "----------------------------");
 
                     //randomly assign a memid to a booking
-                    memberID = ran.nextInt(9)+1;
+                    memberID = ran.nextInt(10)+1;
                     pStmt.setInt(1, memberID);
                     //randomly assign a staffid to a booking
-                    staffID = ran.nextInt(6) + 1;
+                    staffID = ran.nextInt(7) + 1;
                     pStmt.setInt(2, staffID);
                     //randomly assign number of players
                     numPlayers = ran.nextInt(16) + 1;
@@ -745,7 +762,7 @@ public class SetupOperations {
                         pricedPerHour = "N";
                     pStmt.setString(10, pricedPerHour);
 
-                    random = ran.nextInt(1);
+                    random = ran.nextInt(2);
 
                     if(random == 0) {
                         fullyPaid = "N";
@@ -754,7 +771,7 @@ public class SetupOperations {
                         fullyPaid = "Y";
 
                     bookingType = "";
-                    random = ran.nextInt(2);
+                    random = ran.nextInt(3);
                     switch(random){
                         case 0:  bookingType = "Group";
                             break;
@@ -822,6 +839,7 @@ public class SetupOperations {
             System.out.print("DID NOT CREATE A BOOKING :  SQL Exception " + e);
         }
 
+        setBookingCount();
     }
     // I know this seems a ridiciously long method that does feck all but i couldnt find a think of a more straightforward
     //way of assigning a time slot to a time
