@@ -38,15 +38,10 @@ public class MainScreen extends JFrame implements ActionListener {
     private DateTime dt;
     private Format formatter;
     private Alley list;
-    protected static Staff UserLogged;
-    protected static boolean administrator;
 
-    public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b, ArrayList<Lane> l, MainProgramOperations po) {
+    public MainScreen(ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b, ArrayList<Lane> l, MainProgramOperations po) {
         System.out.println("Inside : MainScreenGUI");
 
-        UserLogged = user;
-        if (user.isAdmin()) administrator = true;
-        else administrator = false;
         this.progOps = po;
 
         this.memList = m;
@@ -158,19 +153,22 @@ public class MainScreen extends JFrame implements ActionListener {
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Members</body></html>", jp3);
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Stock</body></html>", jp4);
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Staff</body></html>", jp5);
-        if(!MainScreen.administrator){
-            jtp.setEnabled(false);
-            jtp.setBackgroundAt(5,Color.RED);
-        }
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Administrator</body></html>", jp6);
+
         p2.add(jtp, BorderLayout.CENTER);
+        if(!LoginGUI.user.isAdmin()){
+            jtp.setEnabledAt(4, false);
+            jtp.setEnabledAt(5, false);
+            jtp.setToolTipTextAt(4,"Staff tab DISABLED: \nContact admin for access");
+            jtp.setToolTipTextAt(5, "TAB DISABLED: \nADMIN access ONLY!!");
+        }
         add(p2);
 
         p3 = new JPanel();
         p3.setPreferredSize(new Dimension(800, 100));
         p3.setBackground(Color.WHITE);
 
-        String userID = "USERNAME: "+user.getUsername();
+        String userID = "USERNAME: "+LoginGUI.user.getUsername();
         System.out.println(userID);
         loggedIn = new JLabel(userID);
         p3.add(loggedIn);

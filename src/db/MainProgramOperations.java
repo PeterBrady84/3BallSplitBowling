@@ -404,23 +404,46 @@ public class MainProgramOperations {
         return null;
     }
 
-    public ArrayList<String> staffLogin() {
+    /*public ArrayList<String> staffLogin() {
         System.out.println("Inside : staffLogin() in MainProgramOperations");
-        ArrayList<String> pass = new ArrayList<String>();
-        String queryString = "SELECT username, password FROM staff order by staffId";
+        ArrayList<String> usernames = new ArrayList<String>();
+        String queryString = "SELECT username FROM staff order by staffId";
         try {
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
             while(rSet.next()) {
-                pass.add(rSet.getString(1));
-                pass.add(rSet.getString(2));
-                pass.add(rSet.getString(10));
+                usernames.add(rSet.getString(1));
+
+                System.out.println("LIST OF log in resultset------------\n name:" +rSet.getString(1)
+                +"\t Password = "+rSet.getString(2));
             }
         }
         catch (Exception e) {
             System.out.println(e);
         }
-        return pass;
+        return usernames;
+    }*/
+
+
+    public boolean checkPass(String username, String password) {
+        boolean passwordsMatch = false;
+        System.out.println("Inside : checkPass() in MainProgramOperations");
+
+        String getPassword = "SELECT password FROM staff where username = '"+username+"'";
+        try {
+            pStmt = conn.prepareStatement(getPassword);
+            rSet = pStmt.executeQuery();
+            rSet.next();
+            if(password.equals(rSet.getString(1))) {
+                passwordsMatch = true;
+                System.out.println("       inside SELECT password FROM staff in checkPass method. Result set = "+rSet.getString(1));
+                return passwordsMatch;
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+        return passwordsMatch;
     }
 
     public ArrayList<String> queryLogin() {

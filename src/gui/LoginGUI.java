@@ -135,15 +135,26 @@ public class LoginGUI extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    public boolean login() {
+    /*public boolean login() {
         System.out.println("Inside : login() in LoginGUI");
         boolean login = false;
-        ArrayList<String> pass = progOps.staffLogin();
-        for (int i = 0; i < pass.size(); i++) {
-            if (pass.get(i).equals(userTxt.getText()) && pass.get(i + 1).equals(passTxt.getText())) {
+        ArrayList<String> passwords = progOps.staffLogin();
+        ArrayList<String> users = progOps.staffLogin();
+        for (int i = 0; i < passwords.size(); i++) {
+            if (users.get(i).equals(userTxt.getText()) && passwords.get(i).equals(passTxt.getText())) {
                 login = true;
             }
         }
+        return login;
+    }*/
+    public boolean login() {
+        boolean login = false;
+        if(progOps.checkPass(userTxt.getText(),passTxt.getText())) {
+            System.out.println("THE PASSWORDS MATCH AND login is set as true");
+            return login = true;
+        }
+        System.out.println("THE PASSWORDS DO NOT MATCH AND login is set as false");
+
         return login;
     }
 
@@ -154,7 +165,7 @@ public class LoginGUI extends JFrame implements ActionListener {
             if(login()==true) {
                 Alley a = new Alley(progOps);
                 Staff user = progOps.createUser(userTxt.getText());
-                MainScreen ms = new MainScreen(user, a.getMemberList(), a.getStaffList(), a.getStockList(), a.getBookingList(), a.getLaneList(), progOps);
+                MainScreen ms = new MainScreen(a.getMemberList(), a.getStaffList(), a.getStockList(), a.getBookingList(), a.getLaneList(), progOps);
                 this.setVisible(false);
                 System.out.println("USER SIGNED IS STAFF NUMBER: "+user.getId()+"\tusername: " +
                         " "+user.getLogin() +"\tfname: "+user.getfName()+"lname: "+user.getlName()+"\tbookings : "+user.getBookings());
