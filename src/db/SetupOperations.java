@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -703,6 +704,17 @@ public class SetupOperations {
             String fullyPaid, payMethod, pricedPerHour;
             String bookingType;
             final int SLOTS_PER_HOUR = 4;
+            //Loop to populate array of times that can be compared to find the matching timeslot
+            ArrayList<String> times = new ArrayList<String>();
+            String []minutes = {":00",":15",":30",":45"};
+            String slot = "";
+            final int HOURS_OPEN = 12;
+            for(int hour = 12; hour< HOURS_OPEN+12;hour++){
+                for (String min : minutes) {
+                    slot = hour + min;
+                    times.add(slot);
+                }
+            }
 
             //loop to fill table for one month
             for (int i = 0; i < ONE_MONTH; i++) {
@@ -806,7 +818,7 @@ public class SetupOperations {
 
                     //Loop to assign lanes to the booking
                     for(int lanes = 0; lanes<numLanes; lanes++) {
-                        int timeslot = assignTimeSlot(now);
+                        int timeslot = assignTimeSlot(times, now);
                         for(int index = 0;index<hours_games*SLOTS_PER_HOUR;index++){
                             String name = "lane " + laneNumber;
                             pStmt2.setInt(1, laneNumber);
@@ -840,159 +852,18 @@ public class SetupOperations {
         }
 
         setBookingCount();
+
     }
-    // I know this seems a ridiciously long method that does feck all but i couldnt find a think of a more straightforward
-    //way of assigning a time slot to a time
-    public int assignTimeSlot(String time){
+
+    public int assignTimeSlot(ArrayList list, String selectedTime) {
         int timeslot = 0;
-        if (time.equals("12:00:00")) {
-            timeslot = 1;
-
-        } else if (time.equals("12:15:00")) {
-            timeslot = 2;
-
-        } else if (time.equals("12:30:00")) {
-            timeslot = 3;
-
-        } else if (time.equals("12:45:00")) {
-            timeslot = 4;
-
-        } else if (time.equals("13:00:00")) {
-            timeslot = 5;
-
-        } else if (time.equals("13:15:00")) {
-            timeslot = 6;
-
-        } else if (time.equals("13:30:00")) {
-            timeslot = 7;
-
-        } else if (time.equals("13:45:00")) {
-            timeslot = 8;
-
-        } else if (time.equals("14:00:00")) {
-            timeslot = 9;
-
-        } else if (time.equals("14:15:00")) {
-            timeslot = 10;
-
-        } else if (time.equals("14:30:00")) {
-            timeslot = 11;
-
-        } else if (time.equals("14:45:00")) {
-            timeslot = 12;
-
-        } else if (time.equals("15:00:00")) {
-            timeslot = 13;
-
-        } else if (time.equals("15:15:00")) {
-            timeslot = 14;
-
-        } else if (time.equals("15:30:00")) {
-            timeslot = 15;
-
-        } else if (time.equals("15:45:00")) {
-            timeslot = 16;
-
-        } else if (time.equals("16:00:00")) {
-            timeslot = 17;
-
-        } else if (time.equals("16:15:00")) {
-            timeslot = 18;
-
-        } else if (time.equals("16:30:00")) {
-            timeslot = 19;
-
-        } else if (time.equals("16:45:00")) {
-            timeslot = 20;
-
-        } else if (time.equals("17:00:00")) {
-            timeslot = 21;
-
-        } else if (time.equals("17:15:00")) {
-            timeslot = 21;
-
-        } else if (time.equals("17:30:00")) {
-            timeslot = 23;
-
-        } else if (time.equals("17:45:00")) {
-            timeslot = 24;
-
-        } else if (time.equals("18:00:00")) {
-            timeslot = 25;
-
-        } else if (time.equals("18:15:00")) {
-            timeslot = 26;
-
-        } else if (time.equals("18:30:00")) {
-            timeslot = 27;
-
-        } else if (time.equals("18:45:00")) {
-            timeslot = 28;
-
-        } else if (time.equals("19:00:00")) {
-            timeslot = 29;
-
-        } else if (time.equals("19:15:00")) {
-            timeslot = 30;
-
-        } else if (time.equals("19:30:00")) {
-            timeslot = 31;
-
-        } else if (time.equals("19:45:00")) {
-            timeslot = 32;
-
-        } else if (time.equals("20:00:00")) {
-            timeslot = 33;
-
-        } else if (time.equals("20:15:00")) {
-            timeslot = 34;
-
-        } else if (time.equals("20:30:00")) {
-            timeslot = 35;
-
-        } else if (time.equals("20:45:00")) {
-            timeslot = 36;
-
-        } else if (time.equals("21:00:00")) {
-            timeslot = 37;
-
-        } else if (time.equals("21:15:00")) {
-            timeslot = 38;
-
-        } else if (time.equals("21:30:00")) {
-            timeslot = 39;
-
-        } else if (time.equals("21:45:00")) {
-            timeslot = 40;
-
-        } else if (time.equals("22:00:00")) {
-            timeslot = 41;
-
-        } else if (time.equals("22:15:00")) {
-            timeslot = 42;
-
-        } else if (time.equals("22:30:00")) {
-            timeslot = 43;
-
-        } else if (time.equals("22:45:00")) {
-            timeslot = 44;
-
-        } else if (time.equals("23:00:00")) {
-            timeslot = 45;
-
-        } else if (time.equals("23:15:00")) {
-            timeslot = 46;
-
-        } else if (time.equals("23:30:00")) {
-            timeslot = 47;
-
-        } else if (time.equals("23:45:00")) {
-            timeslot = 48;
-
+        ArrayList <String> times = list;
+        for(String time:times){
+            if(selectedTime.equals(time))
+              timeslot=times.indexOf(time)+1;
         }
         return timeslot;
     }
-
 
     public void queryTables() {
         queryMembers();
