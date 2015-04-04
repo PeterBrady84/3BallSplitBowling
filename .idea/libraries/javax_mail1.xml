@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="ojdbc61">
+  <library name="javax.mail1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/out/production/3BallSplitBowling/lib/ojdbc6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/lib/javax.mail.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

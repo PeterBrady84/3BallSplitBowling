@@ -389,13 +389,14 @@ public class MainProgramOperations {
         return rSet;
     }
     public Staff createUser(String s) {
-        System.out.println("Inside : searchStaff() in MainProgramOperations");
+        System.out.println("Inside : createStaff() in MainProgramOperations");
         String sqlStatement = "SELECT staffid, fname, lname, bookings,admin, username  FROM Staff WHERE username = '" + s + "'";
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
             if (rSet != null && rSet.next()) {
                 Staff user = new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6));
+                System.out.printf("USER returned = %d, %s,%s,%d,%s,%s\n",rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6));
                 return user;
             }
         } catch (Exception ex) {

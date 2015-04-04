@@ -21,7 +21,8 @@ public class LoginGUI extends JFrame implements ActionListener {
     private JButton login, forgot, exit;
     private JTextField userTxt;
     private JPasswordField passTxt;
-    protected static Staff user;
+    public static Staff user;
+    public static boolean administrator;
 
     public LoginGUI(MainProgramOperations po) {
         System.out.println("Inside : LoginGUI");
@@ -163,9 +164,12 @@ public class LoginGUI extends JFrame implements ActionListener {
         System.out.println("Inside : actionPerformed() in LoginGUI");
         if(ae.getSource()==login) {
             if(login()==true) {
-                Alley a = new Alley(progOps);
                 Staff user = progOps.createUser(userTxt.getText());
-                MainScreen ms = new MainScreen(a.getMemberList(), a.getStaffList(), a.getStockList(), a.getBookingList(), a.getLaneList(), progOps);
+                System.out.println("      WHAT IS THE VALUE OF isadmin:   "+user.isAdmin());
+                System.out.println("    +++++++++++++++++          LOG IN PRESSED  ==============   +++++++++++++++++++");
+                Alley a = new Alley(progOps);
+
+                MainScreen ms = new MainScreen(user, a.getMemberList(), a.getStaffList(), a.getStockList(), a.getBookingList(), a.getLaneList(), progOps);
                 this.setVisible(false);
                 System.out.println("USER SIGNED IS STAFF NUMBER: "+user.getId()+"\tusername: " +
                         " "+user.getLogin() +"\tfname: "+user.getfName()+"lname: "+user.getlName()+"\tbookings : "+user.getBookings());

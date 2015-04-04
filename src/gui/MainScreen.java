@@ -39,8 +39,13 @@ public class MainScreen extends JFrame implements ActionListener {
     private Format formatter;
     private Alley list;
 
-    public MainScreen(ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b, ArrayList<Lane> l, MainProgramOperations po) {
+    public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b, ArrayList<Lane> l, MainProgramOperations po) {
         System.out.println("Inside : MainScreenGUI");
+
+        /*boolean administrator;
+        UserLogged = user;
+        if (user.isAdmin()) administrator = true;
+        else administrator = false;*/
 
         this.progOps = po;
 
@@ -156,7 +161,8 @@ public class MainScreen extends JFrame implements ActionListener {
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Administrator</body></html>", jp6);
 
         p2.add(jtp, BorderLayout.CENTER);
-        if(!LoginGUI.user.isAdmin()){
+
+        if(!user.isAdmin()){
             jtp.setEnabledAt(4, false);
             jtp.setEnabledAt(5, false);
             jtp.setToolTipTextAt(4,"Staff tab DISABLED: \nContact admin for access");
@@ -168,7 +174,7 @@ public class MainScreen extends JFrame implements ActionListener {
         p3.setPreferredSize(new Dimension(800, 100));
         p3.setBackground(Color.WHITE);
 
-        String userID = "USERNAME: "+LoginGUI.user.getUsername();
+        String userID = "USERNAME: "+user.getUsername();
         System.out.println(userID);
         loggedIn = new JLabel(userID);
         p3.add(loggedIn);
