@@ -1,5 +1,6 @@
 package gui;
 
+import controller.PinAnimation;
 import db.MainProgramOperations;
 import model.Alley;
 import model.Staff;
@@ -164,6 +165,9 @@ public class LoginGUI extends JFrame implements ActionListener {
         System.out.println("Inside : actionPerformed() in LoginGUI");
         if(ae.getSource()==login) {
             if(login()==true) {
+                PinAnimation pin = new PinAnimation();
+                Thread animate = new Thread(pin);
+                animate.run();
                 Staff user = progOps.createUser(userTxt.getText());
                 System.out.println("      WHAT IS THE VALUE OF isadmin:   "+user.isAdmin());
                 System.out.println("    +++++++++++++++++          LOG IN PRESSED  ==============   +++++++++++++++++++");

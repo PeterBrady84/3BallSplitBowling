@@ -680,8 +680,6 @@ public class SetupOperations {
                     "deposit) VALUES (bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(insertString);
 
-
-
             String insertLanes = "INSERT INTO lane(lanenumber, bookingid, today, lanename, inuse, timeslot)values(?,?,?,?,?,?)";
 
             PreparedStatement pStmt2 = conn.prepareStatement(insertLanes);

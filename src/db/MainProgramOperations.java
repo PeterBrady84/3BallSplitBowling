@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -678,6 +679,72 @@ public class MainProgramOperations {
     }
 
     public void addBooking(Booking b) {
+        try {
+            String insertString = "insert into bookings(\n" +
+                    "bookingId , \n" +
+                    "memId ,\n" +
+                    "staffId ,\n" +
+                    "numPlayers ,\n" +
+                    "numlanes,\n" +
+                    "games_hours ,\n" +
+                    "fromDateTime , \n" +
+                    "toDateTime ,\n" +
+                    "numMembers ,\n" +
+                    "paymentMethod,\n" +
+                    "pricingPerHour ,\n" +
+                    "fullypaid ,\n" +
+                    "bookingType ,\n" +
+                    "totalprice ,\n" +
+                    "deposit) VALUES (bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            pStmt = conn.prepareStatement(insertString);
+
+            pStmt.setInt(1,b.getId());
+            pStmt.setInt(2,b.getStaffId());
+            pStmt.setInt(3,b.getNumPlayers());
+            pStmt.setInt(4,b.getNumLanes());
+            pStmt.setInt(5,b.getHours_games());
+            pStmt.setTimestamp(6, Timestamp.valueOf(b.getFromDateTime()));
+            pStmt.setTimestamp(7, Timestamp.valueOf(b.getToDateTime()));
+            pStmt.setString(8, b.getPaymentMethod());
+            if (b.isPricingPerHour())
+                pStmt.setString(9,"Y");
+            else
+                pStmt.setString(9,"N");
+            pStmt.setDouble(15,b.getTotalPrice());
+            pStmt.setDouble(14,b.getDeposit());
+            pStmt.executeQuery();
+
+            String insertLanes = "INSERT INTO lane(lanenumber, bookingid, today, lanename, inuse, timeslot)values(?,?,?,?,?,?)";
+            int laneNumber = new Random().nextInt(16)+1;
+            PreparedStatement pStmt2 = conn.prepareStatement(insertLanes);
+            for(int lanes = 0; lanes<b.getNumLanes(); lanes++) {
+                int timeslot = b.assignTimeSlot(b.getFromDateTime());
+                for(int index = 0;index<b.getHours_games()*4;index++){
+                    String name = "lane " + laneNumber;
+                    pStmt2.setInt(1, laneNumber);
+                    pStmt2.setInt(2, b.getId());
+                    System.out.print("\t"+name);
+                    pStmt2.setTimestamp(3, Timestamp.valueOf(b.getBookingDate()));
+                    pStmt2.setString(4, name);
+                    pStmt2.setString(5, "N");
+                    pStmt2.setInt(6, timeslot);
+                    timeslot++;
+                    if (laneNumber > 16)
+                        laneNumber = 1;
+
+                    pStmt2.executeQuery();
+
+                    //System.out.println("\tLane number: " + laneNumber + "\t timeslot = " + timeslot);
+                }
+                laneNumber++;
+            }
+
+        } catch (Exception e) {
+            System.out.println("Problem adding booking + "+e);
+        }
+    }
+
+   /* public void addBooking(Booking b) {
         System.out.println("Inside : addBooking() in MainProgramOperations");
         System.out.println(b.getFromDateTime());
         String start = b.getFromDateTime() + ":00";
@@ -696,7 +763,7 @@ public class MainProgramOperations {
         } catch (Exception se) {
             System.out.println(se);
         }
-    }
+    }*/
 
     public void updateBooking(int b, int m, int l, String s, String e) {
         System.out.println("Inside : updateBooking() in MainProgramOperations");
