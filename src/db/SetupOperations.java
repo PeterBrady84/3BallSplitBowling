@@ -704,13 +704,14 @@ public class SetupOperations {
             final int SLOTS_PER_HOUR = 4;
             //Loop to populate array of times that can be compared to find the matching timeslot
             ArrayList<String> times = new ArrayList<String>();
-            String []minutes = {":00",":15",":30",":45"};
+            //String []minutes = {":00:00",":15:00",":30:00",":45:00"};
             String slot = "";
             final int HOURS_OPEN = 12;
             for(int hour = 12; hour< HOURS_OPEN+12;hour++){
-                for (String min : minutes) {
+                for (String min : startTimes) {
                     slot = hour + min;
                     times.add(slot);
+                    System.out.println("\t\tTIME ARRAY: "+slot);
                 }
             }
 
@@ -738,10 +739,10 @@ public class SetupOperations {
                     //randomly assign a startTime to a booking
                     String start = dt.toString("yyyy-MM-dd ");
                     bookingDate = Timestamp.valueOf(start+"00:00:00");
-                    random = ran.nextInt(12)+11;
-                    String now = random+startTimes[ran.nextInt(startTimes.length)];
+                    random = ran.nextInt(times.size());
+                    String now = times.get(random);
                     start = start + now;
-                    //System.out.println("Start time: "+start);
+                    System.out.println("Start time: "+start);
                     time = Timestamp.valueOf(start);
                     pStmt.setTimestamp(6, time);
 
@@ -816,7 +817,10 @@ public class SetupOperations {
 
                     //Loop to assign lanes to the booking
                     for(int lanes = 0; lanes<numLanes; lanes++) {
+                        System.out.println("calling assign Timeslot method: ");
                         int timeslot = assignTimeSlot(times, now);
+                        System.out.println("The timeslot assigned here = "+timeslot+"\nthe lanenumber = "
+                        +laneNumber);
                         for(int index = 0;index<hours_games*SLOTS_PER_HOUR;index++){
                             String name = "lane " + laneNumber;
                             pStmt2.setInt(1, laneNumber);
@@ -851,15 +855,23 @@ public class SetupOperations {
 
         setBookingCount();
 
+
     }
 
     public int assignTimeSlot(ArrayList list, String selectedTime) {
         int timeslot = 0;
         ArrayList <String> times = list;
+        boolean match = false;
         for(String time:times){
-            if(selectedTime.equals(time))
-              timeslot=times.indexOf(time)+1;
+                if(selectedTime.equals(time)){
+                    match = true;
+                    timeslot = times.indexOf(time)+1;
+                    System.out.println("IF THEY MATCH THE TIMESLOT IS "+timeslot);
+                    return timeslot;
+
+            }
         }
+
         return timeslot;
     }
 

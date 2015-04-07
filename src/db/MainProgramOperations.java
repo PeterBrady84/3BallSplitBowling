@@ -734,7 +734,7 @@ public class MainProgramOperations {
 
                     pStmt2.executeQuery();
 
-                    //System.out.println("\tLane number: " + laneNumber + "\t timeslot = " + timeslot);
+                    System.out.println("\tLane number: " + laneNumber + "\t timeslot = " + timeslot);
                 }
                 laneNumber++;
             }
