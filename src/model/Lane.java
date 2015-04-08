@@ -8,6 +8,10 @@ public class Lane {
     private int id;
     private String laneName;
     private final static int maxPlayers = 6;
+    private int timeslot;
+    private String selectedDate;
+    private int bookingId;
+
 
     public Lane(int i, String l,int p) {
         //System.out.println("Inside : LaneModel");
@@ -19,6 +23,14 @@ public class Lane {
     public Lane(String l,int p) {
         this.laneName = l;
         //this.maxPlayers = p;
+    }
+
+    public Lane(int id, int timeslot, String selectedDate, int bookingId) {
+        this.id = id;
+        laneName = "Lane "+id;
+        this.timeslot = timeslot;
+        this.selectedDate = selectedDate;
+        this.bookingId = bookingId;
     }
 
     public int getId() {

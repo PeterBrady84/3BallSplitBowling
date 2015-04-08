@@ -78,7 +78,7 @@ public class AdminTab extends JPanel implements ActionListener {
             printAll(getGraphics());//Extort print all content
         }
         else {
-           FinancialReportsGUI fr = new FinancialReportsGUI(progOps);
+            FinancialReportsGUI fr = new FinancialReportsGUI(progOps);
             JPanel staff = fr;
             this.removeAll();
             this.add(staff);//Adding to content pane, not to Frame

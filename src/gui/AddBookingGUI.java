@@ -85,6 +85,9 @@ public class AddBookingGUI implements ActionListener {
                         a.addBooking();
                         bTab.refreshTable();
                         JOptionPane.showMessageDialog(null, "New Booking Data Saved");
+                        /*int bookingCount = LoginGUI.user.getBookings();
+                        bookingCount++;
+                        progOps.increaseBooking(bookingCount);*/
                         addD.setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(null,

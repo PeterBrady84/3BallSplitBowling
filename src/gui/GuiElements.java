@@ -9,6 +9,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * Created by Peter on 10/03/2015.
@@ -258,7 +259,7 @@ public class GuiElements implements ItemListener {
         JDatePanelImpl datePanel;
         JDatePickerImpl datePicker;
         JLabel idLbl, memIdLbl, nameLbl, laneLbl, dateLbl, startTime, endTime;
-        final String [] HOURS = {"10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
+        final String [] HOURS = {"12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
         final String [] MINUTES = {"00", "15", "30", "45"};
         JPanel addPanel, topPanel;
 
@@ -337,7 +338,6 @@ public class GuiElements implements ItemListener {
         startTimeTxt.setBackground(Color.WHITE);
         startTimeTxt.setEditable(false);
         topPanel.add(startTimeTxt);
-
         endTime = new JLabel("End Time:");
         topPanel.add(endTime);
 
@@ -380,4 +380,7 @@ public class GuiElements implements ItemListener {
         startTimeTxt.setText(HRS24[startHr.getSelectedIndex()] + ":" + startMin.getSelectedItem().toString());
         endTimeTxt.setText(HRS24[endHr.getSelectedIndex()] + ":" + endMin.getSelectedItem().toString());
     }
+
+
+
 }

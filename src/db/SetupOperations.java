@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -323,8 +324,7 @@ public class SetupOperations {
     }
 
     //Method to create and populate Staff Table(pc)
-    public void createStaff()
-    {
+    public void createStaff() {
         try {
             System.out.println("Inside createStaff Method");
             // Create a Table
@@ -347,41 +347,59 @@ public class SetupOperations {
                     "password, securityQuestion, " +
                     "securityAnswer, admin) values(staffId_seq.NextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-            String [] fnames = {"Joe","Mary","Frank","Vera","Barry","Adu","Pablo"};
-            String [] lnames = {"Byrne","Hummins","Hogan","Cooke","Murphy","Panesh","Byrne"};
-            String [] phoneList = {"012457735","087244555","01245741","05422157","01245441","0832454477","085757133"};
-            String [] emailList = {"byrner@hotmail.com","Hummins@gmail.com","Hogan@hotmail.com","Cooke@gmail.com","Murph@hotmail.comt","Panesh@hotmail.com","Byrne@hotmail.com"};
+            String[] fnames = {"Joe", "Mary", "Frank", "Vera", "Barry", "Adu", "Pablo"};
+            String[] lnames = {"Byrne", "Hummins", "Hogan", "Cooke", "Murphy", "Panesh", "Byrne"};
+            String[] phoneList = {"012457735", "087244555", "01245741", "05422157", "01245441", "0832454477", "085757133"};
+            String[] emailList = {"byrner@hotmail.com", "Hummins@gmail.com", "Hogan@hotmail.com", "Cooke@gmail.com", "Murph@hotmail.comt", "Panesh@hotmail.com", "Byrne@hotmail.com"};
             Random ran = new Random();
-            int random ;
+            int random;
 
             pStmt = conn.prepareStatement(insertString);
-            for(int i=0;i<fnames.length;i++) {
+            for (int i = 0; i < fnames.length; i++) {
                 //STAFF NUMBER 1
                 random = ran.nextInt(50);
                 pStmt.setString(1, fnames[i]);
                 pStmt.setString(2, lnames[i]);
-                pStmt.setInt(3, random);
+                pStmt.setInt(3, 0);
                 pStmt.setString(4, phoneList[i]);
-                pStmt.setString(5, "user"+(i+1));
+                pStmt.setString(5, "user" + (i + 1));
                 pStmt.setString(6, emailList[i]);
                 pStmt.setString(7, "password");
                 pStmt.setString(8, "who am i");
                 pStmt.setString(9, "Peter");
                 pStmt.setString(10, "N");
-                if(i==0)
+                if (i == 0)
                     pStmt.setString(10, "Y");
                 pStmt.executeQuery();
 
-                System.out.println("-----------------Staff "+i+" created");
+                System.out.println("-----------------Staff " + (i + 1) + " created");
             }
-
-
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             System.out.print("SQL Exception " + e);
             System.exit(1);
         }
+        //getBookingCount();
+    }
+
+    public void setBookingCount(){
+    try {
+                String countBookings = "UPDATE staff SET bookings = ? WHERE staffid = ?";
+                String getCount = "select count(staffid), staffid from bookings group by staffid";
+
+                pStmt = conn.prepareStatement(getCount);
+                PreparedStatement pStmtUpdate = conn.prepareStatement(countBookings);
+                rSet = pStmt.executeQuery();
+                while (rSet.next()) {
+                    pStmtUpdate.setInt(1, rSet.getInt(1));
+                    pStmtUpdate.setString(2, rSet.getString(2));
+                    System.out.println("OUTPUT RESULT SET WHEN COUNTING BOOKINGS      ========----------------");
+                    pStmtUpdate.executeQuery();
+                }
+        }
+            catch (SQLException e) {
+                System.out.print("NOT UPDATING STAFF BOOKINGS : SQL Exception " + e);
+                System.exit(1);
+            }
 
     }
 
@@ -662,8 +680,6 @@ public class SetupOperations {
                     "deposit) VALUES (bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(insertString);
 
-
-
             String insertLanes = "INSERT INTO lane(lanenumber, bookingid, today, lanename, inuse, timeslot)values(?,?,?,?,?,?)";
 
             PreparedStatement pStmt2 = conn.prepareStatement(insertLanes);
@@ -686,6 +702,18 @@ public class SetupOperations {
             String fullyPaid, payMethod, pricedPerHour;
             String bookingType;
             final int SLOTS_PER_HOUR = 4;
+            //Loop to populate array of times that can be compared to find the matching timeslot
+            ArrayList<String> times = new ArrayList<String>();
+            //String []minutes = {":00:00",":15:00",":30:00",":45:00"};
+            String slot = "";
+            final int HOURS_OPEN = 12;
+            for(int hour = 12; hour< HOURS_OPEN+12;hour++){
+                for (String min : startTimes) {
+                    slot = hour + min;
+                    times.add(slot);
+                    System.out.println("\t\tTIME ARRAY: "+slot);
+                }
+            }
 
             //loop to fill table for one month
             for (int i = 0; i < ONE_MONTH; i++) {
@@ -697,10 +725,10 @@ public class SetupOperations {
                     //System.out.println("----------------- BOOKING "+ bookingCounter + "----------------------------");
 
                     //randomly assign a memid to a booking
-                    memberID = ran.nextInt(9)+1;
+                    memberID = ran.nextInt(10)+1;
                     pStmt.setInt(1, memberID);
                     //randomly assign a staffid to a booking
-                    staffID = ran.nextInt(6) + 1;
+                    staffID = ran.nextInt(7) + 1;
                     pStmt.setInt(2, staffID);
                     //randomly assign number of players
                     numPlayers = ran.nextInt(16) + 1;
@@ -711,10 +739,10 @@ public class SetupOperations {
                     //randomly assign a startTime to a booking
                     String start = dt.toString("yyyy-MM-dd ");
                     bookingDate = Timestamp.valueOf(start+"00:00:00");
-                    random = ran.nextInt(12)+11;
-                    String now = random+startTimes[ran.nextInt(startTimes.length)];
+                    random = ran.nextInt(times.size());
+                    String now = times.get(random);
                     start = start + now;
-                    //System.out.println("Start time: "+start);
+                    System.out.println("Start time: "+start);
                     time = Timestamp.valueOf(start);
                     pStmt.setTimestamp(6, time);
 
@@ -745,7 +773,7 @@ public class SetupOperations {
                         pricedPerHour = "N";
                     pStmt.setString(10, pricedPerHour);
 
-                    random = ran.nextInt(1);
+                    random = ran.nextInt(2);
 
                     if(random == 0) {
                         fullyPaid = "N";
@@ -754,7 +782,7 @@ public class SetupOperations {
                         fullyPaid = "Y";
 
                     bookingType = "";
-                    random = ran.nextInt(2);
+                    random = ran.nextInt(3);
                     switch(random){
                         case 0:  bookingType = "Group";
                             break;
@@ -789,7 +817,10 @@ public class SetupOperations {
 
                     //Loop to assign lanes to the booking
                     for(int lanes = 0; lanes<numLanes; lanes++) {
-                        int timeslot = assignTimeSlot(now);
+                        System.out.println("calling assign Timeslot method: ");
+                        int timeslot = assignTimeSlot(times, now);
+                        System.out.println("The timeslot assigned here = "+timeslot+"\nthe lanenumber = "
+                        +laneNumber);
                         for(int index = 0;index<hours_games*SLOTS_PER_HOUR;index++){
                             String name = "lane " + laneNumber;
                             pStmt2.setInt(1, laneNumber);
@@ -822,159 +853,27 @@ public class SetupOperations {
             System.out.print("DID NOT CREATE A BOOKING :  SQL Exception " + e);
         }
 
+        setBookingCount();
+
+
     }
-    // I know this seems a ridiciously long method that does feck all but i couldnt find a think of a more straightforward
-    //way of assigning a time slot to a time
-    public int assignTimeSlot(String time){
+
+    public int assignTimeSlot(ArrayList list, String selectedTime) {
         int timeslot = 0;
-        if (time.equals("12:00:00")) {
-            timeslot = 1;
+        ArrayList <String> times = list;
+        boolean match = false;
+        for(String time:times){
+                if(selectedTime.equals(time)){
+                    match = true;
+                    timeslot = times.indexOf(time)+1;
+                    System.out.println("IF THEY MATCH THE TIMESLOT IS "+timeslot);
+                    return timeslot;
 
-        } else if (time.equals("12:15:00")) {
-            timeslot = 2;
-
-        } else if (time.equals("12:30:00")) {
-            timeslot = 3;
-
-        } else if (time.equals("12:45:00")) {
-            timeslot = 4;
-
-        } else if (time.equals("13:00:00")) {
-            timeslot = 5;
-
-        } else if (time.equals("13:15:00")) {
-            timeslot = 6;
-
-        } else if (time.equals("13:30:00")) {
-            timeslot = 7;
-
-        } else if (time.equals("13:45:00")) {
-            timeslot = 8;
-
-        } else if (time.equals("14:00:00")) {
-            timeslot = 9;
-
-        } else if (time.equals("14:15:00")) {
-            timeslot = 10;
-
-        } else if (time.equals("14:30:00")) {
-            timeslot = 11;
-
-        } else if (time.equals("14:45:00")) {
-            timeslot = 12;
-
-        } else if (time.equals("15:00:00")) {
-            timeslot = 13;
-
-        } else if (time.equals("15:15:00")) {
-            timeslot = 14;
-
-        } else if (time.equals("15:30:00")) {
-            timeslot = 15;
-
-        } else if (time.equals("15:45:00")) {
-            timeslot = 16;
-
-        } else if (time.equals("16:00:00")) {
-            timeslot = 17;
-
-        } else if (time.equals("16:15:00")) {
-            timeslot = 18;
-
-        } else if (time.equals("16:30:00")) {
-            timeslot = 19;
-
-        } else if (time.equals("16:45:00")) {
-            timeslot = 20;
-
-        } else if (time.equals("17:00:00")) {
-            timeslot = 21;
-
-        } else if (time.equals("17:15:00")) {
-            timeslot = 21;
-
-        } else if (time.equals("17:30:00")) {
-            timeslot = 23;
-
-        } else if (time.equals("17:45:00")) {
-            timeslot = 24;
-
-        } else if (time.equals("18:00:00")) {
-            timeslot = 25;
-
-        } else if (time.equals("18:15:00")) {
-            timeslot = 26;
-
-        } else if (time.equals("18:30:00")) {
-            timeslot = 27;
-
-        } else if (time.equals("18:45:00")) {
-            timeslot = 28;
-
-        } else if (time.equals("19:00:00")) {
-            timeslot = 29;
-
-        } else if (time.equals("19:15:00")) {
-            timeslot = 30;
-
-        } else if (time.equals("19:30:00")) {
-            timeslot = 31;
-
-        } else if (time.equals("19:45:00")) {
-            timeslot = 32;
-
-        } else if (time.equals("20:00:00")) {
-            timeslot = 33;
-
-        } else if (time.equals("20:15:00")) {
-            timeslot = 34;
-
-        } else if (time.equals("20:30:00")) {
-            timeslot = 35;
-
-        } else if (time.equals("20:45:00")) {
-            timeslot = 36;
-
-        } else if (time.equals("21:00:00")) {
-            timeslot = 37;
-
-        } else if (time.equals("21:15:00")) {
-            timeslot = 38;
-
-        } else if (time.equals("21:30:00")) {
-            timeslot = 39;
-
-        } else if (time.equals("21:45:00")) {
-            timeslot = 40;
-
-        } else if (time.equals("22:00:00")) {
-            timeslot = 41;
-
-        } else if (time.equals("22:15:00")) {
-            timeslot = 42;
-
-        } else if (time.equals("22:30:00")) {
-            timeslot = 43;
-
-        } else if (time.equals("22:45:00")) {
-            timeslot = 44;
-
-        } else if (time.equals("23:00:00")) {
-            timeslot = 45;
-
-        } else if (time.equals("23:15:00")) {
-            timeslot = 46;
-
-        } else if (time.equals("23:30:00")) {
-            timeslot = 47;
-
-        } else if (time.equals("23:45:00")) {
-            timeslot = 48;
-
+            }
         }
+
         return timeslot;
     }
-
 
     public void queryTables() {
         queryMembers();

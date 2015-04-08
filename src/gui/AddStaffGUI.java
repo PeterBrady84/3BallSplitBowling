@@ -1,5 +1,6 @@
 package gui;
 
+import controller.SendMail;
 import db.MainProgramOperations;
 import model.Alley;
 import model.Member;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 /**
  * Created by Peter on 10/03/2015.
  */
-public class AddStaffGUI implements ActionListener {
+public class AddStaffGUI extends Thread implements ActionListener  {
     private JDialog addD;
     private MainProgramOperations progOps;
     private StaffTab sTab;
@@ -92,6 +93,9 @@ public class AddStaffGUI implements ActionListener {
                     String secAnswer = ge.secAnsTxt.getText();
                     if (numValidator.isNumeric(phone) == true) {
                         Staff s = new Staff(fName, lName, phone, email, login,  password, secQuestion, secAnswer);
+                        Thread welcomeMail = new Thread(new SendMail(s));
+                        welcomeMail.run();
+//                        SendMail registered= new SendMail(s);
                         System.out.println("Object Staffs being passed to addStaff method. S fname = "+s.getfName());
                         progOps.addStaff(s);
                         Alley a = new Alley(progOps);

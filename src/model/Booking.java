@@ -1,5 +1,10 @@
 package model;
 
+import org.joda.time.DateTime;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+
 /**
  * Created by Peter on 11/03/2015.
  */
@@ -9,6 +14,7 @@ public class Booking {
     public static final double PRICE_GAME = 7.5;
 
     private int id;
+    private int staffId;
     private int memId;
     private int laneId;
     private String fromDateTime;
@@ -23,6 +29,11 @@ public class Booking {
     private String paymentMethod;
     private boolean pricingPerHour;
     private String bookingType;
+    private final int  SLOTS_PER_HOUR = 4;
+    private ArrayList<String> times;
+    private DateTime dt;
+    private String bookingDate;
+    private static int laneNumber;
 
 //Constructor that fills JTable on booking tab
     public Booking(int i, int m, int l, String s, String e) {
@@ -41,15 +52,31 @@ public class Booking {
         this.toDateTime = e;
     }
 
-    public Booking(int id, int memId, String fromDateTime,
+
+
+    public Booking(int id, int staffId, int memId, String fromDateTime,
                    String toDateTime, int numLanes, double deposit,
                    double totalPrice, int hours_games, int numMembers,
                    int numPlayers, boolean paid, String paymentMethod,
                    boolean pricingPerHour, String bookingType) {
+        //this code is used to fill an array with times that are used to find the corresponding timeslot
+        ArrayList<String> times = new ArrayList<String>();
+        String []minutes = {":00",":15",":30",":45"};
+        String slot = "";
+        final int HOURS_OPEN = 12;
+        for(int hour = 12; hour< HOURS_OPEN+12;hour++){
+            for (String min : minutes) {
+                slot = hour + min;
+                times.add(slot);
+            }
+        }
+        String start = dt.toString("yyyy-MM-dd ");
+        bookingDate = start + "00:00:00";
         this.id = id;
+        this.staffId=staffId;//use user.getid() to assign this value
         this.memId = memId;
         //this.laneId = laneId;
-        this.fromDateTime = fromDateTime;
+        this.fromDateTime = fromDateTime;//this should be set from the GUIelements startTimeTxt.getText value
         this.toDateTime = toDateTime;
         this.numLanes = numLanes;
         this.deposit = deposit;
@@ -61,6 +88,7 @@ public class Booking {
         this.paymentMethod = paymentMethod;
         this.pricingPerHour = pricingPerHour;
         this.bookingType = bookingType;
+
     }
 
     public int getId() {
@@ -69,6 +97,10 @@ public class Booking {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getStaffId() {
+        return staffId;
     }
 
     public int getMemId() {
@@ -101,5 +133,71 @@ public class Booking {
 
     public void setToDateTime(String toDateTime) {
         this.toDateTime = toDateTime;
+    }
+
+    public int getNumLanes() {
+        return numLanes;
+    }
+
+    public double getDeposit() {
+        return deposit;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public int getHours_games() {
+        return hours_games;
+    }
+
+    public int getNumMembers() {
+        return numMembers;
+    }
+
+    public int getNumPlayers() {
+        return numPlayers;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public boolean isPricingPerHour() {
+        return pricingPerHour;
+    }
+
+    public String getBookingType() {
+        return bookingType;
+    }
+
+    public DateTime getDt() {
+        return dt;
+    }
+
+    public String getBookingDate() {
+        return bookingDate;
+    }
+
+    public static int getLaneNumber() {
+        return laneNumber;
+    }
+
+    public int assignTimeSlot(String selectedDate) {
+        int timeslot = 0;
+        ArrayList <String> times = getTimes();
+        for(String time:times){
+            if(fromDateTime.equals(time))
+                timeslot=times.indexOf(time)+1;
+        }
+        return timeslot;
+    }
+
+    public ArrayList<String> getTimes() {
+        return times;
     }
 }

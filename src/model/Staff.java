@@ -25,10 +25,7 @@ public class Staff {
         this.fName = fName;
         this.lName = lName;
         this.bookings = bookings;
-//        this.start = start;
-//        this.finish = finish;
         admin = false;
-
         if(access.equals("Y"))
             admin = true;
         this.username = username;

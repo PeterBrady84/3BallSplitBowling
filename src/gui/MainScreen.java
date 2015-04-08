@@ -38,15 +38,15 @@ public class MainScreen extends JFrame implements ActionListener {
     private DateTime dt;
     private Format formatter;
     private Alley list;
-    protected static Staff UserLogged;
-    protected static boolean administrator;
 
     public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b, ArrayList<Lane> l, MainProgramOperations po) {
         System.out.println("Inside : MainScreenGUI");
 
+        /*boolean administrator;
         UserLogged = user;
         if (user.isAdmin()) administrator = true;
-        else administrator = false;
+        else administrator = false;*/
+
         this.progOps = po;
 
         this.memList = m;
@@ -159,7 +159,15 @@ public class MainScreen extends JFrame implements ActionListener {
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Stock</body></html>", jp4);
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Staff</body></html>", jp5);
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Administrator</body></html>", jp6);
+
         p2.add(jtp, BorderLayout.CENTER);
+
+        if(!user.isAdmin()){
+            jtp.setEnabledAt(4, false);
+            jtp.setEnabledAt(5, false);
+            jtp.setToolTipTextAt(4,"Staff tab DISABLED: \nContact admin for access");
+            jtp.setToolTipTextAt(5, "TAB DISABLED: \nADMIN access ONLY!!");
+        }
         add(p2);
 
         p3 = new JPanel();
