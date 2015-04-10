@@ -109,7 +109,7 @@ public class BookingTab extends JPanel implements ActionListener {
         rSet = progOps.getBookingDataForBookingTab();
         try {
             while(rSet.next()) {
-                String laneName = rSet.getString(1);
+                String laneName = "Lane " + rSet.getInt(1);
                 String lName = rSet.getString(2);
                 String fName = rSet.getString(3);
                 String date = rSet.getDate(4).toString();

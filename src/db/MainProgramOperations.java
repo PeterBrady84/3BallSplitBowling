@@ -809,14 +809,16 @@ public class MainProgramOperations {
     public ResultSet getBookingDataForBookingTab() {
         System.out.println("Inside : getBookingDataForBookingTab() in MainProgramOperations");
         try {
-            String queryString = "SELECT l.description, m.lname, m.fname, bd.bookingDate,\n" +
-                    "MIN(ts.timeDescription) \"STARTTIME\", MAX(ts.timeDescription) \"ENDTIME\", b.numplayers\n" +
+            String queryString = "SELECT l.laneNumber, m.lname, m.fname, bd.bookingDate,\n" +
+                    "MIN(ts.timeDescription) \"STARTTIME\",\n" +
+                    "MAX(ts.timeDescription) \"ENDTIME\", b.numplayers\n" +
                     "FROM bookingdetails bd\n" +
                     "INNER JOIN lane l ON bd.lanenumber = l.lanenumber\n" +
                     "INNER JOIN bookings b ON bd.bookingid = b.bookingid\n" +
                     "INNER JOIN timeslots ts ON bd.timeslotid = ts.timeslotid\n" +
-                    "INNER JOIN members m ON b.memberId = m.memberid group by l.description, m.lname, m.fname, bd.bookingDate, b.numplayers\n" +
-                    "ORDER BY bd.bookingdate, l.description";
+                    "INNER JOIN members m ON b.memberId = m.memberid\n" +
+                    "group by l.laneNumber, m.lname, m.fname, bd.bookingDate, b.numplayers\n" +
+                    "ORDER BY bd.bookingdate, l.laneNumber";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
         } catch (Exception e) {
