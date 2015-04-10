@@ -106,8 +106,8 @@ public class UpdateBookingGUI implements ActionListener
                     String start = date + " " + srt[0];
                     String end = date + " " + en[0];
                     if (numValidator.isNumeric(date) == false && numValidator.isNumeric(start) == false && numValidator.isNumeric(end) == false) {
-                        Booking b = new Booking(memId, lane, start, end );
-                        progOps.addBooking(b);
+                        /**Booking b = new Booking(memId, lane, start, end );
+                        progOps.addBooking(b);**/
                         Alley a = new Alley(progOps);
                         a.addBooking();
                         bTab.refreshTable();

@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Peter on 18/03/2015.
@@ -21,11 +22,13 @@ public class LoginGUI extends JFrame implements ActionListener {
     private JButton login, forgot, exit;
     private JTextField userTxt;
     private JPasswordField passTxt;
+    private Date dateSelected;
     public static Staff user;
     public static boolean administrator;
 
     public LoginGUI(MainProgramOperations po) {
         System.out.println("Inside : LoginGUI");
+        this.dateSelected = new Date();
         this.progOps = po;
         this.setBackground(Color.WHITE);
 
@@ -169,7 +172,9 @@ public class LoginGUI extends JFrame implements ActionListener {
                 System.out.println("    +++++++++++++++++          LOG IN PRESSED  ==============   +++++++++++++++++++");
                 Alley a = new Alley(progOps);
 
-                MainScreen ms = new MainScreen(user, a.getMemberList(), a.getStaffList(), a.getStockList(), a.getBookingList(), a.getLaneList(), progOps);
+                MainScreen ms = new MainScreen(user, a.getMemberList(), a.getStaffList(), a.getStockList(),
+                        a.getBookingList(), a.getLaneList(), a.getTimeSlotList(), a.getBookingDetailsList(),
+                        a.getPaymentsList(), progOps);
                 this.setVisible(false);
                 System.out.println("USER SIGNED IS STAFF NUMBER: "+user.getId()+"\tusername: " +
                         " "+user.getLogin() +"\tfname: "+user.getfName()+"lname: "+user.getlName()+"\tbookings : "+user.getBookings());

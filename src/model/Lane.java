@@ -9,16 +9,15 @@ public class Lane {
     private String laneName;
     private final static int maxPlayers = 6;
 
-    public Lane(int i, String l,int p) {
-        //System.out.println("Inside : LaneModel");
+    public Lane (int i, String l) {
+        System.out.println("Inside : LaneModel");
         this.id = i;
         this.laneName = l;
-        //this.maxPlayers = p;
     }
 
-    public Lane(String l,int p) {
+    public Lane (String l) {
+        System.out.println("Inside : LaneModel");
         this.laneName = l;
-        //this.maxPlayers = p;
     }
 
     public int getId() {

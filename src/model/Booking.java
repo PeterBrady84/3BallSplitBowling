@@ -10,96 +10,117 @@ public class Booking {
 
     private int id;
     private int memId;
-    private int laneId;
-    private String fromDateTime;
-    private String toDateTime;
+    private int staffId;
     private int numLanes;
-    private double deposit ;
-    private double totalPrice ;
     private int hours_games;
     private int numMembers ;
     private int numPlayers ;
-    private boolean paid ;
-    private String paymentMethod;
-    private boolean pricingPerHour;
+    private String pricingPerHour;
     private String bookingType;
 
 //Constructor that fills JTable on booking tab
-    public Booking(int i, int m, int l, String s, String e) {
-        //System.out.println("Inside : BookingModel");
+    public Booking(int i, int m, int st, int l, int hg, int nm, int np, String ph, String bt) {
+        System.out.println("Inside : BookingModel");
+        this.id = i;
         this.memId = m;
-        this.laneId = l;
-        this.fromDateTime = s;
-        this.toDateTime = e;
+        this.staffId = st;
+        this.numLanes = l;
+        this.hours_games = hg;
+        this.numMembers = nm;
+        this.numPlayers = np;
+        this.pricingPerHour = ph;
+        this.bookingType = bt;
     }
 
-    public Booking(int m, int l, String s, String e) {
+    public Booking(int m, int st, int l, int hg, int nm, int np, String ph, String bt) {
         System.out.println("Inside : BookingModel");
         this.memId = m;
-        this.laneId = l;
-        this.fromDateTime = s;
-        this.toDateTime = e;
+        this.staffId = st;
+        this.numLanes = l;
+        this.hours_games = hg;
+        this.numMembers = nm;
+        this.numPlayers = np;
+        this.pricingPerHour = ph;
+        this.bookingType = bt;
     }
 
-    public Booking(int id, int memId, String fromDateTime,
-                   String toDateTime, int numLanes, double deposit,
-                   double totalPrice, int hours_games, int numMembers,
-                   int numPlayers, boolean paid, String paymentMethod,
-                   boolean pricingPerHour, String bookingType) {
-        this.id = id;
-        this.memId = memId;
-        //this.laneId = laneId;
-        this.fromDateTime = fromDateTime;
-        this.toDateTime = toDateTime;
-        this.numLanes = numLanes;
-        this.deposit = deposit;
-        this.totalPrice = totalPrice;
-        this.hours_games = hours_games;
-        this.numMembers = numMembers;
-        this.numPlayers = numPlayers;
-        this.paid = paid;
-        this.paymentMethod = paymentMethod;
-        this.pricingPerHour = pricingPerHour;
-        this.bookingType = bookingType;
+    public static double getPRICE_HOUR() {
+        return PRICE_HOUR;
+    }
+
+    public static double getPRICE_GAME() {
+        return PRICE_GAME;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(int i) {
+        this.id = i;
     }
 
     public int getMemId() {
         return memId;
     }
 
-    public void setMemId(int memId) {
-        this.memId = memId;
+    public void setMemId(int m) {
+        this.memId = m;
     }
 
-    public int getLaneId() {
-        return laneId;
+    public int getStaffId() {
+        return staffId;
     }
 
-    public void setLaneId(int laneId) {
-        this.laneId = laneId;
+    public void setStaffId(int s) {
+        this.staffId = s;
     }
 
-    public String getFromDateTime() {
-        return fromDateTime;
+    public int getNumLanes() {
+        return numLanes;
     }
 
-    public void setFromDateTime(String fromDateTime) {
-        this.fromDateTime = fromDateTime;
+    public void setNumLanes(int nl) {
+        this.numLanes = nl;
     }
 
-    public String getToDateTime() {
-        return toDateTime;
+    public int getHours_games() {
+        return hours_games;
     }
 
-    public void setToDateTime(String toDateTime) {
-        this.toDateTime = toDateTime;
+    public void setHours_games(int hg) {
+        this.hours_games = hg;
+    }
+
+    public int getNumMembers() {
+        return numMembers;
+    }
+
+    public void setNumMembers(int nm) {
+        this.numMembers = nm;
+    }
+
+    public int getNumPlayers() {
+        return numPlayers;
+    }
+
+    public void setNumPlayers(int np) {
+        this.numPlayers = np;
+    }
+
+    public String getPricingPerHour() {
+        return pricingPerHour;
+    }
+
+    public void setPricingPerHour(String ph) {
+        this.pricingPerHour = ph;
+    }
+
+    public String getBookingType() {
+        return bookingType;
+    }
+
+    public void setBookingType(String bt) {
+        this.bookingType = bt;
     }
 }

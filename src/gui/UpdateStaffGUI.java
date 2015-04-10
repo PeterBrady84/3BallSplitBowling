@@ -110,10 +110,11 @@ public class UpdateStaffGUI implements ActionListener {
                     String password = ge.passwordTxt.getText();
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
+                    String access = "N";
                     if (numValidator.isNumeric(phone)==true) {
-                        progOps.updateStaffinDB(ge.idTxt.getText(), fName, lName, phone, email, login, password, secQuestion, secAnswer);
+                        progOps.updateStaffinDB(ge.idTxt.getText(), lName, fName,  phone, login, email, password, secQuestion, secAnswer);
                         Alley a = new Alley(progOps);
-                        a.updateStaff(new Staff(fName, lName, phone, email,  login,  password, secQuestion, secAnswer));
+                        a.updateStaff(new Staff(lName, fName, phone, login, email, password, secQuestion, secAnswer, access));
                         JOptionPane.showMessageDialog(null, "Updated Staff Data Saved");
                         progOps.getStaff();
                         sTab.refreshTable();

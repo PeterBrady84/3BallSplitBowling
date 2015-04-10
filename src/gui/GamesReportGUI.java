@@ -39,8 +39,8 @@ public class GamesReportGUI extends JPanel implements ActionListener{
     private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
 
     public GamesReportGUI(MainProgramOperations po) {
-        this.progOps = po;
         System.out.println("Inside : GamesReportGUI");
+        this.progOps = po;
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
@@ -136,6 +136,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.out.println("Inside : ActionPerformed() in GamesReportGUI");
         if (e.getSource() == back){
             //this.setVisible(false);
             AdminTab at = new AdminTab(progOps);

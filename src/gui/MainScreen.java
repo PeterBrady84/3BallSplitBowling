@@ -8,6 +8,7 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 import org.joda.time.DateTime;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -28,18 +29,25 @@ public class MainScreen extends JFrame implements ActionListener {
     private ArrayList<Member> memList;
     private ArrayList<Staff> staffList;
     private ArrayList<Stock> stockList;
-    private ArrayList<Lane> laneList;
     private ArrayList<Booking> bookingList = new ArrayList<Booking>();
+    private ArrayList<Lane> laneList;
+    private ArrayList<TimeSlot> timeSlotList;
+    private ArrayList<BookingDetails> bookingDetailsList;
+    private ArrayList<Payment> paymentsList;
+    private UtilDateModel model;
     public JDatePanelImpl mainDatePanel;
     public JDatePickerImpl mainDatePicker;
     public JFormattedTextField dateInTxt;
     public static String calendarSelected;
+    private Date dateSelected;
     private java.util.Date juDate ;
     private DateTime dt;
     private Format formatter;
     private Alley list;
+    private Staff user;
 
-    public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b, ArrayList<Lane> l, MainProgramOperations po) {
+    public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b,
+                      ArrayList<Lane> l, ArrayList<TimeSlot> t, ArrayList<BookingDetails> bd, ArrayList<Payment> p, MainProgramOperations po) {
         System.out.println("Inside : MainScreenGUI");
 
         /*boolean administrator;
@@ -48,13 +56,25 @@ public class MainScreen extends JFrame implements ActionListener {
         else administrator = false;*/
 
         this.progOps = po;
-
         this.memList = m;
-        list = new Alley(progOps);
-        this.staffList = list.getStaffList();
-        this.laneList = l;
+        this.staffList = s;
         this.stockList = st;
         this.bookingList = b;
+        this.laneList = l;
+        this.timeSlotList = t;
+        this.bookingDetailsList = bd;
+        this.paymentsList = p;
+        this.user = user;
+
+        //This the calendar panel for the mainscreen which sets a date in dd-MMM-yy format
+        //String dateSelected can be used by all the tabs for all DB queries.
+        model = new UtilDateModel();
+        mainDatePanel = new JDatePanelImpl(model);
+        mainDatePicker = new JDatePickerImpl(mainDatePanel);
+        juDate = (Date) mainDatePicker.getModel().getValue();
+        dt = new DateTime(juDate);
+
+        this.dateSelected = dt.toDate();
 
         setTitle("3-Ball-Strike Bowling");
         setSize(850, 600);
@@ -74,35 +94,7 @@ public class MainScreen extends JFrame implements ActionListener {
 
         ImageIcon logo = new ImageIcon("src/lib/files/bray_bowl.png");
         bowl = new JLabel(logo);
-
-        //This the calendar panel for the mainscreen which sets a date in dd-MMM-yy format
-        //String dateSelected can be used by all the tabs for all DB queries.
-        UtilDateModel model=new UtilDateModel();
-        mainDatePanel = new JDatePanelImpl(model);
-        mainDatePicker = new JDatePickerImpl(mainDatePanel);
-        juDate = (Date) mainDatePicker.getModel().getValue();
-        dt = new DateTime(juDate);
-        calendarSelected = dt.toString("dd-MMM-yy");
-        calendarSelected = calendarSelected.toUpperCase();
-        mainDatePicker.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                juDate = (Date) mainDatePicker.getModel().getValue();
-                dt = new DateTime(juDate);
-                calendarSelected = dt.toString("dd-MMM-yy");
-                calendarSelected = calendarSelected.toUpperCase();
-                System.out.println("______________%%%%%%%%%%    DATE  =    "+calendarSelected+"      ________________");
-            }
-        });
-        dateInTxt = mainDatePicker.getJFormattedTextField();
-        dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yy").format(new java.util.Date()));
-        formatter = new SimpleDateFormat("dd-MMM-yy");
-
-        dateInTxt.addActionListener(this);
-
-        dateInTxt.setBackground(Color.WHITE);
-        //p1.add(bowl, BorderLayout.WEST);
-        p1.add(mainDatePicker, BorderLayout.WEST);
+        p1.add(bowl, BorderLayout.WEST);
 
         header = new JLabel("3-Ball-Strike Bowling System", SwingConstants.CENTER);
         header.setFont(header.getFont().deriveFont(40.0f));
@@ -112,53 +104,13 @@ public class MainScreen extends JFrame implements ActionListener {
         help = new JLabel(logo2);
         p1.add(help, BorderLayout.EAST);
 
+
         // Add Panel 2
         p2 = new JPanel();
         p2.setPreferredSize(new Dimension(800, 400));
         p2.setBackground(Color.WHITE);
 
-        // Panel for Home Tab
-        jp1 = new HomeTab(bookingList, progOps);
-        jp1.setPreferredSize(new Dimension(800, 310));
-        jp1.setBackground(Color.WHITE);
-
-        // Panel for Book Tab
-        jp2 = new JPanel();
-        jp2.add(new BookingTab(bookingList, memList, laneList, progOps));
-        jp2.setPreferredSize(new Dimension(800, 310));
-        jp2.setBackground(Color.WHITE);
-
-        // Panel for Members Tab
-        jp3 = new JPanel();
-        jp3.add(new MemberTab(memList, progOps));
-        jp3.setPreferredSize(new Dimension(800, 310));
-        jp3.setBackground(Color.WHITE);
-
-        // Panel for Stock Tab
-        jp4 = new JPanel();
-        jp4.add(new StockTab(stockList, progOps));
-        jp4.setPreferredSize(new Dimension(800, 310));
-        jp4.setBackground(Color.WHITE);
-
-        // Panel for Staff Tab
-        jp5 = new JPanel();
-        jp5.add(new StaffTab(staffList, progOps));
-        jp5.setPreferredSize(new Dimension(800, 310));
-        jp5.setBackground(Color.WHITE);
-
-        // Panel for Administrator Tab
-        jp6 = new JPanel();
-        jp6.add(new AdminTab(progOps));
-        jp6.setPreferredSize(new Dimension(800, 310));
-        jp6.setBackground(Color.WHITE);
-
-        jtp = new JTabbedPane();
-        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Home</body></html>", jp1);
-        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Book</body></html>", jp2);
-        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Members</body></html>", jp3);
-        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Stock</body></html>", jp4);
-        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Staff</body></html>", jp5);
-        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Administrator</body></html>", jp6);
+        createTabbedPane(dateSelected);
 
         p2.add(jtp, BorderLayout.CENTER);
 
@@ -178,12 +130,25 @@ public class MainScreen extends JFrame implements ActionListener {
         System.out.println(userID);
         loggedIn = new JLabel(userID);
         p3.add(loggedIn);
+
+        /*
+         Code for Date Setter at Top of page
+          */
+        calendarSelected = dt.toString("dd-MMM-yyyy");
+        mainDatePicker.addActionListener(this);
+        dateInTxt = mainDatePicker.getJFormattedTextField();
+        dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
+        dateInTxt.setBackground(Color.LIGHT_GRAY);
+        Font font = new Font(Font.SERIF, Font.BOLD, 16);
+        dateInTxt.setFont(font);
+        dateInTxt.setHorizontalAlignment(JTextField.CENTER);
+        dateInTxt.setBorder(new LineBorder(Color.DARK_GRAY));
+
+        p3.add(mainDatePicker);
+
         checkAvailability = new JButton("Check For Availability");
         checkAvailability.addActionListener(this);
         p3.add(checkAvailability);
-
-        changeUser = new JButton("Change User");
-        p3.add(changeUser);
 
         logout = new JButton("Logout");
         logout.addActionListener(this);
@@ -208,10 +173,81 @@ public class MainScreen extends JFrame implements ActionListener {
         });
     }
 
-    @Override
+    public JTabbedPane createTabbedPane(Date d) {
+        System.out.println("Inside : createTabbedPane() in MainScreenGUI");
+        this.dateSelected = d;
+
+        // Panel for Home Tab
+        jp1 = new HomeTab(dateSelected, bookingList, bookingDetailsList, memList, timeSlotList, laneList, progOps);
+        jp1.setPreferredSize(new Dimension(800, 310));
+        jp1.setBackground(Color.WHITE);
+
+        // Panel for Book Tab
+        jp2 = new JPanel();
+        jp2.add(new BookingTab(dateSelected, bookingList, memList, laneList, progOps));
+        jp2.setPreferredSize(new Dimension(800, 310));
+        jp2.setBackground(Color.WHITE);
+
+        // Panel for Members Tab
+        jp3 = new JPanel();
+        jp3.add(new MemberTab(memList, progOps));
+        jp3.setPreferredSize(new Dimension(800, 310));
+        jp3.setBackground(Color.WHITE);
+
+        // Panel for Stock Tab
+        jp4 = new JPanel();
+        jp4.add(new StockTab(stockList, progOps));
+        jp4.setPreferredSize(new Dimension(800, 310));
+        jp4.setBackground(Color.WHITE);
+
+        // Panel for Staff Tab
+        jp5 = new JPanel();
+        jp5.add(new StaffTab(dateSelected, staffList, progOps));
+        jp5.setPreferredSize(new Dimension(800, 310));
+        jp5.setBackground(Color.WHITE);
+
+        // Panel for Administrator Tab
+        jp6 = new JPanel();
+        jp6.add(new AdminTab(progOps));
+        jp6.setPreferredSize(new Dimension(800, 310));
+        jp6.setBackground(Color.WHITE);
+
+        jtp = new JTabbedPane();
+        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Home</body></html>", jp1);
+        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Book</body></html>", jp2);
+        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Members</body></html>", jp3);
+        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Stock</body></html>", jp4);
+        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Staff</body></html>", jp5);
+        jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Administrator</body></html>", jp6);
+
+        return jtp;
+    }
+
+    public void refreshTabbedPane (Date d) {
+        System.out.println("Inside : refreshTabbedPane() in MainScreenGUI");
+        this.dateSelected = d;
+
+        p2.removeAll();
+        p2.add(createTabbedPane(d));
+        p2.revalidate();
+        p2.repaint();
+
+    }
+
+
     public void actionPerformed(ActionEvent e) {
+        System.out.println("Inside : ActionPerformed() in MainScreenGUI");
         if (e.getSource() == checkAvailability) {
             CheckAvailabilityGUI ca = new CheckAvailabilityGUI(progOps);
+        }
+        else if (e.getSource() == mainDatePanel) {
+            System.out.println("HERE");
+            juDate = (Date) mainDatePicker.getModel().getValue();
+            dt = new DateTime(juDate);
+            calendarSelected = dt.toString("dd-MMM-yyyy");
+            dateSelected = dt.toDate();
+            System.out.println("______________%%%%%%%%%%    DATE  =    "+calendarSelected+"      ________________");
+            refreshTabbedPane(dateSelected);
         }
         else if (e.getSource() == logout) {
             if (JOptionPane.showConfirmDialog(null, "Are you sure to logout of this program?", "Logout?",
@@ -221,6 +257,4 @@ public class MainScreen extends JFrame implements ActionListener {
             }
         }
     }
-
-
 }
