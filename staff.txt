@@ -1,0 +1,28 @@
+----------- Adu--------------------------
+ID Number: 6
+Number of Bookings: 44
+
+----------- Mary--------------------------
+ID Number: 2
+Number of Bookings: 41
+
+----------- Pablo--------------------------
+ID Number: 7
+Number of Bookings: 30
+
+----------- Joe--------------------------
+ID Number: 1
+Number of Bookings: 29
+
+----------- Vera--------------------------
+ID Number: 4
+Number of Bookings: 11
+
+----------- Frank--------------------------
+ID Number: 3
+Number of Bookings: 7
+
+----------- Barry--------------------------
+ID Number: 5
+Number of Bookings: 1
+
