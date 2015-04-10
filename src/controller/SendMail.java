@@ -13,15 +13,15 @@ import java.util.Scanner;
 public class SendMail implements Runnable {
 
     private Staff recepient;
+    String emailContent;
 
     public SendMail(Staff newStaff) {
         recepient = newStaff;
     }
 
-    String emailContent = "Welcome to the team "+ recepient.getfName()+"!!\n\nYour username is "+recepient.getUsername();
-
     @Override
     public void run() {
+        emailContent = "Welcome to the team " + recepient.getfName() + "!!\nYour username is " + recepient.getUsername();
         // Recipient's email ID needs to be mentioned.
         String to = "buntmcbunt@gmail.com";
 
