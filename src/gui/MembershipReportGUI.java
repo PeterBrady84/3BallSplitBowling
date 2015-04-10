@@ -185,7 +185,7 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
     }
 
     public void fillPieChartMemberGender() {
-        System.out.println("Inside : fillPieChartMemberGender() in MembershipReportGUI");
+        System.out.println("Inside : FillPieChartMemberGender() in MembershipReportGUI");
 
         try {
             rSet = progOps.getMemberGender();
@@ -230,6 +230,7 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.out.println("Inside : ActionPerformed() in MembershipReportsGUI");
         if (e.getSource() == back){
             //this.setVisible(false);
             AdminTab at = new AdminTab(progOps);

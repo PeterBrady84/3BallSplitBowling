@@ -64,14 +64,13 @@ public class AddBookingGUI implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in AddBookingGUI");
         NumberValidator numValidator = new NumberValidator();
-        if (e.getSource().equals(addB)) {
+        /**if(e.getSource().equals(addB)) {
             try {
                 if (ge.idTxt.getText().equals("") || ge.memIdTxt.getText().equals("") || ge.laneTxt.getText().equals("")
                         || ge.dateInTxt.getText().equals("") || ge.startTimeTxt.getText().equals("") || ge.endTimeTxt.getText().equals("")) {
                     JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
-                                    "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
-                }
-                else {
+                            "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                } else {
                     int memId = Integer.parseInt(ge.idTxt.getText()) - 1;
                     int lane = Integer.parseInt(ge.memIdTxt.getText());
                     System.out.println(ge.dateInTxt.getText() + "\n" + ge.startTimeTxt.getText() + "\n" + ge.endTimeTxt.getText());
@@ -79,19 +78,22 @@ public class AddBookingGUI implements ActionListener {
                     String start = date + " " + ge.startTimeTxt.getText();
                     String end = date + " " + ge.endTimeTxt.getText();
                     if (!numValidator.isNumeric(date) && !numValidator.isNumeric(start) && !numValidator.isNumeric(end)) {
-                        Booking b = new Booking(memId, lane, start, end );
+                        Booking b = new Booking(memId, lane, start, end);
                         progOps.addBooking(b);
                         Alley a = new Alley(progOps);
                         a.addBooking();
                         bTab.refreshTable();
                         JOptionPane.showMessageDialog(null, "New Booking Data Saved");
+                        int bookingCount = LoginGUI.user.getBookings();
+                        bookingCount++;
+                        progOps.increaseBooking(bookingCount);
                         addD.setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "Only Id and Time Fields may be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
                     }
                 }
-            }catch (NumberFormatException nf) {
+            } catch (NumberFormatException nf) {
                 JOptionPane.showMessageDialog(null, "Wrong data format", "ERROR", JOptionPane.WARNING_MESSAGE);
             }
         }
@@ -102,9 +104,8 @@ public class AddBookingGUI implements ActionListener {
             ge.dateTxt.setText("");
             ge.startTimeTxt.setText("");
             ge.endTimeTxt.setText("");
-        }
-        else if (e.getSource() .equals(cancel)) {
+        } else if (e.getSource().equals(cancel)) {
             addD.dispose();
-        }
+        }**/
     }
 }

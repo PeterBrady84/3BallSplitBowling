@@ -18,7 +18,7 @@ public class Member {
 
     public Member(int i, String l, String f, String g, String p,
                   String e, String a, String t, String c, int n) {
-        //System.out.println("Inside : MemberModel");
+        System.out.println("Inside : MemberModel");
         this.id = i;
         this.lName = l;
         this.fName = f;

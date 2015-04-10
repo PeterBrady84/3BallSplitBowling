@@ -62,6 +62,7 @@ public class AddStockGUI implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
+        System.out.println("Inside : actionPerformed() in AddStockGUI");
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(addB)) {
             try {

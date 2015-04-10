@@ -6,10 +6,10 @@ package model;
 public class Staff {
 
     private int id;
-    private String fName;
     private String lName;
-    private String phone;
+    private String fName;
     private int bookings;
+    private String phone;
     private String username;
     private String password;
     private String email;
@@ -20,28 +20,34 @@ public class Staff {
     private boolean admin;
 
 
-    public Staff(int id, String fName, String lName, int bookings, String access, String username) {
+    public Staff(int id, String lName, String fName, int bookings, String start, String finish, String phone, String username, String email,
+                 String password, String secQuestion, String secAnswer, String access) {
+        System.out.println("Inside : StaffModel");
         this.id = id;
-        this.fName = fName;
         this.lName = lName;
+        this.fName = fName;
         this.bookings = bookings;
-//        this.start = start;
-//        this.finish = finish;
+        this.start = start;
+        this.finish = finish;
+        this.phone = phone;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.secQuestion = secQuestion;
+        this.secAnswer = secAnswer;
         admin = false;
-
         if(access.equals("Y"))
             admin = true;
-        this.username = username;
     }
 
     //constructor for updating Staff
-    public Staff(int id, String fName, String lName, String phone, String email, String login, String password, String secQuestion, String secAnswer) {
+    public Staff(int id, String lName, String fName, String phone, String login, String email, String password, String secQuestion, String secAnswer) {
         this.id = id;
-        this.fName = fName;
         this.lName = lName;
+        this.fName = fName;
         this.phone = phone;
-        this.email = email;
         this.username = login;
+        this.email = email;
         this.password = password;
         this.secQuestion = secQuestion;
         this.secAnswer = secAnswer;
@@ -49,29 +55,43 @@ public class Staff {
 
     // constructor that creates a staff object
     //used when adding new Staff to the system
-    public Staff(String f, String l,  String p, String email, String log, String pass, String q, String a) {
+    public Staff(String f, String l,  String p, String email, String log, String pass, String q, String a, String access) {
         System.out.println("Inside : StaffModel");
-        this.fName = f;
         this.lName = l;
+        this.fName = f;
         this.phone = p;
-        this.email = email;
         this.username = log;
+        this.email = email;
         this.password = pass;
         this.secQuestion = q;
         this.secAnswer = a;
+        admin = false;
+        if(access.equals("Y"))
+            admin = true;
     }
     //Constructor retrieving from DB
-    public Staff(int id, String fName, String lName, int bookings, String start, String finish, String phone, String email) {
+    public Staff(int id, String lName, String fName, int bookings, String start, String finish, String phone, String email) {
         this.id = id;
-        this.fName = fName;
         this.lName = lName;
-        this.phone = phone;
+        this.fName = fName;
         this.bookings = bookings;
-        this.email = email;
         this.start = start;
         this.finish = finish;
+        this.phone = phone;
+        this.email = email;
     }
 
+    // Create User in Login GUI
+    public Staff(int id, String lName, String fName, int bookings, String access, String username) {
+        this.id = id;
+        this.lName = lName;
+        this.fName = fName;
+        this.bookings = bookings;
+        admin = false;
+        if(access.equals("Y"))
+            admin = true;
+        this.username = username;
+    }
 
 
     public String getUsername() {

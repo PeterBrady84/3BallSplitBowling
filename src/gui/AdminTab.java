@@ -51,6 +51,7 @@ public class AdminTab extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.out.println("Inside : actionPerformed() in AdminTabGUI");
         if (e.getSource() == staff){
         //this.setVisible(false);
         StaffReportsGUI sr = new StaffReportsGUI(progOps);
@@ -78,7 +79,7 @@ public class AdminTab extends JPanel implements ActionListener {
             printAll(getGraphics());//Extort print all content
         }
         else {
-           FinancialReportsGUI fr = new FinancialReportsGUI(progOps);
+            FinancialReportsGUI fr = new FinancialReportsGUI(progOps);
             JPanel staff = fr;
             this.removeAll();
             this.add(staff);//Adding to content pane, not to Frame
