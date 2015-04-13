@@ -15,12 +15,12 @@ public class Booking {
     private int hours_games;
     private int numMembers ;
     private int numPlayers ;
-    private String pricingPerHour;
+    private double pricingPerHour;
     private String bookingType;
 
 //Constructor that fills JTable on booking tab
     public Booking(int i, int m, int st, int l, int hg, int nm, int np, String ph, String bt) {
-        System.out.println("Inside : BookingModel");
+        //System.out.println("Inside : BookingModel");
         this.id = i;
         this.memId = m;
         this.staffId = st;
@@ -28,19 +28,29 @@ public class Booking {
         this.hours_games = hg;
         this.numMembers = nm;
         this.numPlayers = np;
-        this.pricingPerHour = ph;
+        if (ph.equals('Y')) {
+            this.pricingPerHour = PRICE_HOUR;
+        }
+        else {
+            this.pricingPerHour = PRICE_GAME;
+        }
         this.bookingType = bt;
     }
 
     public Booking(int m, int st, int l, int hg, int nm, int np, String ph, String bt) {
-        System.out.println("Inside : BookingModel");
+        //System.out.println("Inside : BookingModel");
         this.memId = m;
         this.staffId = st;
         this.numLanes = l;
         this.hours_games = hg;
         this.numMembers = nm;
         this.numPlayers = np;
-        this.pricingPerHour = ph;
+        if (ph.equals('Y')) {
+            this.pricingPerHour = PRICE_HOUR;
+        }
+        else {
+            this.pricingPerHour = PRICE_GAME;
+        }
         this.bookingType = bt;
     }
 
@@ -109,11 +119,21 @@ public class Booking {
     }
 
     public String getPricingPerHour() {
-        return pricingPerHour;
+        if (this.pricingPerHour == PRICE_HOUR) {
+            return "Y";
+        }
+        else {
+            return "N";
+        }
     }
 
     public void setPricingPerHour(String ph) {
-        this.pricingPerHour = ph;
+        if (ph.equals('Y')) {
+            this.pricingPerHour = PRICE_HOUR;
+        }
+        else {
+            this.pricingPerHour = PRICE_GAME;
+        }
     }
 
     public String getBookingType() {

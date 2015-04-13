@@ -26,6 +26,7 @@ public class MainScreen extends JFrame implements ActionListener {
     private JButton checkAvailability, changeUser, logout;
     private JTabbedPane jtp;
     private MainProgramOperations progOps;
+    private BookingTab bt;
     private ArrayList<Member> memList;
     private ArrayList<Staff> staffList;
     private ArrayList<Stock> stockList;
@@ -184,7 +185,8 @@ public class MainScreen extends JFrame implements ActionListener {
 
         // Panel for Book Tab
         jp2 = new JPanel();
-        jp2.add(new BookingTab(dateSelected, bookingList, memList, laneList, progOps));
+        bt = new BookingTab(this, dateSelected, bookingList, memList, laneList, progOps, user);
+        jp2.add(bt);
         jp2.setPreferredSize(new Dimension(800, 310));
         jp2.setBackground(Color.WHITE);
 
@@ -238,7 +240,7 @@ public class MainScreen extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in MainScreenGUI");
         if (e.getSource() == checkAvailability) {
-            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(progOps);
+            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(this, bt, progOps, bookingList, user);
         }
         else if (e.getSource() == mainDatePanel) {
             System.out.println("HERE");

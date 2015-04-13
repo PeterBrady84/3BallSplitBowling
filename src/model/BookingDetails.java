@@ -14,7 +14,7 @@ public class BookingDetails {
 
     //Constructor that fills JTable on booking tab
     public BookingDetails(int b, int l, int t, Date d) {
-        System.out.println("Inside : BookingDetailsModel");
+        //System.out.println("Inside : BookingDetailsModel");
         this.bookingId = b;
         this.laneNumber = l;
         this.timeSlotId = t;
@@ -45,8 +45,9 @@ public class BookingDetails {
         this.timeSlotId = t;
     }
 
-    public Date getBookingDate() {
-        return bookingDate;
+    public java.sql.Date getBookingDate() {
+        java.sql.Date sqlDate = new java.sql.Date(bookingDate.getTime());
+        return sqlDate;
     }
 
     public void setBookingDate(Date d) {

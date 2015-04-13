@@ -779,7 +779,7 @@ public class SetupOperations {
                     "numMembers NUMBER(2), " +
                     "numPlayers NUMBER(2), " +
                     "pricingPerHour VARCHAR(2), " +
-                    "bookingType VARCHAR(6), " +
+                    "bookingType VARCHAR(7), " +
                     "FOREIGN KEY (memberId) REFERENCES members (memberId)," +
                     "FOREIGN KEY (staffId) REFERENCES staff (staffId))";
             pStmt = conn.prepareStatement(create);
@@ -946,7 +946,7 @@ public class SetupOperations {
                         case 1:
                             bookingType = "Party";
                             break;
-                        case 2:  bookingType = "Walkin";
+                        case 2:  bookingType = "Walk-In";
                             deposit = 0;
                             fullyPaid = "Y";
                             break;
@@ -999,6 +999,9 @@ public class SetupOperations {
                                 System.out.println("*** Lane Number " + laneNumber);
                                 System.out.println("*** Start Time " + startTime);
                                 System.out.println("*** Booking Date " + bookingDate);
+                                if (timeSlot > 56) {
+                                    timeSlot = 56;
+                                }
                                 System.out.println("*** TimeSlot " + timeSlot);
 
                                 java.util.Date date2 = new SimpleDateFormat("dd-MMM-yyyy").parse(bookingDate);

@@ -9,7 +9,7 @@ public class TimeSlot {
     private String timeDesc;
 
     public TimeSlot(int i, String d) {
-        System.out.println("Inside : timeSlotModel");
+        //System.out.println("Inside : timeSlotModel");
         this.timeSlotId = i;
         this.timeDesc = d;
     }

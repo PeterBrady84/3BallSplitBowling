@@ -1,5 +1,6 @@
 package gui;
 
+import model.Staff;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
@@ -16,12 +17,12 @@ import java.util.ArrayList;
  */
 public class GuiElements implements ItemListener {
 
-    public JTextField idTxt, fNameTxt, lNameTxt, genTxt, phoneTxt, emailTxt, addTxt, townTxt, visTxt,
-            loginTxt, secAnsTxt, confSecAnsTxt, sizeTxt, detailsTxt, qtyTxt, memIdTxt, nameTxt, laneTxt, dateTxt, startTimeTxt, endTimeTxt;
+    public JTextField idTxt, fNameTxt, lNameTxt, phoneTxt, emailTxt, addTxt, townTxt, visTxt,
+            loginTxt, secAnsTxt, confSecAnsTxt, sizeTxt, detailsTxt, qtyTxt, staffIdTxt, memberIdTxt, noGamesTxt, nameTxt, laneTxt, dateTxt, startTimeTxt, endTimeTxt;
     public JFormattedTextField dateInTxt;
     public JPasswordField passwordTxt, confPassTxt;
-    public JRadioButton male, female;
-    public JComboBox<String> coCombo, quest, startHr, startMin, endHr, endMin;
+    public JRadioButton male, female, perGame, perHour;
+    public JComboBox<String> coCombo, quest, startHr, startMin, endHr, endMin, typeCombo;
     final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
 
 
@@ -256,11 +257,8 @@ public class GuiElements implements ItemListener {
 
     public JPanel bookingGui() {
         System.out.println("Inside : bookingGui() in GuiElements");
-        JDatePanelImpl datePanel;
-        JDatePickerImpl datePicker;
-        JLabel idLbl, memIdLbl, nameLbl, laneLbl, dateLbl, startTime, endTime;
-        final String [] HOURS = {"12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
-        final String [] MINUTES = {"00", "15", "30", "45"};
+        JLabel idLbl, staffIdLbl, memberIdLbl, noGamesLbl, gameLbl, typeLbl;
+        final String[] TYPE = {"Group", "Party", "Walk-In"};
         JPanel addPanel, topPanel;
 
         addPanel = new JPanel();
@@ -271,7 +269,7 @@ public class GuiElements implements ItemListener {
         addPanel.setBorder(titled);
 
         topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(11, 2));
+        topPanel.setLayout(new GridLayout(8, 2));
         topPanel.setBackground(Color.white);
 
         idLbl = new JLabel("Booking ID No:");
@@ -281,89 +279,51 @@ public class GuiElements implements ItemListener {
         idTxt.setBackground(Color.white);
         topPanel.add(idTxt);
 
-        memIdLbl = new JLabel("Member Id");
-        topPanel.add(memIdLbl);
-        memIdTxt = new JTextField(15);
-        topPanel.add(memIdTxt);
+        staffIdLbl = new JLabel("Staff Id");
+        topPanel.add(staffIdLbl);
+        staffIdTxt = new JTextField(15);
+        staffIdTxt.setEditable(false);
+        staffIdTxt.setBackground(Color.white);
+        topPanel.add(staffIdTxt);
 
-        nameLbl = new JLabel("Name:");
-        topPanel.add(nameLbl);
-        nameTxt = new JTextField(15);
-        topPanel.add(nameTxt);
+        memberIdLbl = new JLabel("Member Id");
+        topPanel.add(memberIdLbl);
+        memberIdTxt = new JTextField(15);
+        memberIdTxt.setBackground(Color.white);
+        topPanel.add(memberIdTxt);
 
-        laneLbl = new JLabel("Lanes:");
-        topPanel.add(laneLbl);
-        laneTxt = new JTextField(15);
-        topPanel.add(laneTxt);
+        gameLbl = new JLabel("Game Type:");
+        topPanel.add(gameLbl);
 
-        dateLbl = new JLabel("Dates:");
-        topPanel.add(dateLbl);
-        datePanel = new JDatePanelImpl(new UtilDateModel());
-        datePicker = new JDatePickerImpl(datePanel);
-        dateInTxt = datePicker.getJFormattedTextField();
-        dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yy").format(new java.util.Date()));
-        dateInTxt.setBackground(Color.WHITE);
-        topPanel.add(datePicker);
-
-        startTime = new JLabel("Start Time:");
-        topPanel.add(startTime);
-
-        startHr = new JComboBox<String>();
-        startHr.setBackground(Color.white);
-        topPanel.add(startHr);
-        // Populate the hourComboBox list
-        for (int i = 0; i < HOURS.length; i++) {
-            startHr.addItem(HOURS[i]);
-        }
-        startHr.addItemListener(this);
-
-        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
-        
-        startMin = new JComboBox<String>();
-        startMin.setSize(25, startMin.getPreferredSize().height);
-        startMin.setBackground(Color.white);
-        topPanel.add(startMin);
-        // Populate the hourComboBox list
-        for (int i = 0; i < MINUTES.length; i++) {
-            startMin.addItem(MINUTES[i]);
-        }
-        startMin.addItemListener(this);
+        perGame = new JRadioButton("Play Per Game");
+        perGame.setBackground(Color.white);
+        topPanel.add(perGame);
 
         topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
 
-        startTimeTxt = new JTextField(15);
-        startTimeTxt.setBackground(Color.WHITE);
-        startTimeTxt.setEditable(false);
-        topPanel.add(startTimeTxt);
-        endTime = new JLabel("End Time:");
-        topPanel.add(endTime);
+        perHour = new JRadioButton("Play Per Hour", true);
+        perHour.setBackground(Color.white);
+        topPanel.add(perHour);
 
-        endHr = new JComboBox<String>();
-        endHr.setBackground(Color.white);
-        topPanel.add(endHr);
-        // Populate the hourComboBox list
-        for (int i = 0; i < HOURS.length; i++) {
-            endHr.addItem(HOURS[i]);
+        ButtonGroup group = new ButtonGroup();
+        group.add(perGame);
+        group.add(perHour);
+
+        noGamesLbl = new JLabel("Number of Games: ");
+        topPanel.add(noGamesLbl);
+        noGamesTxt = new JTextField(15);
+        noGamesTxt.setBackground(Color.white);
+        topPanel.add(noGamesTxt);
+
+        typeLbl = new JLabel("Booking Type:");
+        topPanel.add(typeLbl);
+        typeCombo = new JComboBox<>();
+        typeCombo.setBackground(Color.white);
+        topPanel.add(typeCombo);
+        // Populate the combobox list
+        for (int i = 0; i < TYPE.length; i++) {
+            typeCombo.addItem(TYPE[i]);
         }
-        endHr.addItemListener(this);
-
-        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
-
-        endMin = new JComboBox<String>();
-        endMin.setBackground(Color.white);
-        topPanel.add(endMin);
-        // Populate the hourComboBox list
-        for (int i = 0; i < MINUTES.length; i++) {
-            endMin.addItem(MINUTES[i]);
-        }
-        endMin.addItemListener(this);
-
-        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
-
-        endTimeTxt = new JTextField(15);
-        endTimeTxt.setBackground(Color.WHITE);
-        endTimeTxt.setEditable(false);
-        topPanel.add(endTimeTxt);
 
         addPanel.add(topPanel, BorderLayout.NORTH);
         addPanel.setBackground(Color.white);
