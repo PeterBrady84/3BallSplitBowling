@@ -23,10 +23,25 @@ public class MainProgramOperations {
     private DateTime dt;
     private String dateSelected;
     public static Staff user;
-    //public DateAndCalendar;
+    private ArrayList <String> timeslots;
 
     public MainProgramOperations() {
         conn = openDB();
+        timeslots = new ArrayList<String>();
+        timeslots = getTimeSlotsArray();
+    }
+
+    private ArrayList getTimeSlotsArray() {
+        System.out.println("Filling timeslots array:   ---------------------------------");
+        String[] minutes = {":00", ":15", ":30", ":45"};
+        for (int i = 10; i < 24; i++) {
+            for (int j =0; j< minutes.length;j++) {
+                String timeDesc = (i) + minutes[j];
+                timeslots.add(timeDesc);
+                System.out.println(timeDesc);
+            }
+        }
+        return timeslots;
     }
 
 
@@ -242,6 +257,7 @@ public class MainProgramOperations {
 
         dateSelected = MainScreen.calendarSelected;
 
+
         if (MainScreen.calendarSelected == null) {
             juDate = new java.util.Date();
             dt = new DateTime(juDate);
@@ -250,7 +266,7 @@ public class MainProgramOperations {
             System.out.println("calendarSelected == null so the date is set as *********************************");
         }
         //dateSelected = MainScreen.calendarSelected;
-
+        dateSelected = dateSelected.toUpperCase();
         System.out.println(dateSelected);
         try {
             String queryString = "SELECT s.staffId, lName, fName, s.bookings,  " +
@@ -526,61 +542,21 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public int [] getLanesAvailable(String dateIn, String startTime, String endTime) {
-        System.out.println("Inside : getLanesAvailable() in MainProgramOperations");
-        int [] lanes = new int[16];
-        System.out.println(dateIn + " " + startTime + " " + endTime);
-        int startId = 0, endId = 0;
+    public int getNumLanes() {
+        System.out.println("Inside : getNumLaness() in MainProgramOperations");
+        int num = 0;
+        try {
+            String queryString = "SELECT count(*) FROM Lane";
 
-        String getStartId = "SELECT timeSlotId " +
-                "FROM timeSlots " +
-                "WHERE timeDescription = '" + startTime + "'";
-        try {
-            pStmt = conn.prepareStatement(getStartId);
+            pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
-            while (rSet.next()) {
-                startId = rSet.getInt(1);
+            if (rSet.next()) {
+                num = rSet.getInt(1);
             }
-            rSet.close();
-        } catch (Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
+        } catch (Exception e) {
+            System.out.println(e);
         }
-        String getEndId = "SELECT timeSlotId " +
-                "FROM timeSlots " +
-                "WHERE timeDescription = '" + endTime + "'";
-        try {
-            pStmt = conn.prepareStatement(getEndId);
-            rSet = pStmt.executeQuery();
-            while (rSet.next()) {
-                endId = rSet.getInt(1);
-            }
-            rSet.close();
-        } catch (Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
-        }
-
-        String getLanes = "SELECT DISTINCT laneNumber " +
-                "FROM bookingDetails " +
-                "WHERE laneNumber NOT IN " +
-                "(SELECT laneNumber " +
-                "FROM bookingDetails " +
-                "WHERE bookingDate = '" + dateIn +
-                "' AND timeSlotId BETWEEN " + startId +
-                " AND " + endId +
-                " GROUP BY laneNumber) " +
-                "ORDER BY laneNumber";
-        try {
-            pStmt = conn.prepareStatement(getLanes);
-            rSet = pStmt.executeQuery();
-            int index = 0;
-            while (rSet.next()) {
-                lanes[index] = rSet.getInt(1);
-                index++;
-            }
-        } catch (Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
-        }
-        return lanes;
+        return num;
     }
     ///// End of Lane Queries ///////////////////////////////////
 
@@ -713,38 +689,28 @@ public class MainProgramOperations {
         return rSet;
     }
 
-
-    public void addBooking(Booking b) {
-        System.out.println("Inside : addBooking() in MainProgramOperations");
-        try {
-            String addBooking = "INSERT INTO bookings(" +
-                "bookingId, " +
-                "memberId, " +
-                "staffId, " +
-                "numLanes, " +
-                "games_hours, " +
-                "numMembers, " +
-                "numPlayers, " +
-                "pricingPerHour, " +
-                "bookingType) " +
-                "VALUES(bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?)";
-            pStmt = conn.prepareStatement(addBooking);
-            pStmt.setInt(1, b.getMemId());
-            pStmt.setInt(2, b.getStaffId());
-            pStmt.setInt(3, b.getNumLanes());
-            pStmt.setInt(4, b.getHours_games());
-            pStmt.setInt(5, b.getNumMembers());
-            pStmt.setInt(6, b.getNumPlayers());
-            pStmt.setString(7, b.getPricingPerHour());
-            pStmt.setString(8, b.getBookingType());
-
-            pStmt.executeUpdate();
-            System.out.println("Booking added to DB");
-        }
-        catch (Exception se) {
-            System.out.println(se);
-        }
-    }
+    /**
+     * public void addBooking(Booking b) {
+     * System.out.println("Inside : addBooking() in MainProgramOperations");
+     * System.out.println(b.getFromDateTime());
+     * String start = b.getFromDateTime() + ":00";
+     * String end = b.getToDateTime() + ":00";
+     * try {
+     * String addsql = "INSERT INTO bookings (bookingId, memId, laneId, fromDateTime, toDateTime)" +
+     * "VALUES (bookingId_seq.nextVal, ?, ?, ?, ?)";
+     * pStmt = conn.prepareStatement(addsql);
+     * pStmt.setInt(1, b.getMemId());
+     * pStmt.setInt(2, b.getLaneId());
+     * pStmt.setString(3, start);
+     * pStmt.setString(4, end);
+     * pStmt.executeUpdate();
+     * <p/>
+     * System.out.println("Booking added to DB");
+     * } catch (Exception se) {
+     * System.out.println(se);
+     * }
+     * }*
+     */
 
     public void updateBooking(int b, int m, int l, String s, String e) {
         System.out.println("Inside : updateBooking() in MainProgramOperations");
@@ -771,47 +737,11 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public ResultSet checkAvailability(String dateIn, String startTime, String endTime) {
+    /*public ResultSet checkAvailability(String dateIn, String timeIn) {
         System.out.println("Inside : checkBookingAvailability() in MainProgramOperations");
-        System.out.println(dateIn + " " + startTime + " " + endTime);
-        int startId = 0, endId = 0;
-
-        String getStartId = "SELECT timeSlotId " +
-                "FROM timeSlots " +
-                "WHERE timeDescription = '" + startTime + "'";
-        try {
-            pStmt = conn.prepareStatement(getStartId);
-            rSet = pStmt.executeQuery();
-            while (rSet.next()) {
-                startId = rSet.getInt(1);
-            }
-            rSet.close();
-        } catch (Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
-        }
-        String getEndId = "SELECT timeSlotId " +
-                "FROM timeSlots " +
-                "WHERE timeDescription = '" + endTime + "'";
-        try {
-            pStmt = conn.prepareStatement(getEndId);
-            rSet = pStmt.executeQuery();
-            while (rSet.next()) {
-                endId = rSet.getInt(1);
-            }
-            rSet.close();
-        } catch (Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
-        }
-
-        String sqlStatement = "SELECT COUNT (DISTINCT laneNumber) " +
-                "FROM bookingDetails " +
-                "WHERE laneNumber NOT IN " +
-                "(SELECT laneNumber " +
-                "FROM bookingDetails " +
-                "WHERE bookingDate = '" + dateIn + "' " +
-                "AND timeSlotId BETWEEN " + startId +
-                " AND " + endId +
-                " GROUP BY laneNumber)";
+        System.out.println(dateIn + " " + timeIn);
+        String sqlStatement = "SELECT l.laneName FROM lanes l WHERE NOT EXISTS (SELECT 1 FROM bookings b " +
+                "WHERE b.laneId = l.laneId AND b.fromDateTime >= '" + dateIn + " " + timeIn + "') ORDER BY l.laneId";
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
@@ -819,7 +749,35 @@ public class MainProgramOperations {
             System.out.println("ERROR: " + ex.getMessage());
         }
         return rSet;
+    }*/
+
+    public boolean checkAvailability(String dateSelected, int numLanes, String startTime, String finishTime){
+        int start = timeslots.indexOf(startTime)+1;
+        int finish = timeslots.indexOf(finishTime)+1;
+        String countLanes = "select count (distinct LANENUMBER) from BOOKINGDETAILS WHERE LANENUMBER NOT IN\n" +
+                "(select LANENUMBER from BOOKINGDETAILS where bookingdate = '"+dateSelected+"' and timeslotid " +
+                "between "+start+" and "+finish+" group by lanenumber)";
+        try {
+            pStmt = conn.prepareStatement(countLanes);
+            ResultSet count;
+            count = pStmt.executeQuery();
+            int available = 0;
+            while (rSet.next()) {
+                available = count.getInt(1);
+            }
+            rSet.close();
+            System.out.println("Number lanes requested = " + numLanes + "\nNum lanes available = " + available);
+            if(numLanes>available) {
+                System.out.println("    TIME IS NOT AVAILABLE   ======================");
+                return false;
+            }
+        } catch (Exception ex) {
+            System.out.println("ERROR in checkAvailability(): " + ex.getMessage());
+        }
+        System.out.println("    TIME IS AVAILABLE   ======================");
+        return true;
     }
+
 ///// End of Booking Queries ///////////////////////////////////
 
 
@@ -835,29 +793,6 @@ public class MainProgramOperations {
             System.out.println(e);
         }
         return rSet;
-    }
-
-    public void addBookingDetails(BookingDetails bd) {
-        System.out.println("Inside : addBooking() in MainProgramOperations");
-        try {
-            String bookingDetails = "INSERT INTO bookingDetails(" +
-                    "bookingId, " +
-                    "laneNumber, " +
-                    "timeSlotId, " +
-                    "bookingDate) " +
-                    "VALUES (?, ?, ?, ?)";
-            pStmt = conn.prepareStatement(bookingDetails);
-            pStmt.setInt(1, bd.getBookingId());
-            pStmt.setInt(2, bd.getLaneNumber());
-            pStmt.setInt(3, bd.getTimeSlotId());
-            pStmt.setDate(4, bd.getBookingDate());
-
-            pStmt.executeUpdate();
-            System.out.println("Booking added to DB");
-        }
-        catch (Exception se) {
-            System.out.println(se);
-        }
     }
 ///// End of BookingDetails Queries ///////////////////////////////////
 
@@ -888,42 +823,6 @@ public class MainProgramOperations {
             System.out.println(e);
         }
         return rSet;
-    }
-
-    public int [] getTimes(String start, String end) {
-        System.out.println("Inside : getTimes() in MainProgramOperations");
-        int [] count = new int[0];
-        int size = 0;
-        try {
-            String queryString = "SELECT COUNT(timeSlotId) " +
-                    "FROM timeSlots " +
-                    "WHERE timeDescription " +
-                    "BETWEEN '" + start + "'" +
-                    "AND '" + end + "'";
-            pStmt = conn.prepareStatement(queryString);
-            rSet = pStmt.executeQuery();
-            while (rSet.next()) {
-                size = rSet.getInt(1);
-            }
-            rSet.close();
-
-            String queryString2 = "SELECT timeSlotId " +
-                    "FROM timeSlots " +
-                    "WHERE timeDescription " +
-                    "BETWEEN '" + start + "'" +
-                    "AND '" + end + "'";
-            pStmt = conn.prepareStatement(queryString2);
-            rSet = pStmt.executeQuery();
-            count = new int[size];
-            int index = 0;
-            while (rSet.next()) {
-                count[index] = rSet.getInt(1);
-                index++;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return count;
     }
 ///// End of TimeSlots Queries ///////////////////////////////////
 

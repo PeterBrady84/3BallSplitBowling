@@ -13,6 +13,5 @@ public class TestProgram {
 
         MainProgramOperations progOps = new MainProgramOperations();
         LoginGUI ls = new LoginGUI(progOps);
-
     }
 }

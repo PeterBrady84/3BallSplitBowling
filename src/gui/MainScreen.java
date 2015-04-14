@@ -1,5 +1,6 @@
 package gui;
 
+import controller.WelcomeAnimation;
 import db.MainProgramOperations;
 import model.*;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
@@ -88,6 +89,7 @@ public class MainScreen extends JFrame implements ActionListener {
         // Add panels to Frame
         // Add Panel 1
         p1 = new JPanel();
+
         p1.setPreferredSize(new Dimension(700, 100));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);

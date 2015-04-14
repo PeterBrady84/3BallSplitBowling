@@ -1,6 +1,7 @@
 package gui;
 
 //import controller.PinAnimation;
+import controller.WelcomeAnimation;
 import db.MainProgramOperations;
 import model.Alley;
 import model.Staff;
@@ -140,18 +141,6 @@ public class LoginGUI extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    /*public boolean login() {
-        System.out.println("Inside : login() in LoginGUI");
-        boolean login = false;
-        ArrayList<String> passwords = progOps.staffLogin();
-        ArrayList<String> users = progOps.staffLogin();
-        for (int i = 0; i < passwords.size(); i++) {
-            if (users.get(i).equals(userTxt.getText()) && passwords.get(i).equals(passTxt.getText())) {
-                login = true;
-            }
-        }
-        return login;
-    }*/
     public boolean login() {
         boolean login = false;
         if(progOps.checkPass(userTxt.getText(),passTxt.getText())) {
@@ -167,9 +156,15 @@ public class LoginGUI extends JFrame implements ActionListener {
         System.out.println("Inside : actionPerformed() in LoginGUI");
         if(ae.getSource()==login) {
             if(login()==true) {
-                //PinAnimation pin = new PinAnimation();
-                //Thread animate = new Thread(pin);
-                //animate.run();
+                //this.add(new WelcomeAnimation());
+               // p1.add(new WelcomeAnimation(), BorderLayout.CENTER);
+                JOptionPane.showMessageDialog(null,
+                            "logged in", "ERROR", JOptionPane.WARNING_MESSAGE);
+
+                WelcomeAnimation wc = new WelcomeAnimation();
+                this.add(wc);
+                wc.repaint();
+
                 Staff user = progOps.createUser(userTxt.getText());
                 System.out.println("      WHAT IS THE VALUE OF isadmin:   "+user.isAdmin());
                 System.out.println("    +++++++++++++++++          LOG IN PRESSED  ==============   +++++++++++++++++++");
