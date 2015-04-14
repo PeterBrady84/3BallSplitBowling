@@ -75,7 +75,7 @@ public class UpdateBookingGUI implements ActionListener
             rSet = progOps.searchBookings(search);
             while (rSet.next()) {
                 ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
-                ge.memIdTxt.setText(Integer.toString(rSet.getInt(2) + 1));
+                ge.staffIdTxt.setText(Integer.toString(rSet.getInt(2) + 1));
                 //ge.nameTxt.setText(rSet.getString(3));
                 ge.laneTxt.setText(rSet.getString(3));
                 ge.dateInTxt.setText(mdt.modifyDateLayout(rSet.getString(4)));
@@ -91,13 +91,12 @@ public class UpdateBookingGUI implements ActionListener
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(updateB)) {
             try {
-                if (ge.memIdTxt.getText().equals("") || ge.laneTxt.getText().equals("") || ge.dateTxt.getText().equals("")
+                if (ge.laneTxt.getText().equals("") || ge.dateTxt.getText().equals("")
                         || ge.startTimeTxt.getText().equals("") || ge.endTimeTxt.getText().equals("")) {
                     JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
                             "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
                 else {
-                    int memId = Integer.parseInt(ge.memIdTxt.getText()) - 1;
                     int lane = Integer.parseInt(ge.laneTxt.getText());
                     String [] srt = ge.startTimeTxt.getText().split(" ");
                     String [] en = ge.endTimeTxt.getText().split(" ");
@@ -123,7 +122,6 @@ public class UpdateBookingGUI implements ActionListener
             }
         }
         else if (e.getSource().equals(clearB)) {
-            ge.memIdTxt.setText("");
             ge.nameTxt.setText("");
             ge.laneTxt.setText("");
             ge.dateTxt.setText("");

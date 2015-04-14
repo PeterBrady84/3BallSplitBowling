@@ -22,7 +22,7 @@ public class Staff {
 
     public Staff(int id, String lName, String fName, int bookings, String start, String finish, String phone, String username, String email,
                  String password, String secQuestion, String secAnswer, String access) {
-        System.out.println("Inside : StaffModel");
+        //System.out.println("Inside : StaffModel");
         this.id = id;
         this.lName = lName;
         this.fName = fName;
@@ -56,7 +56,7 @@ public class Staff {
     // constructor that creates a staff object
     //used when adding new Staff to the system
     public Staff(String f, String l,  String p, String email, String log, String pass, String q, String a, String access) {
-        System.out.println("Inside : StaffModel");
+        //System.out.println("Inside : StaffModel");
         this.lName = l;
         this.fName = f;
         this.phone = p;
