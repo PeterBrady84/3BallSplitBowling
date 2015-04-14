@@ -11,7 +11,9 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Peter on 06/03/2015.
@@ -27,11 +29,14 @@ public class BookingTab extends JPanel implements ActionListener {
     private ArrayList<Booking> bookingList = new ArrayList<Booking>();
     private ArrayList<Lane> laneList = new ArrayList<Lane>();
     private ArrayList<Member> memList = new ArrayList<Member>();
-    private String header[] = new String[] { "Booking Id", "Member Name", "Lane", "Date", "Start Time", "End Time"};
+    private ResultSet rSet;
+    private Date dateSelected;
+    private String header[] = new String[] { "Lane", "Surname", "First Name", "Date", "Start Time", "End Time"};
     private JTextField bookingId, bookingName;
 
-    public BookingTab(ArrayList<Booking> b, ArrayList<Member> m, ArrayList<Lane> l, MainProgramOperations po) {
+    public BookingTab(Date date, ArrayList<Booking> b, ArrayList<Member> m, ArrayList<Lane> l, MainProgramOperations po) {
         System.out.println("Inside : BookingTabGUI");
+        this.dateSelected = date;
         this.progOps = po;
         this.bookingList = b;
         this.memList = m;
@@ -101,21 +106,21 @@ public class BookingTab extends JPanel implements ActionListener {
 
     public void fillTable(ArrayList<Booking> b) {
         System.out.println("Inside : fillTable() in BookingTabGUI");
-        bookingList = b;
-        ModifyDateAndTime mdt = new ModifyDateAndTime();
-        for (int i = 0; i < bookingList.size(); i ++) {
-            try {
-                String memName = memList.get(bookingList.get(i).getMemId()).getfName() + " "
-                        + memList.get(bookingList.get(i).getMemId()).getlName();
-                String lane = laneList.get(bookingList.get(i).getLaneId() - 1).getLaneName();
-                String dateStr = bookingList.get(i).getFromDateTime();
-                String timeStart = bookingList.get(i).getFromDateTime();
-                String timeEnd = bookingList.get(i).getToDateTime();
-                model.addRow(new Object[]{bookingList.get(i).getId(), memName, lane,
-                        mdt.modifyDateLayout(dateStr), mdt.modifyTimeLayout(timeStart), mdt.modifyTimeLayout(timeEnd)});
-            } catch (Exception e) {
-                System.out.println(e);
+        rSet = progOps.getBookingDataForBookingTab();
+        try {
+            while(rSet.next()) {
+                String laneName = "Lane " + rSet.getInt(1);
+                String lName = rSet.getString(2);
+                String fName = rSet.getString(3);
+                String date = rSet.getDate(4).toString();
+                String start = rSet.getString(5);
+                String end = rSet.getString(6);
+                int players = rSet.getInt(7);
+
+                model.addRow(new Object[]{laneName, lName, fName, date, start, end, players});
             }
+        } catch (Exception e) {
+                System.out.println(e);
         }
     }
 

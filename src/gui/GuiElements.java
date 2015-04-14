@@ -305,9 +305,6 @@ public class GuiElements implements ItemListener {
         dateInTxt.setBackground(Color.WHITE);
         topPanel.add(datePicker);
 
-        //dateTxt = new JTextField(new java.text.SimpleDateFormat("dd-MMM-yy").format(new java.util.Date()), 15);
-        //topPanel.add(dateTxt);
-
         startTime = new JLabel("Start Time:");
         topPanel.add(startTime);
 

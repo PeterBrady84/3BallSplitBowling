@@ -51,6 +51,7 @@ public class AdminTab extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.out.println("Inside : actionPerformed() in AdminTabGUI");
         if (e.getSource() == staff){
         //this.setVisible(false);
         StaffReportsGUI sr = new StaffReportsGUI(progOps);

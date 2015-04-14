@@ -13,16 +13,15 @@ public class Lane {
     private int bookingId;
 
 
-    public Lane(int i, String l,int p) {
-        //System.out.println("Inside : LaneModel");
+    public Lane (int i, String l) {
+        System.out.println("Inside : LaneModel");
         this.id = i;
         this.laneName = l;
-        //this.maxPlayers = p;
     }
 
-    public Lane(String l,int p) {
+    public Lane (String l) {
+        System.out.println("Inside : LaneModel");
         this.laneName = l;
-        //this.maxPlayers = p;
     }
 
     public Lane(int id, int timeslot, String selectedDate, int bookingId) {

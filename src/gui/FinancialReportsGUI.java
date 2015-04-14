@@ -39,8 +39,8 @@ public class FinancialReportsGUI extends JPanel implements ActionListener{
     private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
 
     public FinancialReportsGUI(MainProgramOperations po) {
-        this.progOps = po;
         System.out.println("Inside : FinancialReportsGUI");
+        this.progOps = po;
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
@@ -141,6 +141,7 @@ public class FinancialReportsGUI extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.out.println("Inside : actionPerformed() in FinancialReportsGUI");
         if (e.getSource() == back){
             //this.setVisible(false);
             AdminTab at = new AdminTab(progOps);

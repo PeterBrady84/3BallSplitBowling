@@ -91,10 +91,10 @@ public class AddStaffGUI extends Thread implements ActionListener  {
                     String password = String.valueOf(ge.passwordTxt.getPassword());
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
+                    String access = "N";
                     if (numValidator.isNumeric(phone) == true) {
-                        Staff s = new Staff(fName, lName, phone, email, login,  password, secQuestion, secAnswer);
-                        Thread welcomeMail = new Thread(new SendMail(s));
-                        welcomeMail.run();
+                        Staff s = new Staff(lName, fName, phone, login, email, password, secQuestion, secAnswer, access);
+                        new SendMail(s).run();
 //                        SendMail registered= new SendMail(s);
                         System.out.println("Object Staffs being passed to addStaff method. S fname = "+s.getfName());
                         progOps.addStaff(s);

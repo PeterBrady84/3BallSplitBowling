@@ -6,6 +6,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -16,13 +18,18 @@ import java.util.Scanner;
 public class SetupOperations {
     private final int ONE_WEEK = 7;
     private final int ONE_MONTH = 30;
-
+    private final int NUMBER_LANES = 16;
+    private final int HOURS_OPEN = 14;
+    private static int numSlots;
     private Connection conn = null;
-    private PreparedStatement pStmt = null;
+    private PreparedStatement pStmt;
+    private PreparedStatement pStmt2;
+    private PreparedStatement pStmt3;
     private Statement stmt = null;
     private ResultSet rSet;
     private java.util.Date juDate ;
     private DateTime dt;
+    private ArrayList<String> times;
 
     public SetupOperations()
     {
@@ -88,8 +95,41 @@ public class SetupOperations {
         try {
             // Get a Statement object.
             stmt = conn.createStatement();
+
+            // Drop the Payments Table and Payments Sequence
             try {
-                // Drop the Staff and Roster table.
+                stmt.execute("DROP TABLE payments");
+                System.out.println("Payments Table dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("Payments not found.");
+            }
+            try {
+                stmt.execute("DROP SEQUENCE paymentId_seq");
+                System.out.println("Payment Sequence dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("Payment Sequence not found.");
+            }
+
+            // Drop the BookingDetails Table and bookingDetails Sequence
+            try {
+                stmt.execute("DROP TABLE bookingDetails");
+                System.out.println("BookingDetails Table dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("BookingDetails not found.");
+            }
+            try {
+                stmt.execute("DROP SEQUENCE BookingDetailsId_seq");
+                System.out.println("BookingDetails Sequence dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("BookingDetails Sequence not found.");
+            }
+
+            // Drop the Bookings Table and Bookings Sequence
+            try {
                 stmt.execute("DROP TABLE bookings");
                 System.out.println("Bookings table dropped.");
             }
@@ -103,6 +143,40 @@ public class SetupOperations {
             catch (SQLException ex) {
                 System.out.println("Booking Sequence not found.");
             }
+
+            // Drop TimeSlots Table and TimeSlot Sequence
+            try {
+                stmt.execute("DROP TABLE timeSlots");
+                System.out.println("TimeSlots table dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("TimeSlots not found.");
+            }
+            try {
+                stmt.execute("DROP SEQUENCE TimeSlotId_seq");
+                System.out.println("TimeSlot Sequence dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("TimeSlot Sequence not found.");
+            }
+
+            // Drop the Lane Table and Lane Sequence
+            try {
+                stmt.execute("DROP TABLE lane");
+                System.out.println("Lanes table dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("Lanes not found.");
+            }
+            try {
+                stmt.execute("DROP SEQUENCE LaneNumber_seq");
+                System.out.println("LaneNumber Sequence dropped.");
+            }
+            catch (SQLException ex) {
+                System.out.println("LaneNumber Sequence not found.");
+            }
+
+            // Drop Stock Table and Stock Sequence
             try {
                 stmt.execute("DROP TABLE stock");
                 System.out.println("Stock table dropped.");
@@ -110,15 +184,7 @@ public class SetupOperations {
                 System.out.println("Stock Sequence dropped.");
             }
             catch (SQLException ex) {
-                System.out.println("stock not found.");
-            }
-            try {
-                stmt.execute("DROP TABLE lane");
-                System.out.println("Lanes table dropped.");
-                //
-            }
-            catch (SQLException ex) {
-                System.out.println("Lanes not found.");
+                System.out.println("Stock not found.");
             }
             // Drop the Staff & Roster table table.
             try {
@@ -142,8 +208,9 @@ public class SetupOperations {
             catch (SQLException ex) {
                 System.out.println("staff Sequence not found.");
             }
+
+            // Drop the Members table and Sequence
             try {
-                // Drop the Members table.
                 stmt.execute("DROP TABLE members");
                 System.out.println("Members table dropped.");
             }
@@ -151,14 +218,13 @@ public class SetupOperations {
                 System.out.println("Members Data not found.");
             }
             try {
-                // Drop the Members table.
-
                 stmt.execute("DROP SEQUENCE memId_seq");
                 System.out.println("Member Sequence dropped.");
             }
             catch (SQLException ex) {
                 System.out.println("Members sequence not found.");
             }
+            stmt.close();
         } catch (SQLException ex) {
             System.out.println("ERROR: " + ex.getMessage());
             ex.printStackTrace();
@@ -169,9 +235,12 @@ public class SetupOperations {
         createMembers();
         createStaff();
         createRosterTable();
-        //createLanes();
         createStock();
+        createLanes();
+        createTimeSlots();
         createBookings();
+        createPayments();
+        createBookingDetails();
     }
 
     public void createMembers() {
@@ -180,19 +249,21 @@ public class SetupOperations {
             System.out.println("Inside Create Members Method");
             // Create a Table
             String create = "CREATE TABLE members " +
-                    "(memId NUMBER PRIMARY KEY, lName VARCHAR(40), fName VARCHAR(40), " +
+                    "(memberId NUMBER PRIMARY KEY, lName VARCHAR(40), fName VARCHAR(40), " +
                     "gender CHAR, phone VARCHAR(40), email VARCHAR(50), address VARCHAR(50), " +
                     "town VARCHAR(50), county VARCHAR(20), numVisits NUMBER)";
             pStmt = conn.prepareStatement(create);
             pStmt.executeUpdate(create);
+            pStmt.close();
 
             // Creating a sequence
             String createseq = "create sequence memId_seq increment by 1 start with 1";
             pStmt = conn.prepareStatement(createseq);
             pStmt.executeUpdate(createseq);
+            pStmt.close();
 
             // Insert data into table
-            String insertString = "INSERT INTO members(memId, lName, fName, gender, phone, email," +
+            String insertString = "INSERT INTO members(memberId, lName, fName, gender, phone, email," +
                     "address, town, county, numVisits) values(memId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(insertString);
 
@@ -315,6 +386,8 @@ public class SetupOperations {
             pStmt.setString(8, "Wexford");
             pStmt.setInt(9, 9);
             pStmt.executeQuery();
+
+            pStmt.close();
         }
         catch (SQLException e)
         {
@@ -331,16 +404,20 @@ public class SetupOperations {
             String createStaff = "CREATE TABLE staff " +
                     "(staffId NUMBER , lname VARCHAR(40), fname VARCHAR(40), " + "bookings NUMBER(4)," +
                     "phone VARCHAR(40), username VARCHAR(40),email VARCHAR(40), password VARCHAR(40), " +
-                    "securityQuestion  VARCHAR(40), securityAnswer  VARCHAR(40), admin CHAR," +
+                    "securityQuestion  VARCHAR(40), securityAnswer  VARCHAR(40), admin VARCHAR(2), " +
                     "PRIMARY KEY (staffId))";
             pStmt = conn.prepareStatement(createStaff);
             System.out.println("Attempting to create staff ");
             pStmt.executeUpdate(createStaff);
+            pStmt.close();
+
             System.out.println("staff table created");
             System.out.println("Attempting to create staffid sequence");
             String createseq = "create sequence staffId_seq increment by 1 start with 1";
             pStmt = conn.prepareStatement(createseq);
             pStmt.executeUpdate(createseq);
+            pStmt.close();
+
             System.out.println("staffid sequence created");
             // Insert data into Staff table
             String insertString = "INSERT INTO staff(staffId, lname, fname, bookings, phone, username, email, " +
@@ -374,6 +451,7 @@ public class SetupOperations {
 
                 System.out.println("-----------------Staff " + (i + 1) + " created");
             }
+            pStmt.close();
         } catch (SQLException e) {
             System.out.print("SQL Exception " + e);
             System.exit(1);
@@ -382,25 +460,26 @@ public class SetupOperations {
     }
 
     public void setBookingCount(){
-    try {
-                String countBookings = "UPDATE staff SET bookings = ? WHERE staffid = ?";
-                String getCount = "select count(staffid), staffid from bookings group by staffid";
+        try {
+            String countBookings = "UPDATE staff SET bookings = ? WHERE staffid = ?";
+            String getCount = "select count(staffid), staffid from bookings group by staffid";
 
-                pStmt = conn.prepareStatement(getCount);
-                PreparedStatement pStmtUpdate = conn.prepareStatement(countBookings);
-                rSet = pStmt.executeQuery();
-                while (rSet.next()) {
-                    pStmtUpdate.setInt(1, rSet.getInt(1));
-                    pStmtUpdate.setString(2, rSet.getString(2));
-                    System.out.println("OUTPUT RESULT SET WHEN COUNTING BOOKINGS      ========----------------");
-                    pStmtUpdate.executeQuery();
-                }
-        }
-            catch (SQLException e) {
-                System.out.print("NOT UPDATING STAFF BOOKINGS : SQL Exception " + e);
-                System.exit(1);
+            pStmt = conn.prepareStatement(getCount);
+            PreparedStatement pStmtUpdate = conn.prepareStatement(countBookings);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                pStmtUpdate.setInt(1, rSet.getInt(1));
+                pStmtUpdate.setString(2, rSet.getString(2));
+                System.out.println("OUTPUT RESULT SET WHEN COUNTING BOOKINGS      ========----------------");
+                pStmtUpdate.executeQuery();
             }
-
+            pStmt.close();
+            rSet.close();
+        }
+        catch (SQLException e) {
+            System.out.print("NOT UPDATING STAFF BOOKINGS : SQL Exception " + e);
+            System.exit(1);
+        }
     }
 
     //Create Table Roster(PC)
@@ -418,8 +497,8 @@ public class SetupOperations {
                     "ON DELETE CASCADE)";
 
             pStmt = conn.prepareStatement(createRoster);
-
             pStmt.executeUpdate(createRoster);
+            pStmt.close();
 
             String [] starts = {"10:00:00","11:00:00","12:00:00","13:00:00","14:00:00"};
             String [] finishes = {"18:00:00","20:00:00","22:00:00","23:00:00","23:30:00"};
@@ -452,10 +531,9 @@ public class SetupOperations {
                     pStmt.executeQuery();
                     dt = dt.plusDays(1);
                 }
+                pStmt.close();
                 System.out.println("Staff "+fnames[j-1]+" rostered");
             }
-
-
         }
         catch (SQLException e)
         {
@@ -473,11 +551,13 @@ public class SetupOperations {
                     "(stockId NUMBER PRIMARY KEY, shoeSize VARCHAR2(30), quantity NUMBER, details VARCHAR2(30))";
             pStmt = conn.prepareStatement(create);
             pStmt.executeUpdate(create);
+            pStmt.close();
 
             // Creating a sequence
             String createseq = "create sequence stockId_seq increment by 1 start with 1";
             pStmt = conn.prepareStatement(createseq);
             pStmt.executeUpdate(createseq);
+            pStmt.close();
 
             // Insert data into table
             String insertString = "INSERT INTO stock(stockId, shoeSize, quantity, details)" +
@@ -604,276 +684,440 @@ public class SetupOperations {
             pStmt.setString(3, "Female");
             pStmt.executeQuery();
 
+            pStmt.close();
         } catch (SQLException e) {
             System.out.print("SQL Exception " + e);
             System.exit(1);
         }
     }
 
-    public void createBookings() {
+    public void createLanes () {
+        System.out.println("Inside CreateLanes Method");
         try {
-            System.out.println("Inside Create Bookings Method");
-            // Create a Table
-            String create = "CREATE TABLE bookings(\n" +
-                    "bookingId NUMBER(3) PRIMARY KEY NOT NULL, \n" +
-                    "memId NUMBER(4), \n" +
-                    "staffId NUMBER(2),\n" +
-                    "numlanes NUMBER(2),\n" +
-                    "fromDateTime TIMESTAMP, \n" +
-                    "toDateTime TIMESTAMP, \n" +
-                    "deposit DECIMAL (6,2),\n" +
-                    "totalprice DECIMAL (6,2),\n" +
-                    "games_hours NUMBER(2),\n" +
-                    "numMembers NUMBER(2),\n" +
-                    "numPlayers NUMBER(2),\n" +
-                    "fullypaid CHAR,\n" +
-                    "paymentMethod VARCHAR2(10),\n" +
-                    "pricingPerHour CHAR,\n" +
-                    "bookingtype VARCHAR2(6),\n" +
-                    "FOREIGN KEY (memId) REFERENCES members (memId),\n" +
-                    "FOREIGN KEY (staffId) REFERENCES staff (staffId))";
-            pStmt = conn.prepareStatement(create);
-            pStmt.executeUpdate(create);
-
-            String addLanes = "CREATE TABLE lane(\n" +
-                    "laneNumber NUMBER, \n" +
-                    "bookingId NUMBER(3),\n" +
-                    "today TIMESTAMP,\n" +
-                    "laneName VARCHAR(10), \n" +
-                    "inUse CHAR(2),\n" +
-                    "timeSlot INTEGER, " +
-                    "PRIMARY KEY (laneNumber,timeslot,today)," +
-                    "FOREIGN KEY (bookingId) REFERENCES bookings (bookingId))";
+            String addLanes = "CREATE TABLE lane(" +
+                    "laneNumber NUMBER(2) PRIMARY KEY NOT NULL, " +
+                    "description VARCHAR(10))";
 
             pStmt = conn.prepareStatement(addLanes);
             pStmt.executeUpdate(addLanes);
+            pStmt.close();
+
+            // Creating a LaneNumber Sequence
+            String createSeq = "CREATE SEQUENCE LaneNumber_seq increment by 1 start with 1";
+            pStmt = conn.prepareStatement(createSeq);
+            pStmt.executeUpdate(createSeq);
+            pStmt.close();
+
+            // Insert Values into Lane Table
+            // and assign timeSlots to each Lane
+            String insertTimeSlots = "INSERT INTO lane (" +
+                    "laneNumber, description) " +
+                    "values (laneNumber_seq.nextVal, ?)";
+            pStmt = conn.prepareStatement(insertTimeSlots);
+
+            for (int i = 0; i < NUMBER_LANES; i++) {
+                pStmt.setString(1, "Lane " + (i + 1));
+                pStmt.execute();
+            }
+            pStmt.close();
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public void createTimeSlots () {
+        System.out.println("Inside Create TimeSlots Method");
+        try {
+            // Create a TimeSlots Table
+            String timeSlots = "CREATE TABLE timeSlots(" +
+                    "timeSlotId NUMBER(2) PRIMARY KEY NOT NULL, " +
+                    "timeDescription VARCHAR(10))";
+
+            pStmt = conn.prepareStatement(timeSlots);
+            pStmt.executeUpdate(timeSlots);
+            pStmt.close();
+
+            // Creating a TimeSlot sequence
+            String createSeq = "create sequence timeSlotId_seq increment by 1 start with 1";
+            pStmt = conn.prepareStatement(createSeq);
+            pStmt.executeUpdate(createSeq);
+            pStmt.close();
+
+            // Insert Values into TimeSlot Table
+            // With times from 10.00 am to 12:00 pm
+            String insertTimeSlots = "INSERT INTO timeSlots (" +
+                    "timeSlotId, timeDescription) VALUES (timeSlotId_seq.nextVal, ?)";
+            pStmt = conn.prepareStatement(insertTimeSlots);
+
+            String[] minutes = {":00", ":15", ":30", ":45"};
+            for (int i = 0; i < HOURS_OPEN; i++) {
+                for (String min : minutes) {
+                    String timeDesc = (i + 10) + min;
+                    pStmt.setString(1, timeDesc);
+                    pStmt.execute();
+                }
+            }
+            numSlots = getNumberSlots();
+            pStmt.close();
+        }
+        catch (SQLException e) {
+            System.out.print(e);
+        }
+    }
+
+    public void createBookings() {
+        System.out.println("Inside Create Bookings Method");
+        try {
+            // Create Bookings Table
+            String create = "CREATE TABLE bookings(" +
+                    "bookingId NUMBER(3) PRIMARY KEY NOT NULL, " +
+                    "memberId NUMBER(4), " +
+                    "staffId NUMBER(2), " +
+                    "numLanes NUMBER(2), " +
+                    "games_hours NUMBER(2), " +
+                    "numMembers NUMBER(2), " +
+                    "numPlayers NUMBER(2), " +
+                    "pricingPerHour VARCHAR(2), " +
+                    "bookingType VARCHAR(6), " +
+                    "FOREIGN KEY (memberId) REFERENCES members (memberId)," +
+                    "FOREIGN KEY (staffId) REFERENCES staff (staffId))";
+            pStmt = conn.prepareStatement(create);
+            pStmt.executeUpdate(create);
+            pStmt.close();
+
             //System.out.println("past create bookings");
             // Creating a booking sequence
             String createseq = "create sequence bookingId_seq increment by 1 start with 1";
             pStmt = conn.prepareStatement(createseq);
             pStmt.executeUpdate(createseq);
-
+            pStmt.close();
         }
-        catch (SQLException e)
-        {
+        catch (SQLException e) {
             System.out.print("Problem creating the booking table: " + e);
             //System.exit(1);
         }
+    }
 
-            // Insert data into table
+    public void createBookingDetails () {
+        System.out.println("Inside Create BookingDetails Method");
         try {
-            String insertString = "insert into bookings(\n" +
-                    "bookingId , \n" +
-                    "memId ,\n" +
-                    "staffId ,\n" +
-                    "numPlayers ,\n" +
-                    "numlanes,\n" +
-                    "games_hours ,\n" +
-                    "fromDateTime , \n" +
-                    "toDateTime ,\n" +
-                    "numMembers ,\n" +
-                    "paymentMethod,\n" +
-                    "pricingPerHour ,\n" +
-                    "fullypaid ,\n" +
-                    "bookingType ,\n" +
-                    "totalprice ,\n" +
-                    "deposit) VALUES (bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            pStmt = conn.prepareStatement(insertString);
+            String details = "CREATE TABLE bookingDetails(" +
+                    "bookingId NUMBER(3), " +
+                    "laneNumber NUMBER(2), " +
+                    "timeSlotId NUMBER(2), " +
+                    "bookingDate DATE, " +
+                    "PRIMARY KEY (bookingId, laneNumber, timeSlotId), " +
+                    "FOREIGN KEY (bookingId) REFERENCES bookings (bookingId), " +
+                    "FOREIGN KEY (laneNumber) REFERENCES lane (laneNumber), " +
+                    "FOREIGN KEY (timeSlotId) REFERENCES timeSlots (timeSlotId))";
 
-            String insertLanes = "INSERT INTO lane(lanenumber, bookingid, today, lanename, inuse, timeslot)values(?,?,?,?,?,?)";
+            pStmt = conn.prepareStatement(details);
+            pStmt.executeUpdate(details);
+            pStmt.close();
 
-            PreparedStatement pStmt2 = conn.prepareStatement(insertLanes);
+            // Creating a BookingDetails sequence
+            String createSeq = "CREATE SEQUENCE bookingDetailsId_seq increment by 1 start with 1";
+            pStmt = conn.prepareStatement(createSeq);
+            pStmt.executeUpdate(createSeq);
+            pStmt.close();
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+    }
 
-            //Inserting values using a loop to populate bookings table for one month
-            String[] startTimes = {":00:00", ":15:00", ":30:00", ":45:00"};
-            //double deposits[] = {5.50,10.0,7.50,20};
-            String[] paymentMethod = {"VISA", "Mastercard", "cash"};
-            juDate = new java.util.Date();
-            dt = new DateTime(juDate);
-            Timestamp time, bookingDate;
-            Random ran = new Random();
-            int random, memberID, numLanes, hours_games, numPlayers, numMembers, staffID;
-            int numBookingsForToday;
-            int bookingCounter = 1;
-            int laneNumber = 1;
-            double deposit;
-            double totalPrice;
-            final int MAX_PLAYERS = 6;
-            String fullyPaid, payMethod, pricedPerHour;
-            String bookingType;
-            final int SLOTS_PER_HOUR = 4;
-            //Loop to populate array of times that can be compared to find the matching timeslot
-            ArrayList<String> times = new ArrayList<String>();
-            //String []minutes = {":00:00",":15:00",":30:00",":45:00"};
-            String slot = "";
-            final int HOURS_OPEN = 12;
-            for(int hour = 12; hour< HOURS_OPEN+12;hour++){
-                for (String min : startTimes) {
-                    slot = hour + min;
-                    times.add(slot);
-                    System.out.println("\t\tTIME ARRAY: "+slot);
-                }
-            }
+    public void createPayments () {
+        System.out.println("Inside Create Payments Method");
+        try {
+            // Create a TimeSlots Table
+            String timeSlots = "CREATE TABLE payments(" +
+                    "paymentId NUMBER(3) PRIMARY KEY NOT NULL, " +
+                    "bookingId NUMBER(3), " +
+                    "deposit DECIMAL(6, 2), " +
+                    "totalPrice DECIMAL(6, 2), " +
+                    "fullyPaid VARCHAR(2), " +
+                    "paymentMethod VARCHAR(12), " +
+                    "FOREIGN KEY (bookingId) REFERENCES bookings (bookingId))";
+            pStmt = conn.prepareStatement(timeSlots);
+            pStmt.executeUpdate(timeSlots);
+            pStmt.close();
 
-            //loop to fill table for one month
-            for (int i = 0; i < ONE_MONTH; i++) {
+            // Creating a TimeSlot sequence
+            String createSeq = "create sequence paymentId_seq increment by 1 start with 1";
+            pStmt = conn.prepareStatement(createSeq);
+            pStmt.executeUpdate(createSeq);
+            pStmt.close();
+        }
+        catch (SQLException e) {
+            System.out.print(e);
+        }
+    }
+
+
+    public void populateBookings() {
+        System.out.println("Inside populateBookings Method");
+
+        //double deposits[] = {5.50,10.0,7.50,20};
+        String[] startTimes = {":00", ":15", ":30", ":45"};
+        String[] paymentMethod = {"VISA", "Mastercard", "Cash"};
+        juDate = new java.util.Date();
+        dt = new DateTime(juDate);
+        String bookingDate, startTime;
+        Random ran = new Random();
+        int random, memberID, numLanes, hours_games, numPlayers, numMembers, staffID, numBookingsForToday;
+        int bookingCounter = 1;
+        int laneNumber = 1;
+        double deposit, totalPrice;
+        final int MAX_PLAYERS = 6;
+        String fullyPaid, payMethod, pricedPerHour, bookingType;
+        final int SLOTS_PER_HOUR = 4;
+        //Loop to populate array of times that can be compared to find the matching timeslot
+        //times = getTimeSlots();
+
+        try{
+            // SQL to create Bookings Table
+            String bookingsInsert = "INSERT INTO bookings(" +
+                    "bookingId, " +
+                    "memberId, " +
+                    "staffId, " +
+                    "numLanes, " +
+                    "games_hours, " +
+                    "numMembers, " +
+                    "numPlayers, " +
+                    "pricingPerHour, " +
+                    "bookingType) " +
+                    "VALUES(bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            // SQL to create BookingDetailsTable
+            String bookingDetails = "INSERT INTO bookingDetails(" +
+                    "bookingId, " +
+                    "laneNumber, " +
+                    "timeSlotId, " +
+                    "bookingDate) " +
+                    "VALUES (?, ?, ?, ?)";
+
+            for (int i = 0; i < ONE_WEEK; i++) {
+
+                //Inserting values using a loop to populate bookings table for one month
+                //loop to fill table for one month
+
                 //random num of bookings for one day
-                numBookingsForToday = ran.nextInt(3)+3;
-                //System.out.println("\n\nNEW DAY "+(i+1)+"    =======================\n==================\nNumber of Bookings for " + dt + " is " + numBookingsForToday + "   --------------- \n  ");
+                numBookingsForToday = ran.nextInt(6)+3;
+                System.out.println("\nNEW DAY "+(i+1)+"\n====================\n====================\nNumber of Bookings for " + dt.toString("dd-MMM-yyyy") + " is " + numBookingsForToday);
+
                 //loop to add a booking to a day
                 for (int bookingsMadeToday = 0; bookingsMadeToday < numBookingsForToday; bookingsMadeToday++) {
-                    //System.out.println("----------------- BOOKING "+ bookingCounter + "----------------------------");
+                    System.out.println("----------------- BOOKING " + bookingCounter + "----------------------------");
 
-                    //randomly assign a memid to a booking
+                    pStmt = null;
+                    pStmt = conn.prepareStatement(bookingsInsert);
+
+                    // Randomly assign a memberId
                     memberID = ran.nextInt(10)+1;
-                    pStmt.setInt(1, memberID);
-                    //randomly assign a staffid to a booking
+                    // Randomly assign a staffId
                     staffID = ran.nextInt(7) + 1;
-                    pStmt.setInt(2, staffID);
-                    //randomly assign number of players
+                    // Randomly assign a Number of Players
                     numPlayers = ran.nextInt(16) + 1;
-                    pStmt.setInt(3, numPlayers);
-                    // assign numLanes according to the number of players
+                    // Assign a Number of Lanes, based on Number of Players
                     numLanes = ((int) Math.ceil(numPlayers / MAX_PLAYERS))+1;
-                    pStmt.setInt(4, numLanes);
-                    //randomly assign a startTime to a booking
-                    String start = dt.toString("yyyy-MM-dd ");
-                    bookingDate = Timestamp.valueOf(start+"00:00:00");
-                    random = ran.nextInt(times.size());
-                    String now = times.get(random);
-                    start = start + now;
-                    System.out.println("Start time: "+start);
-                    time = Timestamp.valueOf(start);
-                    pStmt.setTimestamp(6, time);
-
-                    //randomly assign how many hours or games the booking will be for
+                    // Randomly assign Hours or Games Played
                     hours_games = ran.nextInt(3) + 1;
-                    pStmt.setInt(5, hours_games);
-
-                    // finishtime will be starttime plus number of hours
-                    dt = DateTime.parse(start,
-                            DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
-                    dt = dt.plusHours(hours_games);
-                    start = dt.toString("yyyy-MM-dd HH:mm:ss");
-                    //System.out.println("finishtime: "+start);
-                    time = Timestamp.valueOf(start);
-                    pStmt.setTimestamp(7, time);
-
+                    // Assign a Number of Members, based on Number of Players
                     numMembers = numPlayers/12;
-                    pStmt.setInt(8, numMembers);
-
-                    payMethod = paymentMethod[ran.nextInt(paymentMethod.length)];
-                    pStmt.setString(9, payMethod);
-
+                    // Randomly assign if Priced per Hour
                     random = ran.nextInt(1);
-                    if(random == 0) {
+                    if(random == 0)
                         pricedPerHour = "Y";
-                    }
                     else
                         pricedPerHour = "N";
-                    pStmt.setString(10, pricedPerHour);
-
+                    // Randomly assign if Fully Paid
                     random = ran.nextInt(2);
-
-                    if(random == 0) {
+                    if(random == 0)
                         fullyPaid = "N";
-                    }
                     else
                         fullyPaid = "Y";
-
+                    // Randomly assign a Booking Type
                     bookingType = "";
                     random = ran.nextInt(3);
                     switch(random){
                         case 0:  bookingType = "Group";
                             break;
-                        case 1:  bookingType = "Party";
+                        case 1:
+                            bookingType = "Party";
                             break;
                         case 2:  bookingType = "Walkin";
                             deposit = 0;
                             fullyPaid = "Y";
                             break;
                     }
-                    //System.out.println("BOOKING TYPE = "+bookingType);
-                    pStmt.setString(11, fullyPaid);
-                    //System.out.println("FULLY PAID = "+fullyPaid);
-                    pStmt.setString(12,bookingType);
-
-                    if(pricedPerHour.equals("Y")) {
+                    // Randomly assign PaymentMethod from Array
+                    payMethod = paymentMethod[ran.nextInt(paymentMethod.length)];
+                    // Calculate Total Price
+                    if(pricedPerHour.equals("Y"))
                         totalPrice = Booking.PRICE_HOUR * (numPlayers * numLanes * hours_games);
-                    }else
+                    else
                         totalPrice = Booking.PRICE_GAME*(numPlayers* hours_games);
-
-                   // System.out.println("Number of lanes = "+numLanes+"\nHOURS_GAMES = "+hours_games);
-                    //System.out.println("TOTAL PRICE = " + totalPrice);
-                    pStmt.setDouble(13,totalPrice);
-
+                    // Calculate Deposit based on Total Price
                     deposit = totalPrice/10;
-                    //System.out.println("\tdeposit = "+deposit);
-                    pStmt.setDouble(14, deposit);
+                    // Randomly assign a Starting Time
+                    bookingDate = dt.toString("dd-MMM-yyyy");
+                    startTime = dt.toString("dd-MMM-yyyy ");
+                    random = ran.nextInt(12) + 11;
+                    String now = random + startTimes[ran.nextInt(startTimes.length)];
+                    startTime += now;
+                    System.out.println("Start time: " + startTime);
 
+
+
+                    // Add Random Data to BOOKINGS TABLE
+                    pStmt.setInt(1, memberID);
+                    pStmt.setInt(2, staffID);
+                    pStmt.setInt(3, numLanes);
+                    pStmt.setInt(4, hours_games);
+                    pStmt.setInt(5, numMembers);
+                    pStmt.setInt(6, numPlayers);
+                    pStmt.setString(7, pricedPerHour);
+                    pStmt.setString(8, bookingType);
                     pStmt.executeQuery();
+                    pStmt.close();
 
                     System.out.println("Booking created now adding lanes to booking");
 
+
                     //Loop to assign lanes to the booking
-                    for(int lanes = 0; lanes<numLanes; lanes++) {
-                        System.out.println("calling assign Timeslot method: ");
-                        int timeslot = assignTimeSlot(times, now);
-                        System.out.println("The timeslot assigned here = "+timeslot+"\nthe lanenumber = "
-                        +laneNumber);
-                        for(int index = 0;index<hours_games*SLOTS_PER_HOUR;index++){
-                            String name = "lane " + laneNumber;
-                            pStmt2.setInt(1, laneNumber);
-                            pStmt2.setInt(2, bookingCounter);
-                            System.out.print("\t"+name);
-                            pStmt2.setTimestamp(3, bookingDate);
-                            pStmt2.setString(4, name);
-                            pStmt2.setString(5, "N");
-                            pStmt2.setInt(6, timeslot);
-                            timeslot++;
-                            if (laneNumber > 16)
-                                laneNumber = 1;
+                    int bookingId = getBookingId();
+                    for(int l = 0; l < numLanes; l++) {
+                        int timeSlot = getTimeSlots(now) + 1;
+                        for (int s = 0; (s < hours_games * SLOTS_PER_HOUR) && (s < numSlots); s ++) {
+                            try {
+                                pStmt2 = null;
+                                pStmt2 = conn.prepareStatement(bookingDetails);
 
-                            pStmt2.executeQuery();
+                                System.out.println("Now " + now);
+                                System.out.println("*** Booking Id " + bookingId);
+                                System.out.println("*** Lane Number " + laneNumber);
+                                System.out.println("*** Start Time " + startTime);
+                                System.out.println("*** Booking Date " + bookingDate);
+                                System.out.println("*** TimeSlot " + timeSlot);
 
-                            //System.out.println("\tLane number: " + laneNumber + "\t timeslot = " + timeslot);
+                                java.util.Date date2 = new SimpleDateFormat("dd-MMM-yyyy").parse(bookingDate);
+                                java.sql.Date sqlDate = new java.sql.Date(date2.getTime());
+                                System.out.println("*** SQL DATE " + sqlDate);
+
+                                pStmt2.setInt(1, bookingId);
+                                pStmt2.setInt(2, laneNumber);
+                                pStmt2.setInt(3, timeSlot);
+                                pStmt2.setDate(4, sqlDate);
+                                pStmt2.executeQuery();
+                                pStmt2.close();
+                                timeSlot++;
+                                if (laneNumber > 16)
+                                    laneNumber = 1;
+                            } catch (Exception e) {
+                                System.out.println("HERE" + e);
+                            }
                         }
                         laneNumber++;
+                        if (laneNumber > 16)
+                            laneNumber = 1;
                     }
                     System.out.println("LANES ASSIGNED");
-                    System.out.println(bookingCounter);
-                    bookingCounter++;
-                    System.out.println(bookingCounter);
 
+                    String paymentInsert = "INSERT INTO payments(" +
+                            "paymentId, " +
+                            "bookingId, " +
+                            "deposit, " +
+                            "totalPrice, " +
+                            "fullyPaid, " +
+                            "paymentMethod)" +
+                            "VALUES(paymentId_seq.nextVal, ?, ?, ?, ?, ?)";
+                    pStmt3 = conn.prepareStatement(paymentInsert);
+                    pStmt3.setInt(1, bookingId);
+                    pStmt3.setDouble(2, deposit);
+                    pStmt3.setDouble(3, totalPrice);
+                    pStmt3.setString(4, fullyPaid);
+                    pStmt3.setString(5, payMethod);
+                    pStmt3.executeQuery();
+                    pStmt3.close();
+
+                    bookingCounter++;
                 }
                 dt=dt.plusDays(1);
             }
         }catch (SQLException e)
         {
-            System.out.print("DID NOT CREATE A BOOKING :  SQL Exception " + e);
+            System.out.println("DID NOT CREATE A BOOKING :  SQL Exception " + e);
         }
-
         setBookingCount();
-
-
     }
 
-    public int assignTimeSlot(ArrayList list, String selectedTime) {
-        int timeslot = 0;
-        ArrayList <String> times = list;
-        boolean match = false;
-        for(String time:times){
-                if(selectedTime.equals(time)){
-                    match = true;
-                    timeslot = times.indexOf(time)+1;
-                    System.out.println("IF THEY MATCH THE TIMESLOT IS "+timeslot);
-                    return timeslot;
-
+    public int getBookingId() throws SQLException {
+        System.out.println("Inside : getBookingId() in SetupOperations");
+        String sqlStatement = "SELECT count(*) FROM Bookings";
+        int count = 0;
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                count = rSet.getInt(1);
             }
+            rSet.close();
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
         }
-
-        return timeslot;
+        return count;
     }
+
+    public int getNumberSlots() throws SQLException {
+        System.out.println("Inside : getNumberSlots() in SetupOperations");
+        String sqlStatement = "SELECT count(*) FROM timeSlots";
+        int count = 0;
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                count = rSet.getInt(1);
+            }
+            rSet.close();
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return count;
+    }
+
+
+
+    public int getTimeSlots(String selectedTime) {
+        System.out.println("Inside : getTimeSlots() in SetupOperations");
+        //ArrayList<String> times = new ArrayList<>();
+        int timeSlot = 0;
+        String sqlStatement = "SELECT * FROM timeSlots ORDER BY timeSlotId";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                if (selectedTime.equals(rSet.getString(2))) {
+                    timeSlot = rSet.getInt(1);
+                }
+            }
+            rSet.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return timeSlot;
+    }
+
+    /**public int assignTimeSlot(String selectedTime) {
+        System.out.println("Inside assignTimeSlots Method");
+        int timeslot = 0;
+        ArrayList <String> times = getTimeSlots();
+        for(String time:times){
+            if(selectedTime.equals(time))
+              timeslot=times.indexOf(time)+1;
+        }
+        return timeslot;
+    }**/
 
     public void queryTables() {
         queryMembers();
@@ -895,6 +1139,7 @@ public class SetupOperations {
                         + " " + rSet.getString(7) + " " + rSet.getString(8) + " " + rSet.getString(9)
                         + " " + rSet.getInt(10));
             }
+            rSet.close();
         }
         catch(Exception e) {
             System.out.println(e);
@@ -912,6 +1157,7 @@ public class SetupOperations {
                         + " " + rSet.getString(4) + " " + rSet.getString(5) + " " + rSet.getString(6)
                         + " " + rSet.getString(7) + " " + rSet.getString(8));
             }
+            rSet.close();
         }
         catch(Exception e) {
             System.out.println(e);
@@ -925,8 +1171,9 @@ public class SetupOperations {
             rSet = pStmt.executeQuery();
             System.out.println("Lanes Table");
             while (rSet.next()){
-                System.out.println(rSet.getInt(1) + " " + rSet.getString(2) + " " + rSet.getInt(3));
+                System.out.println(rSet.getInt(1) + " " + rSet.getString(2));
             }
+            rSet.close();
         }
         catch(Exception e) {
             System.out.println(e);
@@ -943,6 +1190,7 @@ public class SetupOperations {
                 System.out.println(rSet.getInt(1) + " " + rSet.getString(2) + " " + rSet.getInt(3)
                         + " " + rSet.getString(4));
             }
+            rSet.close();
         }
         catch(Exception e){
             System.out.println(e);
@@ -959,6 +1207,7 @@ public class SetupOperations {
                 System.out.println(rSet.getInt(1) + " " + rSet.getInt(2) + " " + rSet.getInt(3)
                         + " " + rSet.getString(4) + " " + rSet.getString(5));
             }
+            rSet.close();
         }
         catch(Exception e){
             System.out.println(e);
@@ -971,6 +1220,7 @@ public class SetupOperations {
         SetupOperations setup = new SetupOperations();
         setup.dropTables();
         setup.createTables();
+        setup.populateBookings();
         setup.queryTables();
         setup.closeDB();
     }

@@ -77,7 +77,7 @@ public class UpdateStockGUI implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        System.out.println("Inside : ActionPerformed() in UpdateMemberGUI");
+        System.out.println("Inside : ActionPerformed() in UpdateStockGUI");
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(updateB)) {
             try {

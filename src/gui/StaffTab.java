@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Peter on 06/03/2015.
@@ -27,6 +28,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
     private DefaultTableModel model;
     private JTable table;
     private MainProgramOperations progOps;
+    private Date dateSelected;
     private ArrayList<Staff> staffList = new ArrayList<Staff>();
     private String TimeHeader[] = new String[] { "ID", "Name", "Surname", "Bookings", "Start", "Finish"};
     private String ContactHeader[] = new String[] { "ID", "Name", "Surname", "Bookings", "Phone", "Email"};
@@ -34,9 +36,10 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
 
 
 
-    public StaffTab(ArrayList<Staff> s, MainProgramOperations po) {
+    public StaffTab(Date date, ArrayList<Staff> s, MainProgramOperations po) {
         System.out.println("-------------------------------------Inside the staff tab dateselected = "+MainScreen.calendarSelected);
         System.out.println("Inside : StaffTabGUI");
+        this.dateSelected = date;
         this.progOps = po;
         this.staffList = s;
 
@@ -105,10 +108,6 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         add(p2, BorderLayout.EAST);
     }
 
-    public StaffTab(){
-
-    }
-
     public void fillTable(ArrayList<Staff> s) {
         System.out.println("Inside : fillTable() in StaffTabGUI");
         this.staffList = s;
@@ -118,6 +117,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         }
         System.out.println("staff list amount ==================== "+staffList.size());
     }
+
     // this is to display contact details
     public void fillTableContact(ArrayList<Staff> s) {
         System.out.println("Inside : fillTable() in StaffTabGUI");
@@ -126,7 +126,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
             model.addRow(new Object[]{aStaffList.getId(), aStaffList.getlName(), aStaffList.getfName(),
                     aStaffList.getBookings(), aStaffList.getPhone(), aStaffList.getEmail()});
         }
-        System.out.println("staff list amount ==================== "+staffList.size());
+        System.out.println("staff list amount ==================== " + staffList.size());
     }
 
     public void refreshTable () {
