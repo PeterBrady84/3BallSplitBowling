@@ -74,7 +74,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
 
         p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));
-        model = new DefaultTableModel(0, 0) {
+        model = new DefaultTableModel(null, TimeHeader) {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
@@ -92,7 +92,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         refreshTable();
         //fillTable(staffList);
 
-        //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
         tca.adjustColumns();
 
@@ -114,6 +114,8 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         for (int i = 0; i < staffList.size(); i ++) {
             model.addRow(new Object[]{staffList.get(i).getId(), staffList.get(i).getlName(), staffList.get(i).getfName(), staffList.get(i).getBookings(),
                     staffList.get(i).getStart(), staffList.get(i).getFinish()});
+            System.out.println(staffList.get(i).getId() + " " + staffList.get(i).getlName() + " " + staffList.get(i).getfName() + " " + staffList.get(i).getBookings() + " " +
+                    staffList.get(i).getStart() + " " + staffList.get(i).getFinish());
         }
         System.out.println("staff list amount ==================== "+staffList.size());
     }

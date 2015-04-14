@@ -76,6 +76,7 @@ public class MainScreen extends JFrame implements ActionListener {
         dt = new DateTime(juDate);
 
         this.dateSelected = dt.toDate();
+        calendarSelected = dateSelected.toString();
 
         setTitle("3-Ball-Strike Bowling");
         setSize(850, 600);

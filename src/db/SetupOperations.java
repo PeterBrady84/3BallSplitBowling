@@ -492,7 +492,7 @@ public class SetupOperations {
             System.out.println("Inside createRoster Method");
             // Create a Table
             String createRoster = "CREATE TABLE roster " +
-                    "(staffId NUMBER , startTime DATE, finishTime DATE," +
+                    "(staffId NUMBER , startTime TIMESTAMP, finishTime TIMESTAMP," +
                     "PRIMARY KEY (staffId, startTime),FOREIGN KEY (staffId) REFERENCES Staff(staffId)" +
                     "ON DELETE CASCADE)";
 

@@ -132,16 +132,17 @@ public class MainProgramOperations {
     public void addMember(Member m) {
         System.out.println("Inside : addMember() in MainProgramOperations");
         try {
-            String addsql = "INSERT INTO members(memberId, lName, fName, phone, email," +
-                    "address, town, county, numVisits) values(memId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, 0)";
+            String addsql = "INSERT INTO members(memberId, lName, fName, gender, phone, email," +
+                    "address, town, county, numVisits) values(memId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
             pStmt = conn.prepareStatement(addsql);
             pStmt.setString(1, m.getlName());
             pStmt.setString(2, m.getfName());
-            pStmt.setString(3, m.getPhone());
-            pStmt.setString(4, m.getEmail());
-            pStmt.setString(5, m.getAddress());
-            pStmt.setString(6, m.getTown());
-            pStmt.setString(7, m.getCounty());
+            pStmt.setString(3, m.getGender());
+            pStmt.setString(4, m.getPhone());
+            pStmt.setString(5, m.getEmail());
+            pStmt.setString(6, m.getAddress());
+            pStmt.setString(7, m.getTown());
+            pStmt.setString(8, m.getCounty());
             pStmt.executeUpdate();
 
             System.out.println("Member added to DB");
@@ -155,7 +156,7 @@ public class MainProgramOperations {
         try {
             String update = "UPDATE members SET fName = '" + n + "', lName = '" + l + "', gender = '" + g + "', phone = '"
                     + p + "', email = '" + e + "', address = '" + a + "', town = '" + t + "', county = '" + c + "'" +
-                    "WHERE memId = " + i;
+                    "WHERE memberId = " + i;
             pStmt = conn.prepareStatement(update);
             pStmt.executeUpdate();
         } catch (Exception ex) {
@@ -165,11 +166,22 @@ public class MainProgramOperations {
 
     public ResultSet searchMembers(String s) {
         System.out.println("Inside : searchMembers() in MainProgramOperations");
-        String sqlStatement = "SELECT * FROM Members WHERE " + s;
+        String sqlStatement = "SELECT * FROM members WHERE " + s;
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
-            ;
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+    public ResultSet deleteMember(String s) {
+        System.out.println("Inside : deleteMembers() in MainProgramOperations");
+        String sqlStatement = "DELETE FROM members WHERE " + s;
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
@@ -179,7 +191,7 @@ public class MainProgramOperations {
     /////////////////For Reports///////////////////////////////////////////////////////
     public ResultSet getMember() {
         System.out.println("Inside : getMemberNumVisits() in MainProgramOperations");
-        String sqlStatement = "SELECT fname,lname,numVisits,gender FROM Members ORDER BY numVisits";
+        String sqlStatement = "SELECT fname, lname, numVisits, gender FROM Members ORDER BY numVisits";
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
@@ -249,7 +261,6 @@ public class MainProgramOperations {
             dateSelected = dateSelected.toUpperCase();
             System.out.println("calendarSelected == null so the date is set as *********************************");
         }
-        //dateSelected = MainScreen.calendarSelected;
 
         System.out.println(dateSelected);
         try {
