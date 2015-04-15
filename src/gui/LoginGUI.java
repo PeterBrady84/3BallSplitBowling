@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -19,8 +21,8 @@ public class LoginGUI extends JFrame implements ActionListener {
 
     private MainProgramOperations progOps;
     private JPanel p1, p2, p3, p4, sub1, sub2, sub3;
-    private JLabel userLbl, passLbl, bowl, header, help;
-    private JButton login, forgot, exit;
+    private JLabel userLbl, passLbl, bowl, header;
+    private JButton help, login, forgot, exit;
     private JTextField userTxt;
     private JPasswordField passTxt;
     private Date dateSelected;
@@ -42,7 +44,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         this.setBackground(Color.WHITE);
 
         p1 = new JPanel();
-        p1.setPreferredSize(new Dimension (700, 100));
+        p1.setPreferredSize(new Dimension(700, 100));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);
         add(p1, BorderLayout.NORTH);
@@ -56,8 +58,14 @@ public class LoginGUI extends JFrame implements ActionListener {
         p1.add(header, BorderLayout.CENTER);
 
         ImageIcon logo2 = new ImageIcon("src/lib/files/bowling_help.png");
-        help = new JLabel(logo2);
+        help = new JButton(logo2);
+        help.setMargin(new Insets(0, 0, 0, 0));
+        help.setBackground(Color.WHITE);
+        help.setBorder(null);
+        help.setContentAreaFilled(false);
+        help.setOpaque(true);
         p1.add(help, BorderLayout.EAST);
+        help.addActionListener(this);
 
         //P2
         p2 = new JPanel(new BorderLayout());
@@ -191,8 +199,18 @@ public class LoginGUI extends JFrame implements ActionListener {
                         JOptionPane.WARNING_MESSAGE);
             }
         }
-        if(ae.getSource()==forgot) {
+        else if(ae.getSource()==forgot) {
             ForgotLoginGUI fl = new ForgotLoginGUI(progOps);
+        }
+        else if (ae.getSource() == help) {
+            if (Desktop.isDesktopSupported()) {
+                try {
+                    File helpPDF = new File("src/lib/files/helpManuals/login.pdf");
+                    Desktop.getDesktop().open(helpPDF);
+                } catch (IOException ex) {
+                    System.out.println("Unable to open PDFs");
+                }
+            }
         }
         if(ae.getSource()==exit) {
             progOps.closeDB();

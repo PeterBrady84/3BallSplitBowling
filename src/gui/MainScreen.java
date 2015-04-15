@@ -11,6 +11,8 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.Format;
@@ -22,8 +24,8 @@ import java.text.SimpleDateFormat;
 public class MainScreen extends JFrame implements ActionListener {
 
     private JPanel p1, p2, p3, jp1, jp2, jp3, jp4, jp5, jp6;
-    private JLabel bowl, header, help, button, loggedIn;
-    private JButton checkAvailability, changeUser, logout;
+    private JLabel header, button, loggedIn;
+    private JButton bowl, help, checkAvailability, logout;
     private JTabbedPane jtp;
     private MainProgramOperations progOps;
     private BookingTab bt;
@@ -91,17 +93,28 @@ public class MainScreen extends JFrame implements ActionListener {
         add(p1, BorderLayout.NORTH);
 
         ImageIcon logo = new ImageIcon("src/lib/files/bray_bowl.png");
-        bowl = new JLabel(logo);
+        bowl = new JButton(logo);
+        bowl.setMargin(new Insets(0, 0, 0, 0));
+        bowl.setBackground(Color.WHITE);
+        bowl.setBorder(null);
+        bowl.setContentAreaFilled(false);
+        bowl.setOpaque(true);
         p1.add(bowl, BorderLayout.WEST);
+        bowl.addActionListener(this);
 
         header = new JLabel("3-Ball-Strike Bowling System", SwingConstants.CENTER);
         header.setFont(header.getFont().deriveFont(40.0f));
         p1.add(header, BorderLayout.CENTER);
 
         ImageIcon logo2 = new ImageIcon("src/lib/files/bowling_help.png");
-        help = new JLabel(logo2);
+        help = new JButton(logo2);
+        help.setMargin(new Insets(0, 0, 0, 0));
+        help.setBackground(Color.WHITE);
+        help.setBorder(null);
+        help.setContentAreaFilled(false);
+        help.setOpaque(true);
         p1.add(help, BorderLayout.EAST);
-
+        help.addActionListener(this);
 
         // Add Panel 2
         p2 = new JPanel();
@@ -229,7 +242,15 @@ public class MainScreen extends JFrame implements ActionListener {
         p2.add(createTabbedPane(d));
         p2.revalidate();
         p2.repaint();
+    }
 
+
+    private void itemStateChanged(javax.swing.event.ChangeEvent evt)
+    {
+        if (jtp.getTitleAt(jtp.getSelectedIndex()).equals("Staff"))
+        {
+            // what you wish to do when tab is selected here ....
+        }
     }
 
 
@@ -245,6 +266,53 @@ public class MainScreen extends JFrame implements ActionListener {
 
             dateSelected = dt.toDate();
             refreshTabbedPane(dateSelected);
+        }
+        else if (e.getSource() == bowl) {
+            juDate = new Date();
+            dt = new DateTime(juDate);
+            dateSelected = dt.toDate();
+            dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
+            refreshTabbedPane(dateSelected);
+        }
+        else if (e.getSource() == help) {
+            File helpPDF = new File("src/lib/files/helpManuals/UserManualTest.pdf");
+            if (Desktop.isDesktopSupported()) {
+                if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Home"))
+                {
+                    helpPDF = new File("src/lib/files/helpManuals/home.pdf");
+                    System.out.println("HOME PDF");
+                }
+                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Booking"))
+                {
+                    helpPDF = new File("src/lib/files/helpManuals/booking.pdf");
+                    System.out.println("BOOKING PDF");
+                }
+                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Members"))
+                {
+                    helpPDF = new File("src/lib/files/helpManuals/members.pdf");
+                    System.out.println("MEMBERS PDF");
+                }
+                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Stock"))
+                {
+                    helpPDF = new File("src/lib/files/helpManuals/stock.pdf");
+                    System.out.println("STOCK PDF");
+                }
+                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Staff"))
+                {
+                    helpPDF = new File("src/lib/files/helpManuals/staff.pdf");
+                    System.out.println("STAFF PDF");
+                }
+                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Administrator"))
+                {
+                    helpPDF = new File("src/lib/files/helpManuals/administrator.pdf");
+                    System.out.println("ADMINISTRATOR PDF");
+                }
+                try {
+                    Desktop.getDesktop().open(helpPDF);
+                } catch (IOException ex) {
+                    System.out.println("Unable to open PDFs");
+                }
+            }
         }
         else if (e.getSource() == logout) {
             if (JOptionPane.showConfirmDialog(null, "Are you sure to logout of this program?", "Logout?",
