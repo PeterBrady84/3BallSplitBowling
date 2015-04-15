@@ -19,9 +19,10 @@ public class MainProgramOperations {
     private PreparedStatement pStmt;
     private ResultSet rSet;
     private Connection conn;
+    private SimpleDateFormat format;
     private java.util.Date juDate;
     private DateTime dt;
-    private String dateSelected;
+    private Date dateSelected;
     public static Staff user;
     //public DateAndCalendar;
 
@@ -251,25 +252,29 @@ public class MainProgramOperations {
     //used to populate the staffList which can be then used to fillTable
     public ResultSet getStaff() {
         System.out.println("Inside : getStaff() in MainProgramOperations");
+        dateSelected = MainScreen.dateSelected;
+        String date;
 
-        dateSelected = MainScreen.calendarSelected;
-
-        if (MainScreen.calendarSelected == null) {
+        if (dateSelected == null) {
             juDate = new java.util.Date();
             dt = new DateTime(juDate);
-            dateSelected = dt.toString("dd-MMM-yy");
-            dateSelected = dateSelected.toUpperCase();
-            System.out.println("calendarSelected == null so the date is set as *********************************");
+            date = dt.toString("dd-MMM-yy").toUpperCase();
+            System.out.println("dateSelected == null so the date is set as ******");
+            System.out.println("Today's Date: " + date);
         }
-
-        System.out.println(dateSelected);
+        else {
+            format = new SimpleDateFormat("dd-MMM-yy");
+            date = format.format(dateSelected).toUpperCase();
+            System.out.println("dateSelected NOT == null so the date IS ******");
+            System.out.println(date);
+        }
         try {
             String queryString = "SELECT s.staffId, lName, fName, s.bookings,  " +
                     "TO_CHAR(startTime, 'HH24:MI') AS STARTTIME, " +
                     "TO_CHAR(finishTime, 'HH24:MI') AS FINISHTIME, s.phone, s.username, s.email, s.password, " +
                     "s.securityQuestion, s.securityAnswer, s.admin " +
                     "FROM staff s, roster r WHERE s.staffId = r.staffId " +
-                    "AND startTime LIKE '%" + dateSelected + "%'";
+                    "AND startTime LIKE '%" + date + "%'";
 
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
@@ -942,7 +947,7 @@ public class MainProgramOperations {
     ///// Beginning of Misc Queries ///////////////////////////////////
     public ResultSet getBookingDataForHomeTab(Date d) {
         System.out.println("Inside : getBookingDataForHomeTab() in MainProgramOperations");
-        SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yy");
+        format = new SimpleDateFormat("dd-MMM-yy");
         String date = format.format(d);
         try {
             String queryString = "SELECT bd.laneNumber, bd.bookingId, bd.bookingDate,\n" +

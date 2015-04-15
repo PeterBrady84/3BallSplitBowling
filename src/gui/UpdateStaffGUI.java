@@ -117,6 +117,7 @@ public class UpdateStaffGUI implements ActionListener {
                         a.updateStaff(new Staff(lName, fName, phone, login, email, password, secQuestion, secAnswer, access));
                         JOptionPane.showMessageDialog(null, "Updated Staff Data Saved");
                         progOps.getStaff();
+                        String t = "contact";
                         sTab.refreshTable();
                         updateD.setVisible(false);
                     } else {

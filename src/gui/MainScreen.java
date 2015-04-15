@@ -39,12 +39,9 @@ public class MainScreen extends JFrame implements ActionListener {
     public JDatePanelImpl mainDatePanel;
     public JDatePickerImpl mainDatePicker;
     public JFormattedTextField dateInTxt;
-    public static String calendarSelected;
-    private Date dateSelected;
+    public static Date dateSelected;
     private java.util.Date juDate ;
     private DateTime dt;
-    private Format formatter;
-    private Alley list;
     private Staff user;
 
     public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b,
@@ -76,7 +73,6 @@ public class MainScreen extends JFrame implements ActionListener {
         dt = new DateTime(juDate);
 
         this.dateSelected = dt.toDate();
-        calendarSelected = dateSelected.toString();
 
         setTitle("3-Ball-Strike Bowling");
         setSize(850, 600);
@@ -136,7 +132,6 @@ public class MainScreen extends JFrame implements ActionListener {
         /*
          Code for Date Setter at Top of page
           */
-        calendarSelected = dt.toString("dd-MMM-yyyy");
         mainDatePicker.addActionListener(this);
         dateInTxt = mainDatePicker.getJFormattedTextField();
         dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
@@ -229,7 +224,7 @@ public class MainScreen extends JFrame implements ActionListener {
     public void refreshTabbedPane (Date d) {
         System.out.println("Inside : refreshTabbedPane() in MainScreenGUI");
         this.dateSelected = d;
-
+        Alley a = new Alley(progOps);
         p2.removeAll();
         p2.add(createTabbedPane(d));
         p2.revalidate();
@@ -247,9 +242,8 @@ public class MainScreen extends JFrame implements ActionListener {
             System.out.println("HERE");
             juDate = (Date) mainDatePicker.getModel().getValue();
             dt = new DateTime(juDate);
-            calendarSelected = dt.toString("dd-MMM-yyyy");
+
             dateSelected = dt.toDate();
-            System.out.println("______________%%%%%%%%%%    DATE  =    "+calendarSelected+"      ________________");
             refreshTabbedPane(dateSelected);
         }
         else if (e.getSource() == logout) {

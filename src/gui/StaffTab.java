@@ -37,7 +37,6 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
 
 
     public StaffTab(Date date, ArrayList<Staff> s, MainProgramOperations po) {
-        System.out.println("-------------------------------------Inside the staff tab dateselected = "+MainScreen.calendarSelected);
         System.out.println("Inside : StaffTabGUI");
         this.dateSelected = date;
         this.progOps = po;
@@ -45,13 +44,16 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
 
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
+        this.setBackground(Color.WHITE);
 
         p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 290));
         p1.setLayout(new BorderLayout());
+        p1.setBackground(Color.WHITE);
         p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
+        p1a.setBackground(Color.WHITE);
         toggle = new JToggleButton("View Contact details", false);
         create = new JButton("Add Staff");
         edit = new JButton("Update Staff");
@@ -74,6 +76,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
 
         p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));
+        p2.setBackground(Color.WHITE);
         model = new DefaultTableModel(null, TimeHeader) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -88,11 +91,11 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
             }
         };
         table.getTableHeader().setReorderingAllowed(false);
-
         refreshTable();
-        //fillTable(staffList);
 
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        fillTable(staffList);
+
+        //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
         tca.adjustColumns();
 
@@ -114,20 +117,22 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
         for (int i = 0; i < staffList.size(); i ++) {
             model.addRow(new Object[]{staffList.get(i).getId(), staffList.get(i).getlName(), staffList.get(i).getfName(), staffList.get(i).getBookings(),
                     staffList.get(i).getStart(), staffList.get(i).getFinish()});
-            System.out.println(staffList.get(i).getId() + " " + staffList.get(i).getlName() + " " + staffList.get(i).getfName() + " " + staffList.get(i).getBookings() + " " +
-                    staffList.get(i).getStart() + " " + staffList.get(i).getFinish());
         }
+        TableColumnAdjuster tca = new TableColumnAdjuster(table);
+        tca.adjustColumns();
         System.out.println("staff list amount ==================== "+staffList.size());
     }
 
     // this is to display contact details
     public void fillTableContact(ArrayList<Staff> s) {
-        System.out.println("Inside : fillTable() in StaffTabGUI");
+        System.out.println("Inside : fillContactTable() in StaffTabGUI");
         this.staffList = s;
-        for (Staff aStaffList : staffList) {
-            model.addRow(new Object[]{aStaffList.getId(), aStaffList.getlName(), aStaffList.getfName(),
-                    aStaffList.getBookings(), aStaffList.getPhone(), aStaffList.getEmail()});
+        for (int i = 0; i < staffList.size(); i ++) {
+            model.addRow(new Object[]{staffList.get(i).getId(), staffList.get(i).getlName(), staffList.get(i).getfName(),
+                    staffList.get(i).getBookings(), staffList.get(i).getPhone(), staffList.get(i).getEmail()});
         }
+        TableColumnAdjuster tca = new TableColumnAdjuster(table);
+        tca.adjustColumns();
         System.out.println("staff list amount ==================== " + staffList.size());
     }
 
@@ -140,14 +145,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
 
         model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
-
-        if(toggle.isSelected())
-            fillTableContact(staffList);
-        else
-            fillTable(staffList);
     }
-
-
 
     public String searchStaff() {
         System.out.println("Inside : searchStaff() in StaffTabGUI");
@@ -202,15 +200,16 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
     }
 
     public void itemStateChanged(ItemEvent ev) {
-        refreshTable();
         if (ev.getStateChange() == ItemEvent.SELECTED) {
             System.out.println("button is selected");
             model.setColumnIdentifiers(ContactHeader);
-            //fillTableContact(staffList);
+            refreshTable();
+            fillTableContact(staffList);
         } else if (ev.getStateChange() == ItemEvent.DESELECTED) {
             System.out.println("button is not selected");
             model.setColumnIdentifiers(TimeHeader);
-            //fillTable(staffList);
+            refreshTable();
+            fillTable(staffList);
         }
     }
 
