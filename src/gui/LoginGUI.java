@@ -164,14 +164,19 @@ public class LoginGUI extends JFrame implements ActionListener {
         System.out.println("Inside : actionPerformed() in LoginGUI");
         if(ae.getSource()==login) {
             if(login()==true) {
-                //this.add(new WelcomeAnimation());
-               // p1.add(new WelcomeAnimation(), BorderLayout.CENTER);
-                JOptionPane.showMessageDialog(null,
-                            "logged in", "ERROR", JOptionPane.WARNING_MESSAGE);
+                int width = this.getWidth();
+                int height = this.getHeight();
+                System.out.println("          width = "+width+"   ********     Height = "+height);
+                //JPanel animation;
+                Color tranparent = new Color(0,0,0,0);
+                WelcomeAnimation animation = new WelcomeAnimation(width,height);
+                //animation.setBackground(tranparent);
+                animation.setPreferredSize(new Dimension(width,height));
+                this.add(animation, BorderLayout.CENTER);
+                setVisible(true);
 
-                WelcomeAnimation wc = new WelcomeAnimation();
-                this.add(wc);
-                wc.repaint();
+                JOptionPane.showMessageDialog(null, "Press to Enter","Welcome to Java Bowling",
+                        JOptionPane.CLOSED_OPTION);
 
                 Staff user = progOps.createUser(userTxt.getText());
                 System.out.println("      WHAT IS THE VALUE OF isadmin:   "+user.isAdmin());

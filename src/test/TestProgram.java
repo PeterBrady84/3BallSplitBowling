@@ -1,5 +1,6 @@
 package test;
 
+import controller.WelcomeAnimation;
 import db.MainProgramOperations;
 import gui.LoginGUI;
 import gui.MainScreen;
@@ -12,6 +13,7 @@ public class TestProgram {
         System.out.println("Inside : TestProgram");
 
         MainProgramOperations progOps = new MainProgramOperations();
+        //WelcomeAnimation hello = new WelcomeAnimation();
         LoginGUI ls = new LoginGUI(progOps);
     }
 }

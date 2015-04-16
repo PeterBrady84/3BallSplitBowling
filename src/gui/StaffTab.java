@@ -112,7 +112,7 @@ public class StaffTab extends JPanel implements ActionListener, ItemListener {
     }
 
     public void fillTable(ArrayList<Staff> s) {
-        System.out.println("Inside : fillTable() in StaffTabGUI");
+        System.out.println("Inside : fillTable() in StaffTab");
         this.staffList = s;
         for (int i = 0; i < staffList.size(); i ++) {
             model.addRow(new Object[]{staffList.get(i).getId(), staffList.get(i).getlName(), staffList.get(i).getfName(), staffList.get(i).getBookings(),

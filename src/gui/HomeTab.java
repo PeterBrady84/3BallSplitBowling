@@ -1,5 +1,6 @@
 package gui;
 
+import controller.WelcomeAnimation;
 import db.MainProgramOperations;
 import model.*;
 import controller.ModifyDateAndTime;
@@ -37,6 +38,7 @@ public class HomeTab extends JPanel {
     private SimpleDateFormat format;
     private Date dateSelected;
     private int yr, mon, day;
+    private Image laneBg;
 
     public HomeTab(Date date, ArrayList<Booking> b, ArrayList<BookingDetails> bd, ArrayList<Member> m, ArrayList<TimeSlot> t,
                    ArrayList<Lane> l, MainProgramOperations po) {
@@ -48,6 +50,10 @@ public class HomeTab extends JPanel {
         this.memList = m;
         this.timeSlotList = t;
         this.laneList = l;
+
+
+        ImageIcon bg = new ImageIcon("src/lib/files/laneBG.png");
+        laneBg = bg.getImage();
 
         this.setPreferredSize(new Dimension(780, 300));
         setLayout(new BorderLayout());
@@ -63,11 +69,16 @@ public class HomeTab extends JPanel {
         ChartPanel chartPanel = new ChartPanel(chart);
 
         CategoryPlot plot = chart.getCategoryPlot();
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        // set the color (r,g,b)
-        Color color = new Color(2, 171, 33);
-        renderer.setSeriesPaint(0, color);
 
+        plot.setBackgroundPaint(new Color(255, 255, 255, 0));
+
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        // The last int controls the transparency of the bars. 0 = invisible, 255 = solid
+        Color color = new Color(83, 23, 171,190);
+        renderer.setSeriesPaint(0, color);
+        plot.setBackgroundImageAlpha(1.0f);
+        plot.setBackgroundImage(laneBg);
+        System.out.println("  ====================         BG      alpha  ===    " + plot.getBackgroundImageAlpha());
         this.add(chartPanel, BorderLayout.CENTER);
         this.setVisible(true);
     }

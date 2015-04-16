@@ -326,8 +326,8 @@ public class MainProgramOperations {
             pStmt.setString(2, s.getfName());
             pStmt.setInt(3, 0);// when adding a new staff member they have ZERO bookings
             pStmt.setString(4, s.getPhone());
-            pStmt.setString(5, s.getLogin());
-            pStmt.setString(6, s.getEmail());
+            pStmt.setString(5, s.getEmail());
+            pStmt.setString(6, s.getLogin());
             pStmt.setString(7, s.getPassword());
             pStmt.setString(8, s.getSecQuestion());
             pStmt.setString(9, s.getSecAnswer());
@@ -941,6 +941,42 @@ public class MainProgramOperations {
         }
         return count;
     }
+
+    /*public int [] getTimes(String start, String end) {
+        System.out.println("Inside : getTimes() in MainProgramOperations");
+        int [] count = new int[0];
+        int size = 0;
+        try {
+            String queryString = "SELECT COUNT(timeSlotId) " +
+                    "FROM timeSlots " +
+                    "WHERE timeDescription " +
+                    "BETWEEN '" + start + "'" +
+                    "AND '" + end + "'";
+            pStmt = conn.prepareStatement(queryString);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                size = rSet.getInt(1);
+            }
+            rSet.close();
+
+            String queryString2 = "SELECT timeSlotId " +
+                    "FROM timeSlots " +
+                    "WHERE timeDescription " +
+                    "BETWEEN '" + start + "'" +
+                    "AND '" + end + "'";
+            pStmt = conn.prepareStatement(queryString2);
+            rSet = pStmt.executeQuery();
+            count = new int[size];
+            int index = 0;
+            while (rSet.next()) {
+                count[index] = rSet.getInt(1);
+                index++;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return count;
+    }*/
 ///// End of TimeSlots Queries ///////////////////////////////////
 
 

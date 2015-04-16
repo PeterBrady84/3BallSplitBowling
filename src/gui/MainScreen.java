@@ -45,6 +45,8 @@ public class MainScreen extends JFrame implements ActionListener {
     public static Date dateSelected;
     private java.util.Date juDate ;
     private DateTime dt;
+    private Format formatter;
+    private Alley list;
     private Staff user;
 
     public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b,
@@ -117,6 +119,7 @@ public class MainScreen extends JFrame implements ActionListener {
         help.setOpaque(true);
         p1.add(help, BorderLayout.EAST);
         help.addActionListener(this);
+
 
         // Add Panel 2
         p2 = new JPanel();

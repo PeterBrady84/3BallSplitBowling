@@ -104,7 +104,7 @@ public class AddBookingGUI implements ActionListener {
                     String type = ge.typeCombo.getSelectedItem().toString();
                     if (numValidator.isNumeric(ge.noGamesTxt.getText())) {
                         Booking b = new Booking(bookingId, memId, staffId, noLanes, games, 1,  noPlayers, pricingPerHr, type);
-                        progOps.addBooking(b);
+                        //progOps.addBooking(b);
                         Alley a = new Alley(progOps);
                         a.addBooking();
                         bTab.refreshTable();
