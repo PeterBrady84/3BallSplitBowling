@@ -82,7 +82,7 @@ public class MemberTab extends JPanel implements ActionListener {
 
         fillTable(memList);
 
-        //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
         tca.adjustColumns();
 
@@ -123,7 +123,7 @@ public class MemberTab extends JPanel implements ActionListener {
 
     public String searchMember() {
         System.out.println("Inside : searchMember() in MemberTabGUI");
-        String query = "";
+        String query;
         NumberValidator numValidator = new NumberValidator();
         memId = new JTextField();
         memName = new JTextField();
@@ -135,7 +135,7 @@ public class MemberTab extends JPanel implements ActionListener {
         int option = JOptionPane.showConfirmDialog(null, options, "Search Members", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             if (numValidator.isNumeric(memId.getText())) {
-                query = "memId = " + memId.getText();
+                query = "memberId = " + memId.getText();
             } else if (numValidator.isNumeric(memName.getText()) == false && memName.getText().contains(" ")) {
                 String[] name = memName.getText().split(" ");
                 if (name.length < 2) {
@@ -165,6 +165,11 @@ public class MemberTab extends JPanel implements ActionListener {
             }
         }
         else if (ae.getSource() == delete) {
+            String s = searchMember();
+            if (!s.equals("cancel")) {
+                progOps.deleteMember(s);
+                refreshTable();
+            }
         }
     }
 }

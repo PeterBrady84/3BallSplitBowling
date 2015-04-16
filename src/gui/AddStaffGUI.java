@@ -100,6 +100,7 @@ public class AddStaffGUI extends Thread implements ActionListener  {
                         progOps.addStaff(s);
                         Alley a = new Alley(progOps);
                         a.addStaffLastRow();
+                        String t = "contact";
                         sTab.refreshTable();
                         JOptionPane.showMessageDialog(null, "New Staff Data Saved");
                         addD.setVisible(false);
