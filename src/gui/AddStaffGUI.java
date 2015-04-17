@@ -64,12 +64,18 @@ public class AddStaffGUI extends Thread implements ActionListener  {
         System.out.println("Inside : ActionPerformed in AddStaffGUI");
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(addB)) {
+            System.out.println("      =================      \n\n=====================   username eneterd = "+ge.loginTxt.getText());
             try {
                 if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || ge.phoneTxt.getText().equals("") ||
                         ge.loginTxt.getText().equals("") || ge.passwordTxt.getPassword().equals("") || ge.confPassTxt.getPassword().equals("")) {
                     JOptionPane.showMessageDialog(null,
                             "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                } else if (progOps.isUniqueUsername(ge.loginTxt.getText())) {
+                    JOptionPane.showMessageDialog(null,
+                            "User name is not unique", "ERROR", JOptionPane.WARNING_MESSAGE);
+                    ge.secAnsTxt.setText("");
+                    ge.confSecAnsTxt.setText("");
                 } else if (!(Arrays.equals(ge.passwordTxt.getPassword(), ge.confPassTxt.getPassword()))) {
                     JOptionPane.showMessageDialog(null,
                             "Passwords do not match, please retry", "ERROR", JOptionPane.WARNING_MESSAGE);

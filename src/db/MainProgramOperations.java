@@ -421,25 +421,28 @@ public class MainProgramOperations {
         return null;
     }
 
-    /*public ArrayList<String> staffLogin() {
-        System.out.println("Inside : staffLogin() in MainProgramOperations");
-        ArrayList<String> usernames = new ArrayList<String>();
-        String queryString = "SELECT username FROM staff order by staffId";
+    public boolean isUniqueUsername(String verify){
+        System.out.println("Inside : checkPass() in MainProgramOperations");
+        ArrayList <String> usernames = new ArrayList<>(10);
+        String getPassword = "SELECT username FROM staff";
         try {
-            pStmt = conn.prepareStatement(queryString);
+            pStmt = conn.prepareStatement(getPassword);
             rSet = pStmt.executeQuery();
-            while(rSet.next()) {
+            rSet.next();
+            int i = 0;
+            while (rSet.next()) {
                 usernames.add(rSet.getString(1));
-
-                System.out.println("LIST OF log in resultset------------\n name:" +rSet.getString(1)
-                +"\t Password = "+rSet.getString(2));
+                System.out.println(" =============================\n\n==================               userba     :         "+usernames.get(i));
+                i++;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e);
         }
-        return usernames;
-    }*/
+        if (usernames.contains(verify))
+            return false;
+        else
+            return true;
+    }
 
 
     public boolean checkPass(String username, String password) {
