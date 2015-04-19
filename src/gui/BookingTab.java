@@ -26,21 +26,25 @@ public class BookingTab extends JPanel implements ActionListener {
     private DefaultTableModel model;
     private JTable table;
     private MainProgramOperations progOps;
+    private MainScreen ms;
     private ArrayList<Booking> bookingList = new ArrayList<Booking>();
     private ArrayList<Lane> laneList = new ArrayList<Lane>();
     private ArrayList<Member> memList = new ArrayList<Member>();
+    private Staff user;
     private ResultSet rSet;
     private Date dateSelected;
     private String header[] = new String[] { "Lane", "Surname", "First Name", "Date", "Start Time", "End Time"};
     private JTextField bookingId, bookingName;
 
-    public BookingTab(Date date, ArrayList<Booking> b, ArrayList<Member> m, ArrayList<Lane> l, MainProgramOperations po) {
+    public BookingTab(MainScreen ms, Date date, ArrayList<Booking> b, ArrayList<Member> m, ArrayList<Lane> l, MainProgramOperations po, Staff user) {
         System.out.println("Inside : BookingTabGUI");
         this.dateSelected = date;
         this.progOps = po;
+        this.ms = ms;
         this.bookingList = b;
         this.memList = m;
         this.laneList = l;
+        this.user = user;
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
@@ -172,7 +176,7 @@ public class BookingTab extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         System.out.println("Inside : actionPerformed() in BookingTabGUI");
         if (ae.getSource() == create) {
-            AddBookingGUI ab = new AddBookingGUI(this, progOps, bookingList);
+            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(ms, this, progOps, bookingList, user);
         }
         else if (ae.getSource() == edit) {
             String s = searchBooking();

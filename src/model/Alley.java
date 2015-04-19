@@ -37,12 +37,13 @@ public class Alley {
             System.out.println(e);
         }
 
+        System.out.println("    ///////////////  ******************              Just before get Staff in alley");
         rSet = progOps.getStaff();
         try {
             while (rSet.next()) {
                 staffList.add(new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3),  rSet.getInt(4),
-                        rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8), rSet.getString(9),
-                        rSet.getString(10), rSet.getString(11), rSet.getString(12), rSet.getString(13)));
+                        rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8)));
+                System.out.println(rSet.getInt(1)+"\t"+ rSet.getString(2)+"\t"+  rSet.getString(3));
             }
         } catch (Exception e) {
             System.out.println(e);

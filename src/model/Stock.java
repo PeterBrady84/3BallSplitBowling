@@ -11,7 +11,7 @@ public class Stock {
     private String details;
 
     public Stock(int i, String s, int q, String d) {
-        System.out.println("Inside : StockModel");
+        //System.out.println("Inside : StockModel");
         this.id = i;
         this.shoeSize = s;
         this.quantity = q;

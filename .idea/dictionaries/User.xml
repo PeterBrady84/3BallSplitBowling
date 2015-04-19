@@ -2,6 +2,7 @@
   <dictionary name="User">
     <words>
       <w>timeslot</w>
+      <w>timeslots</w>
     </words>
   </dictionary>
 </component>

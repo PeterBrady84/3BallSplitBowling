@@ -2,7 +2,10 @@ package gui;
 
 import db.MainProgramOperations;
 import controller.ModifyDateAndTime;
+import model.Booking;
+import model.BookingDetails;
 import model.NumberValidator;
+import model.Staff;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
@@ -19,7 +22,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Peter on 20/03/2015.
@@ -28,6 +35,10 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
 
     private JDialog addD;
     private MainProgramOperations progOps;
+    private MainScreen ms;
+    private BookingTab bt;
+    private ArrayList<Booking> bookingList;
+    private Staff user;
     private ResultSet rSet;
     private UtilDateModel model;
     private JDatePanelImpl datePanel;
@@ -38,16 +49,20 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
     private JTextField startTimeTxt, endTimeTxt, playerTxt;
     private JTextArea display;
     private JPanel checkPanel, topPanel, bottomPanel;
-    private JButton checkB, clearB, cancel;
+    private JButton create, checkB, clearB, cancel;
     private final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
     private final String [] HOURS = {"10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm",
             "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
     private final String [] MINUTES = {"00", "15", "30", "45"};
     private final int [] LANES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
 
-    public CheckAvailabilityGUI (MainProgramOperations po) {
+    public CheckAvailabilityGUI (MainScreen ms, BookingTab bt, MainProgramOperations po, ArrayList<Booking> b, Staff user) {
         System.out.println("Inside : CheckAvailabilityGUI");
         this.progOps = po;
+        this.ms = ms;
+        this.bt = bt;
+        this.bookingList = b;
+        this.user = user;
 
         addD = new JDialog();
         addD.setTitle("Check For Availability");
@@ -62,7 +77,7 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
         checkPanel.setBorder(titled);
 
         topPanel = new JPanel();
-        topPanel.setLayout(new GridLayout(10, 2));
+        topPanel.setLayout(new GridLayout(9, 2));
         topPanel.setBackground(Color.white);
 
         dateLbl = new JLabel("Date:");
@@ -157,10 +172,15 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
         midPanel.setBackground(Color.WHITE);
         JScrollPane sp = new JScrollPane();
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        sp.setPreferredSize(new Dimension(250, 120));
-        sp.setBackground(Color.WHITE);
-        sp.add(display);
+        sp.setPreferredSize(new Dimension(250, 100));
+        sp.getViewport().setBackground(Color.WHITE);
+        sp.setViewportView(display);
         midPanel.add(sp);
+
+        create = new JButton("Create Booking");
+        midPanel.add(create);
+        create.setVisible(false);
+        create.addActionListener(this);
 
         checkPanel.add(topPanel, BorderLayout.NORTH);
         checkPanel.setBackground(Color.WHITE);
@@ -169,7 +189,6 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
 
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
-
 
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.setBackground(Color.WHITE);
@@ -215,13 +234,22 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
                         for (int i = laneIndex; i < LANES.length; i++) {
                             noLanes.addItem(LANES[i]);
                         }
-                        String available = "";
-                        rSet = progOps.checkAvailability(d, st);
+                        int available = 0;
+                        rSet = progOps.checkAvailability(d, st, et);
                         try {
                             while (rSet.next()) {
-                                available += rSet.getString(1) + "\n";
+                                available = rSet.getInt(1);
                             }
-                            display.setText(available);
+                            display.setText("Lanes Available: " + available +
+                                    "\nLanes Required: " + noLanes.getSelectedItem() + "\n\n");
+                                    if (available >= (Integer)(noLanes.getSelectedItem())) {
+                                        display.append("SUCCESS, there are lanes available!");
+                                        create.setVisible(true);
+                                    }
+                                    else {
+                                        display.append("Insufficient Lanes available!");
+                                        create.setVisible(false);
+                                    }
                         } catch (SQLException ex) {
                             System.out.println(e);
                         }
@@ -236,9 +264,36 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
                 JOptionPane.showMessageDialog(null, "Wrong data format", "ERROR", JOptionPane.WARNING_MESSAGE);
             }
         }
+        else if (e.getSource() == create) {
+            int lanes = (Integer)noLanes.getSelectedItem();
+            int players = Integer.parseInt(playerTxt.getText());
+            int [] freeLanes = progOps.getLanesAvailable(dateInTxt.getText(), startTimeTxt.getText(), endTimeTxt.getText());
+            DateFormat formatter ;
+            Date date = new Date();
+            try {
+                formatter = new SimpleDateFormat("dd-MMM-yy");
+                date = formatter.parse(dateInTxt.getText());
+            }
+            catch (Exception exc) {
+                System.out.println(exc);
+            }
+            for (int i = 0; i < (Integer)noLanes.getSelectedItem(); i ++) {
+                int [] slots = progOps.getTimes(startTimeTxt.getText(), endTimeTxt.getText());
+                for (int j = 0; j < slots.length; j ++) {
+                    BookingDetails bd = new BookingDetails(bookingList.size(), freeLanes[i], slots[j], date);
+                    progOps.addBookingDetails(bd);
+                }
+            }
+            AddBookingGUI ab = new AddBookingGUI(ms, bt, progOps, bookingList, user, lanes, players);
+            addD.dispose();
+        }
         else if (e.getSource().equals(clearB)) {
             startTimeTxt.setText("");
             endTimeTxt.setText("");
+            noLanes.removeAllItems();
+            playerTxt.setText("");
+            display.setText("");
+            create.setVisible(false);
         }
         else if (e.getSource().equals(cancel)) {
             addD.dispose();

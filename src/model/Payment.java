@@ -17,7 +17,7 @@ public class Payment {
 
 
     public Payment(int p, int b, double d, double t, String f, String pm) {
-        System.out.println("Inside : PaymentModel");
+        //System.out.println("Inside : PaymentModel");
         this.paymentId = p;
         this.bookingId = b;
         this.deposit = d;
