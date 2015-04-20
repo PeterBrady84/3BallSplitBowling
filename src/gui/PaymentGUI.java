@@ -30,7 +30,7 @@ public class PaymentGUI extends JFrame{
     private JLabel deposit;
     private JLabel price;
     private JRadioButton cashRadioButton;
-    private JComboBox comboBox1;
+    private JComboBox cardTypeBox;
     private JRadioButton cardRadioButton;
     private JPanel rootPanel;
     private JTextField startTxt;
@@ -40,9 +40,10 @@ public class PaymentGUI extends JFrame{
     private Payment pay;
     private MainProgramOperations progOps;
     private ArrayList timeslots;
+    private String payMethod;
 
 
-    public PaymentGUI(Booking b, final ArrayList<BookingDetails> bd, Member mem, final Payment pay, MainProgramOperations po) {
+    public PaymentGUI(Booking b, final ArrayList<BookingDetails> bd, Member mem,  MainProgramOperations po) {
         super("Booking Receipt");
         this.setSize(600,750);
         setResizable(false);
@@ -54,14 +55,15 @@ public class PaymentGUI extends JFrame{
         book = b;
         cust = mem;
         detail = bd.get(0);
-        this.pay = pay;
+        //this.pay = pay;
+        pay = new Payment(b);
         progOps = po;
         timeslots = bd;
 
         System.out.println("Booking passed into payment gui = "+b.getId()+",memid = "+b.getMemId()+", staffid = "+b.getStaffId());
         System.out.println("\tMember passed into payment gui , customerid = "+cust.getId()+",fname = "+cust.getfName()+", lname = "+cust.getEmail());
 
-        customerTxt.setText(cust.getfName()+", "+cust.getlName());
+        customerTxt.setText(cust.getfName() + ", " + cust.getlName());
         dateTxt.setText(String.valueOf(detail.getBookingDate()));
         lanesTxt.setText(String.valueOf(book.getNumLanes()));
         startTxt.setText(String.valueOf(detail.getTimeSlotId()));
@@ -71,19 +73,46 @@ public class PaymentGUI extends JFrame{
         final ActionListener listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                double depositAmt = Double.parseDouble(depositTxt.getText());
                 if(e.getSource().equals(confirm)){
+                    double deposit = Double.parseDouble(depositTxt.getText().toString());
+                    double total = pay.getTotalPrice();
+                    pay.setDeposit(deposit);
+                    if(deposit<total)
+                        pay.setFullyPaid("N");
+                    else if((deposit==total))
+                        pay.setFullyPaid("Y");
                     progOps.addBooking(book);
                     System.out.println("\t\t\t\t\t\t                Booking id = "+book.getId());
                     for(int i = 0; i<timeslots.size();i++){
                         progOps.addBookingDetails(bd.get(i));
                         System.out.println("      \t\t\t\t---------     Booking id of detail = " + bd.get(0).getBookingId());
                     }
+                    pay.setPaymentMethod(payMethod);
+
                     progOps.addPayment(pay);
                 }
             }
         };
+
         confirm.addActionListener(listener);
         back.addActionListener(listener);
+
+
+        ActionListener listener1 = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(e.getSource().equals(cashRadioButton)){
+                    payMethod = "Cash";
+                }
+                else{
+                    cardTypeBox.setEnabled(true);
+                    payMethod = cardTypeBox.getSelectedItem().toString();
+                }
+            }
+        };
+        cashRadioButton.addActionListener(listener1);
+        cardRadioButton.addActionListener(listener1);
     }
+
+
 }

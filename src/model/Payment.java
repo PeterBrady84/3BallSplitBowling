@@ -27,13 +27,15 @@ public class Payment {
     }
 
     public Payment(Booking b) {
+        paymentId = b.getId();
         bookingId = b.getId();
         if(b.getPricingPerHour().equals("Y"))
             totalPrice = (b.getHours_games() * 10)*b.getNumLanes();
         //PRICE_PER_HOUR = 10;
         else
-            totalPrice = b.getNumPlayers() * b.getHours_games() * 7.5;
+            totalPrice = (b.getNumPlayers() * b.getHours_games()) * 7.5;
         //PRICE_PER_GAME = 7.5;
+
     }
 
     public int getPaymentId() {

@@ -285,7 +285,7 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
                 int [] slots = progOps.getTimes(startTimeTxt.getText(), endTimeTxt.getText());
                 games_hours = progOps.getNumHours(startTimeTxt.getText(), endTimeTxt.getText());
                 for (int j = 0; j < slots.length; j ++) {
-                    BookingDetails bd = new BookingDetails(bookingList.size()+1, freeLanes[i], slots[j], date);
+                    BookingDetails bd = new BookingDetails(progOps.getNumBookings()+1, freeLanes[i], slots[j], date);
                     //progOps.addBookingDetails(bd);
                     timeslots.add(bd);
                 }

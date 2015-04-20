@@ -130,13 +130,12 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public int nextMemberid(){
+    public int lastMemberid(){
         rSet = getMemLastRow();
         int id = -1;
         try {
             id = rSet.getInt(1);
-            id+=1;
-            System.out.println("member id returned was "+(id-1));
+            System.out.println("member id returned was "+(id));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -1024,17 +1023,21 @@ public class MainProgramOperations {
     }
 
     public void addPayment(Payment pay) {
+        System.out.println("Payment details :pay id = "+pay.getPaymentId() +", booking id = "+pay.getBookingId()+", deposit =  "+pay.getDeposit()+",total =  "
+                +pay.getTotalPrice()+",full paid = "+pay.getFullyPaid()+", pay method = "+pay.getPaymentMethod());
         System.out.println("Inside : addPayment() in MainProgramOperations");
-        String sqlStatement = "INSERT INTO Payments (paymentid, bookingid, deposit, totalprice, fullyPaid,paymentmethod) values (?,?,?,?,?,?)";
+        String sqlStatement = "INSERT INTO Payments (paymentid, bookingid, deposit, totalprice, fullyPaid, paymentmethod) values (?,?,?,?,?,?)";
         try {
             pStmt = conn.prepareStatement(sqlStatement);
-            rSet = pStmt.executeQuery();
-            pStmt.setInt(1, pay.getBookingId());
-            pStmt.setInt(2, pay.getPaymentId());
+
+            pStmt.setInt(1, pay.getPaymentId());
+            pStmt.setInt(2, pay.getBookingId());
             pStmt.setDouble(3, pay.getDeposit());
             pStmt.setDouble(4, pay.getTotalPrice());
             pStmt.setString(5, pay.getFullyPaid());
             pStmt.setString(6, pay.getPaymentMethod());
+
+            pStmt.executeQuery();
             System.out.println("Payment added to booking number "+pay.getBookingId());
 
         } catch (Exception ex) {

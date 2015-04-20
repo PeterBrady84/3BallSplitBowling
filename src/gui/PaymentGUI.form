@@ -243,11 +243,12 @@
               <text value="Card"/>
             </properties>
           </component>
-          <component id="5acba" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+          <component id="5acba" class="javax.swing.JComboBox" binding="cardTypeBox">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <enabled value="false"/>
               <model>
                 <item value="VISA"/>
                 <item value="Mastercard"/>
@@ -258,4 +259,10 @@
       </grid>
     </children>
   </grid>
+  <buttonGroups>
+    <group name="payMethodGroup">
+      <member id="50a13"/>
+      <member id="1b01e"/>
+    </group>
+  </buttonGroups>
 </form>

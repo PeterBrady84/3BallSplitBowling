@@ -181,14 +181,13 @@ public class BookingForm extends JFrame implements ItemListener, ActionListener 
                                         emailTxt.getText().toString(), addres1Txt.getText().toString(), address2Txt.getText().toString(),
                                         county);
                                 progOps.addMember(customer);
-                                memberid= progOps.nextMemberid();
+                                memberid= progOps.lastMemberid();
                             }
                             int id = bookingList.size() + 1;
 
                             Booking b = new Booking(id, memberid, userid, noLanes, games_hours, 1,
                                     noPlayers, perHour, bookingType);
-                            Payment pay = new Payment(b);
-                            PaymentGUI receipt = new PaymentGUI(b, timeslots, customer, pay, progOps);
+                            PaymentGUI receipt = new PaymentGUI(b, timeslots, customer, progOps);
                         }
                     }
                         }
