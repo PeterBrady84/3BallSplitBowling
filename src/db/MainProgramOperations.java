@@ -130,6 +130,18 @@ public class MainProgramOperations {
         return rSet;
     }
 
+    public int lastMemberid(){
+        rSet = getMemLastRow();
+        int id = -1;
+        try {
+            id = rSet.getInt(1);
+            System.out.println("member id returned was "+(id));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
     public void addMember(Member m) {
         System.out.println("Inside : addMember() in MainProgramOperations");
         try {
@@ -175,6 +187,24 @@ public class MainProgramOperations {
             System.out.println("ERROR: " + ex.getMessage());
         }
         return rSet;
+    }
+
+    public Member findMemberByID(String id){
+        System.out.println("Inside : findMemberByID() in MainProgramOperations");
+        String sqlStatement = "SELECT memberid, lName, fName, phone, email, address, town, county FROM Members WHERE memberid = " + id ;
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+            if (rSet != null && rSet.next()) {
+                Member customer = new Member(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getString(4), rSet.getString(5), rSet.getString(6), rSet.getString(7),  rSet.getString(8));
+                System.out.printf("Member returned = %d, %s,%s,%d,%s,%s\n", rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6), rSet.getString(7),  rSet.getString(8));
+                return customer;
+            }
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        System.out.println("\n\n\n   -----------------       no member etruned");
+        return null;
     }
 
     public ResultSet deleteMember(String s) {
@@ -271,7 +301,7 @@ public class MainProgramOperations {
         try {
             String queryString = "SELECT s.staffId, lName, fName, s.bookings,  " +
                     "TO_CHAR(startTime, 'HH24:MI') AS STARTTIME, " +
-                    "TO_CHAR(finishTime, 'HH24:MI') AS FINISHTIME, s.phone, s.username, s.email, s.password, " +
+                    "TO_CHAR(finishTime, 'HH24:MI') AS FINISHTIME, s.phone, s.email,s.username , s.password, " +
                     "s.securityQuestion, s.securityAnswer, s.admin " +
                     "FROM staff s, roster r WHERE s.staffId = r.staffId " +
                     "AND startTime LIKE '%" + date + "%'";
@@ -425,23 +455,30 @@ public class MainProgramOperations {
         System.out.println("Inside : checkPass() in MainProgramOperations");
         ArrayList <String> usernames = new ArrayList<>(10);
         String getPassword = "SELECT username FROM staff";
+        boolean x;
         try {
             pStmt = conn.prepareStatement(getPassword);
             rSet = pStmt.executeQuery();
-            rSet.next();
+            //rSet.next();
             int i = 0;
             while (rSet.next()) {
                 usernames.add(rSet.getString(1));
-                System.out.println(" =============================\n\n==================               userba     :         "+usernames.get(i));
+                System.out.println(" =============================\n=============================              username "+(i+1)+"     :         "+usernames.get(i));
                 i++;
             }
         } catch (Exception e) {
             System.out.println(e);
         }
-        if (usernames.contains(verify))
-            return false;
-        else
-            return true;
+        if (usernames.contains(verify)) {
+            x = true;
+            System.out.println("boolean = "+x);
+            return x;
+        }
+        else {
+            x = false;
+            System.out.println("boolean = "+x);
+            return x;
+        }
     }
 
 
@@ -734,7 +771,9 @@ public class MainProgramOperations {
 
 
     public void addBooking(Booking b) {
-        System.out.println("Inside : addBooking() in MainProgramOperations");
+        Booking add = b;
+        System.out.println("Inside : addBooking() in MainProgramOperations\n" +
+                "Booking = id is "+add.getId()+", "+add.getMemId()+", " +add.getStaffId());
         try {
             String addBooking = "INSERT INTO bookings(" +
                 "bookingId, " +
@@ -839,6 +878,95 @@ public class MainProgramOperations {
         }
         return rSet;
     }
+
+    public int getNumHours(String startTime, String finishTime ){
+        int hrs;
+        int startId = 0, endId = 0;
+
+        String getStartId = "SELECT timeSlotId " +
+                "FROM timeSlots " +
+                "WHERE timeDescription = '" + startTime + "'";
+        try {
+            pStmt = conn.prepareStatement(getStartId);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                startId = rSet.getInt(1);
+            }
+            rSet.close();
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        String getEndId = "SELECT timeSlotId " +
+                "FROM timeSlots " +
+                "WHERE timeDescription = '" + finishTime + "'";
+        try {
+            pStmt = conn.prepareStatement(getEndId);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                endId = rSet.getInt(1);
+            }
+            rSet.close();
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        hrs = endId - startId;
+        System.out.println("                       NUM  hours of game = "+hrs);
+        return hrs;
+    }
+
+    public boolean isAvailable(String dateSelected, int numLanes, String startTime, String finishTime){
+        int startId = 0, endId = 0;
+
+        String getStartId = "SELECT timeSlotId " +
+                "FROM timeSlots " +
+                "WHERE timeDescription = '" + startTime + "'";
+        try {
+            pStmt = conn.prepareStatement(getStartId);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                startId = rSet.getInt(1);
+            }
+            rSet.close();
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        String getEndId = "SELECT timeSlotId " +
+                "FROM timeSlots " +
+                "WHERE timeDescription = '" + finishTime + "'";
+        try {
+            pStmt = conn.prepareStatement(getEndId);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                endId = rSet.getInt(1);
+            }
+            rSet.close();
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+
+        String countLanes = "select count (distinct LANENUMBER) from BOOKINGDETAILS WHERE LANENUMBER NOT IN\n" +
+                "(select LANENUMBER from BOOKINGDETAILS where bookingdate = '"+dateSelected+"' and timeslotid " +
+                "between "+startId+" and "+endId+" group by lanenumber)";
+        try {
+            pStmt = conn.prepareStatement(countLanes);
+            ResultSet count;
+            count = pStmt.executeQuery();
+            int available = 0;
+            while (rSet.next()) {
+                available = count.getInt(1);
+            }
+            rSet.close();
+            System.out.println("Number lanes requested = " + numLanes + "\nNum lanes available = " + available);
+            if(numLanes>available) {
+                System.out.println("    TIME IS NOT AVAILABLE   ======================");
+                return false;
+            }
+        } catch (Exception ex) {
+            System.out.println("ERROR in checkAvailability(): " + ex.getMessage());
+        }
+        System.out.println("    TIME IS AVAILABLE   ======================");
+        return true;
+    }
 ///// End of Booking Queries ///////////////////////////////////
 
 
@@ -857,7 +985,7 @@ public class MainProgramOperations {
     }
 
     public void addBookingDetails(BookingDetails bd) {
-        System.out.println("Inside : addBooking() in MainProgramOperations");
+        System.out.println("Inside : addBookingDetails() in MainProgramOperations");
         try {
             String bookingDetails = "INSERT INTO bookingDetails(" +
                     "bookingId, " +
@@ -872,7 +1000,7 @@ public class MainProgramOperations {
             pStmt.setDate(4, bd.getBookingDate());
 
             pStmt.executeUpdate();
-            System.out.println("Booking added to DB");
+            System.out.println("BookingDetail added to Booking number "+bd.getBookingId());
         }
         catch (Exception se) {
             System.out.println(se);
@@ -893,6 +1021,33 @@ public class MainProgramOperations {
         }
         return rSet;
     }
+
+    public void addPayment(Payment pay) {
+        System.out.println("Payment details :pay id = "+pay.getPaymentId() +", booking id = "+pay.getBookingId()+", deposit =  "+pay.getDeposit()+",total =  "
+                +pay.getTotalPrice()+",full paid = "+pay.getFullyPaid()+", pay method = "+pay.getPaymentMethod());
+        System.out.println("Inside : addPayment() in MainProgramOperations");
+        String sqlStatement = "INSERT INTO Payments (paymentid, bookingid, deposit, totalprice, fullyPaid, paymentmethod) values (?,?,?,?,?,?)";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+
+            pStmt.setInt(1, pay.getPaymentId());
+            pStmt.setInt(2, pay.getBookingId());
+            pStmt.setDouble(3, pay.getDeposit());
+            pStmt.setDouble(4, pay.getTotalPrice());
+            pStmt.setString(5, pay.getFullyPaid());
+            pStmt.setString(6, pay.getPaymentMethod());
+
+            pStmt.executeQuery();
+            System.out.println("Payment added to booking number "+pay.getBookingId());
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+    }
+
+
+
+
 ///// End of Payment Queries ///////////////////////////////////
 
 

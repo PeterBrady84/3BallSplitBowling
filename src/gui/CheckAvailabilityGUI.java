@@ -38,6 +38,7 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
     private MainScreen ms;
     private BookingTab bt;
     private ArrayList<Booking> bookingList;
+    private ArrayList<BookingDetails> timeslots;
     private Staff user;
     private ResultSet rSet;
     private UtilDateModel model;
@@ -55,6 +56,7 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
             "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
     private final String [] MINUTES = {"00", "15", "30", "45"};
     private final int [] LANES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    private int games_hours;
 
     public CheckAvailabilityGUI (MainScreen ms, BookingTab bt, MainProgramOperations po, ArrayList<Booking> b, Staff user) {
         System.out.println("Inside : CheckAvailabilityGUI");
@@ -63,6 +65,8 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
         this.bt = bt;
         this.bookingList = b;
         this.user = user;
+
+        timeslots = new ArrayList<BookingDetails>();
 
         addD = new JDialog();
         addD.setTitle("Check For Availability");
@@ -279,12 +283,15 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
             }
             for (int i = 0; i < (Integer)noLanes.getSelectedItem(); i ++) {
                 int [] slots = progOps.getTimes(startTimeTxt.getText(), endTimeTxt.getText());
+                games_hours = progOps.getNumHours(startTimeTxt.getText(), endTimeTxt.getText());
                 for (int j = 0; j < slots.length; j ++) {
-                    BookingDetails bd = new BookingDetails(bookingList.size(), freeLanes[i], slots[j], date);
-                    progOps.addBookingDetails(bd);
+                    BookingDetails bd = new BookingDetails(progOps.getNumBookings()+1, freeLanes[i], slots[j], date);
+                    //progOps.addBookingDetails(bd);
+                    timeslots.add(bd);
                 }
             }
-            AddBookingGUI ab = new AddBookingGUI(ms, bt, progOps, bookingList, user, lanes, players);
+            //AddBookingGUI ab = new AddBookingGUI(ms, bt, progOps, bookingList, user, lanes, players);
+            BookingForm reserve = new BookingForm(user, ms, bt, this, progOps, bookingList, games_hours, lanes, players, timeslots);
             addD.dispose();
         }
         else if (e.getSource().equals(clearB)) {

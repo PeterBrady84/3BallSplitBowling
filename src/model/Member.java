@@ -44,7 +44,26 @@ public class Member {
         this.county = c;
     }
 
+    public Member(int id, String lName, String fName, String phone, String email, String address, String town, String county) {
+        this.id = id;
+        this.lName = lName;
+        this.fName = fName;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.town = town;
+        this.county = county;
+    }
 
+    public Member(String lName, String fName, String phone, String email, String address, String town, String county) {
+        this.lName = lName;
+        this.fName = fName;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.town = town;
+        this.county = county;
+    }
 
     public int getId() {
         return id;

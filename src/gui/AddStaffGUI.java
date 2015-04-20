@@ -64,7 +64,7 @@ public class AddStaffGUI extends Thread implements ActionListener  {
         System.out.println("Inside : ActionPerformed in AddStaffGUI");
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(addB)) {
-            System.out.println("      =================      \n\n=====================   username eneterd = "+ge.loginTxt.getText());
+            System.out.println("      =================      \n\n      =================         username enetered = "+ge.loginTxt.getText());
             try {
                 if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || ge.phoneTxt.getText().equals("") ||
                         ge.loginTxt.getText().equals("") || ge.passwordTxt.getPassword().equals("") || ge.confPassTxt.getPassword().equals("")) {
@@ -108,6 +108,7 @@ public class AddStaffGUI extends Thread implements ActionListener  {
                         a.addStaffLastRow();
                         String t = "contact";
                         sTab.refreshTable();
+                        sTab.fillTableContact(staffList);
                         JOptionPane.showMessageDialog(null, "New Staff Data Saved");
                         addD.setVisible(false);
                     } else {

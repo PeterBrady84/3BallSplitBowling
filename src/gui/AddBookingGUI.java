@@ -38,7 +38,7 @@ public class AddBookingGUI implements ActionListener {
 
         addD = new JDialog();
         addD.setTitle("Add New Booking");
-        addD.setSize(new Dimension(300, 400));
+        addD.setSize(new Dimension(600, 400));
         addD.setLocationRelativeTo(null);
 
         ge = new GuiElements();
