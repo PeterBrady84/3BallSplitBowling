@@ -54,6 +54,19 @@ public class Booking {
         this.bookingType = bt;
     }
 
+    public Booking(int id, int memId, int staffId, int numLanes, int hours_games, int numMembers, int numPlayers, double pricingPerHour, String bookingType) {
+        this.id = id;
+        this.memId = memId;
+        this.staffId = staffId;
+        this.numLanes = numLanes;
+        this.hours_games = hours_games;
+        this.numMembers = numMembers;
+        this.numPlayers = numPlayers;
+        this.pricingPerHour = pricingPerHour;
+        this.bookingType = bookingType;
+
+    }
+
     public static double getPRICE_HOUR() {
         return PRICE_HOUR;
     }

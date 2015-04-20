@@ -173,8 +173,9 @@ public class LoginGUI extends JFrame implements ActionListener {
                 //animation.setBackground(tranparent);
                 animation.setPreferredSize(new Dimension(width,height));
                 this.add(animation, BorderLayout.CENTER);
-                setVisible(true);
 
+                setVisible(true);
+                System.out.println("=========================        login finished"+animation.isFinished());
                 JOptionPane.showMessageDialog(null, "Press to Enter","Welcome to Java Bowling",
                         JOptionPane.CLOSED_OPTION);
 

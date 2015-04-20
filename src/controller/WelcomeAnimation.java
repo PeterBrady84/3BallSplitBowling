@@ -41,6 +41,8 @@ public class WelcomeAnimation extends JPanel {
             animationThread.setDaemon(true);
             animationThread.start();
 
+
+
         }
 
     public boolean isFinished() {
@@ -51,8 +53,8 @@ public class WelcomeAnimation extends JPanel {
         System.out.println("In Repaint");
         super.paintComponent(g);
         Graphics2D gg = (Graphics2D) g;
-        ImageIcon p = new ImageIcon("C:/Users/User/Documents/GitBowling/3BallSplitBowling/src/lib/bowling-pins-600-300x300.png");
-        ImageIcon b = new ImageIcon("C:/Users/User/Documents/GitBowling/3BallSplitBowling/src/lib/files/barrier.png");
+        ImageIcon p = new ImageIcon("src/lib/bowling-pins-600-300x300.png");
+        ImageIcon b = new ImageIcon("src/lib/files/barrier.png");
 
         barrier = b.getImage();
         pins = p.getImage();
