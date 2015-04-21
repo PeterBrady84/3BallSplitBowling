@@ -11,25 +11,21 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 
 /**
  * Created by Peter on 09/03/2015.
  */
-public class UpdateMemberGUI implements ActionListener{
-    private JDialog updateD;
-    private ResultSet rSet;
-    private MainProgramOperations progOps;
-    private MemberTab mTab;
-    private ArrayList<Member> memList = new ArrayList<Member>();
-    private GuiElements ge;
-    private JPanel updatePanel, bottomPanel;
-    private JButton updateB, cancel;
+class UpdateMemberGUI implements ActionListener{
+    private final JDialog updateD;
+    private final MainProgramOperations progOps;
+    private final MemberTab mTab;
+    private final GuiElements ge;
+    private final JButton updateB;
+    private final JButton cancel;
 
-    public UpdateMemberGUI(MemberTab mt, MainProgramOperations po, ArrayList<Member> m, String s) {
+    public UpdateMemberGUI(MemberTab mt, MainProgramOperations po, String s) {
         System.out.println("Inside : UpdateMemberGUI");
         this.progOps = po;
-        this.memList = m;
         this.mTab = mt;
 
         updateD = new JDialog();
@@ -38,9 +34,9 @@ public class UpdateMemberGUI implements ActionListener{
         updateD.setLocationRelativeTo(null);
 
         ge = new GuiElements();
-        updatePanel = ge.membersGui();
+        JPanel updatePanel = ge.membersGui();
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.add(Box.createRigidArea(new Dimension(40, 0)));
@@ -63,10 +59,10 @@ public class UpdateMemberGUI implements ActionListener{
         fillFields(s);
     }
 
-    public void fillFields(String s) {
+    private void fillFields(String s) {
         System.out.println("Inside : fillFields() in UpdateMemberGUI");
         try {
-            rSet = progOps.searchMembers(s);
+            ResultSet rSet = progOps.searchMembers(s);
             while (rSet.next()) {
                 ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
                 ge.lNameTxt.setText(rSet.getString(2));
@@ -85,7 +81,7 @@ public class UpdateMemberGUI implements ActionListener{
                 ge.coCombo.setSelectedItem(rSet.getString(9));
                 ge.visTxt.setText(Integer.toString(rSet.getInt(10)));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -106,7 +102,7 @@ public class UpdateMemberGUI implements ActionListener{
                         ge.emailTxt.getText().equals("") || ge.addTxt.getText().equals("") || ge.townTxt.getText().equals("")) {
                     JOptionPane.showMessageDialog(null,
                             "Fields cannot be blank");
-                } else if (!emailValidator.validate(ge.emailTxt.getText())) {
+                } else if (emailValidator.validate(ge.emailTxt.getText())) {
                     JOptionPane.showMessageDialog(null, "Email address is not valid", "ERROR", JOptionPane.WARNING_MESSAGE);
                 } else {
                     String fName = ge.fNameTxt.getText();

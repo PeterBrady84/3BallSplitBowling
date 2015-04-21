@@ -8,9 +8,6 @@ public class Lane {
     private int id;
     private String laneName;
     private final static int maxPlayers = 6;
-    private int timeslot;
-    private String selectedDate;
-    private int bookingId;
 
 
     public Lane (int i, String l) {
@@ -24,12 +21,9 @@ public class Lane {
         this.laneName = l;
     }
 
-    public Lane(int id, int timeslot, String selectedDate, int bookingId) {
+    public Lane(int id) {
         this.id = id;
         laneName = "Lane "+id;
-        this.timeslot = timeslot;
-        this.selectedDate = selectedDate;
-        this.bookingId = bookingId;
     }
 
     public int getId() {

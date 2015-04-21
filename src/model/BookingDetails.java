@@ -46,8 +46,7 @@ public class BookingDetails {
     }
 
     public java.sql.Date getBookingDate() {
-        java.sql.Date sqlDate = new java.sql.Date(bookingDate.getTime());
-        return sqlDate;
+        return new java.sql.Date(bookingDate.getTime());
     }
 
     public void setBookingDate(Date d) {

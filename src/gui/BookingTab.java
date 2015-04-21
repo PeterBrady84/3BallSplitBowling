@@ -2,7 +2,6 @@ package gui;
 
 import db.MainProgramOperations;
 import controller.TableColumnAdjuster;
-import controller.ModifyDateAndTime;
 import model.*;
 
 import javax.swing.*;
@@ -13,53 +12,41 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by Peter on 06/03/2015.
  */
-public class BookingTab extends JPanel implements ActionListener {
+class BookingTab extends JPanel implements ActionListener {
 
     private static String[] cols = {"Booking Id", "Name", "Date", "Time", "Players"};
-    private JPanel p1, p2, p1a;
-    private JButton create, edit, delete;
+    private final JButton create;
+    private final JButton edit;
     private DefaultTableModel model;
-    private JTable table;
-    private MainProgramOperations progOps;
-    private MainScreen ms;
-    private ArrayList<Booking> bookingList = new ArrayList<Booking>();
-    private ArrayList<Lane> laneList = new ArrayList<Lane>();
-    private ArrayList<Member> memList = new ArrayList<Member>();
-    private Staff user;
-    private ResultSet rSet;
-    private Date dateSelected;
-    private String header[] = new String[] { "Lane", "Surname", "First Name", "Date", "Start Time", "End Time"};
-    private JTextField bookingId, bookingName;
+    private final JTable table;
+    private final MainProgramOperations progOps;
+    private ArrayList<Booking> bookingList = new ArrayList<>();
+    private final Staff user;
 
-    public BookingTab(MainScreen ms, Date date, ArrayList<Booking> b, ArrayList<Member> m, ArrayList<Lane> l, MainProgramOperations po, Staff user) {
+    public BookingTab(MainScreen ms, ArrayList<Booking> b, MainProgramOperations po, Staff user) {
         System.out.println("Inside : BookingTabGUI");
-        this.dateSelected = date;
         this.progOps = po;
-        this.ms = ms;
         this.bookingList = b;
-        this.memList = m;
-        this.laneList = l;
         this.user = user;
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
 
-        p1 = new JPanel();
+        JPanel p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 290));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);
-        p1a = new JPanel();
+        JPanel p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
         create = new JButton("Create Booking");
         edit = new JButton("Edit Booking");
-        delete = new JButton("Delete Booking");
+        JButton delete = new JButton("Delete Booking");
 
         p1a.add(create);
         create.addActionListener(this);
@@ -71,9 +58,10 @@ public class BookingTab extends JPanel implements ActionListener {
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
 
-        p2 = new JPanel();
+        JPanel p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));
         p2.setBackground(Color.WHITE);
+        String[] header = new String[]{"Lane", "Surname", "First Name", "Date", "Start Time", "End Time"};
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -90,7 +78,7 @@ public class BookingTab extends JPanel implements ActionListener {
 
         table.getTableHeader().setReorderingAllowed(false);
 
-        fillTable(bookingList);
+        fillTable();
 
         //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
@@ -108,9 +96,9 @@ public class BookingTab extends JPanel implements ActionListener {
         add(p2, BorderLayout.EAST);
     }
 
-    public void fillTable(ArrayList<Booking> b) {
+    private void fillTable() {
         System.out.println("Inside : fillTable() in BookingTabGUI");
-        rSet = progOps.getBookingDataForBookingTab();
+        ResultSet rSet = progOps.getBookingDataForBookingTab();
         try {
             while(rSet.next()) {
                 String laneName = "Lane " + rSet.getInt(1);
@@ -138,15 +126,15 @@ public class BookingTab extends JPanel implements ActionListener {
         model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
 
-        fillTable(bookingList);
+        fillTable();
     }
 
-    public String searchBooking() {
+    private String searchBooking() {
         System.out.println("Inside : searchBooking() in BookingTabGUI");
-        String query = "";
+        String query;
         NumberValidator numValidator = new NumberValidator();
-        bookingId = new JTextField();
-        bookingName = new JTextField();
+        JTextField bookingId = new JTextField();
+        JTextField bookingName = new JTextField();
         Object[] options = {
                 "Please Enter -\nBooking Id:", bookingId,
                 "Or\nBooking Name:", bookingName
@@ -176,12 +164,12 @@ public class BookingTab extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         System.out.println("Inside : actionPerformed() in BookingTabGUI");
         if (ae.getSource() == create) {
-            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(ms, this, progOps, bookingList, user);
+            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(progOps, bookingList, user);
         }
         else if (ae.getSource() == edit) {
             String s = searchBooking();
             if (!s.equals("cancel")) {
-                UpdateBookingGUI ub = new UpdateBookingGUI(this, progOps, bookingList, s);
+                UpdateBookingGUI ub = new UpdateBookingGUI(this, progOps, s);
             }
         }
     }

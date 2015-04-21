@@ -5,12 +5,9 @@ import db.MainProgramOperations;
 import model.Stock;
 import org.jfree.chart.*;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
-import org.jfree.ui.RefineryUtilities;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -27,18 +24,17 @@ import java.util.ArrayList;
 /**
  * Created by Peter on 23/03/2015.
  */
-public class StaffReportsGUI extends JPanel implements ActionListener {
+class StaffReportsGUI extends JPanel implements ActionListener {
 
-    private JPanel p1, p2, p1a;
-    private JButton barCharts, staffHours, staffDetails,back;
-    private ArrayList<Stock> stockList = new ArrayList<Stock>();
+    private final JButton barCharts;
+    private final JButton staffDetails;
+    private final JButton back;
+    private ArrayList<Stock> stockList = new ArrayList<>();
     private AdminTab aTab;
-    private MainProgramOperations progOps;
-    private String header[] = new String[]{"Staff ID", "First Name", "Bookings"};
+    private final MainProgramOperations progOps;
     private ResultSet rSet;
-    private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
-    private JTable table;
-    private DefaultTableModel model;
+    private final DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
+    private final DefaultTableModel model;
     private DefaultPieDataset pieDataset = new DefaultPieDataset();
 
     public StaffReportsGUI(MainProgramOperations po) {
@@ -48,11 +44,11 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
 
-        p1 = new JPanel();
+        JPanel p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 290));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);
-        p1a = new JPanel();
+        JPanel p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
@@ -60,7 +56,7 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
         staffDetails.addActionListener(this);
         barCharts = new JButton("Bar Charts");
         barCharts.addActionListener(this);
-        staffHours = new JButton("Staff Hours Worked");
+        JButton staffHours = new JButton("Staff Hours Worked");
         //staffHours.addActionListener(this);
         back = new JButton("Back");
         back.addActionListener(this);
@@ -75,13 +71,14 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
         add(p1, BorderLayout.WEST);
 
 
-        p2 = new JPanel();
+        JPanel p2 = new JPanel();
+        String[] header = new String[]{"Staff ID", "First Name", "Bookings"};
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        table = new JTable(model) {
+        JTable table = new JTable(model) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component comp = super.prepareRenderer(renderer, row, column);
@@ -110,7 +107,7 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
         add(p2, BorderLayout.EAST);
     }
 
-    public void fillTableStaff() {
+    private void fillTableStaff() {
         System.out.println("Inside : fillTableStaff() in StaffReportGUI");
 
 
@@ -135,7 +132,7 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
     }
 
 
-    public JPanel fillBarChartStaffBookings() {
+    private void fillBarChartStaffBookings() {
         System.out.println("Inside : fillBarChartStaffBookings() in StaffReportsGUI");
 
         try {
@@ -167,7 +164,6 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
             System.out.println(e);
         }
 
-        return null;
     }
 
 
@@ -177,10 +173,8 @@ public class StaffReportsGUI extends JPanel implements ActionListener {
         System.out.println("Inside : ActionPerformed() in StaffReportsGUI");
         if (e.getSource() == back){
             //this.setVisible(false);
-            AdminTab at = new AdminTab(progOps);
-            JPanel admin = at;
             this.removeAll();
-            this.add(admin);//Adding to content pane, not to Frame
+            this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
         }

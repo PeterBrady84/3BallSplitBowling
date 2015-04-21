@@ -15,20 +15,18 @@ import java.util.ArrayList;
 /**
  * Created by x00115070 on 27/02/2015.
  */
-public class AddMemberGUI implements ActionListener {
-    private JDialog addD;
-    private MainProgramOperations progOps;
-    private ArrayList<Member> memList = new ArrayList<Member>();
-    private GuiElements ge;
-    private MemberTab mTab;
-    private JPanel addPanel, bottomPanel;
-    private JButton addB, clearB, cancelB;
+class AddMemberGUI implements ActionListener {
+    private final JDialog addD;
+    private final MainProgramOperations progOps;
+    private final GuiElements ge;
+    private final MemberTab mTab;
+    private final JButton addB;
+    private final JButton clearB;
 
     public AddMemberGUI(MemberTab mt, MainProgramOperations po, ArrayList<Member> m) {
         System.out.println("Inside : AddMemberGUI");
         this.mTab = mt;
         this.progOps = po;
-        this.memList = m;
 
         addD = new JDialog();
         addD.setTitle("Add New Member");
@@ -36,11 +34,11 @@ public class AddMemberGUI implements ActionListener {
         addD.setLocationRelativeTo(null);
 
         ge = new GuiElements();
-        addPanel = ge.membersGui();
-        ge.idTxt.setText(Integer.toString(memList.size() + 1));
+        JPanel addPanel = ge.membersGui();
+        ge.idTxt.setText(Integer.toString(m.size() + 1));
         ge.visTxt.setText("0");
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.setBackground(Color.white);
@@ -53,7 +51,7 @@ public class AddMemberGUI implements ActionListener {
         clearB.addActionListener(this);
         bottomPanel.add(clearB);
 
-        cancelB = new JButton("Cancel");
+        JButton cancelB = new JButton("Cancel");
         cancelB.addActionListener(this);
         bottomPanel.add(cancelB);
 
@@ -82,7 +80,7 @@ public class AddMemberGUI implements ActionListener {
                         ge.addTxt.getText().equals("") || ge.townTxt.getText().equals("")) {
                     JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
-                } else if (!emailValidator.validate(ge.emailTxt.getText())) {
+                } else if (emailValidator.validate(ge.emailTxt.getText())) {
                     JOptionPane.showMessageDialog(null, "Email address is not valid", "ERROR", JOptionPane.WARNING_MESSAGE);
                 } else {
                     String fName = ge.fNameTxt.getText();

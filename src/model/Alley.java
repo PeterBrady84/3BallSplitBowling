@@ -11,16 +11,16 @@ import java.util.ArrayList;
 public class Alley {
 
 
-    private MainProgramOperations progOps;
+    private final MainProgramOperations progOps;
     private ResultSet rSet;
-    private ArrayList<Member> memList = new ArrayList<Member>();
-    private ArrayList<Staff> staffList = new ArrayList<Staff>();
-    private ArrayList<Lane> laneList = new ArrayList<Lane>();
-    private ArrayList<Stock> stockList = new ArrayList<Stock>();
-    private ArrayList<Booking> bookingList = new ArrayList<Booking>();
-    private ArrayList<BookingDetails> bookingDetailsList = new ArrayList<BookingDetails>();
-    private ArrayList<Payment> paymentsList = new ArrayList<Payment>();
-    private ArrayList<TimeSlot> timeSlotList = new ArrayList<TimeSlot>();
+    private final ArrayList<Member> memList = new ArrayList<>();
+    private final ArrayList<Staff> staffList = new ArrayList<>();
+    private final ArrayList<Lane> laneList = new ArrayList<>();
+    private final ArrayList<Stock> stockList = new ArrayList<>();
+    private final ArrayList<Booking> bookingList = new ArrayList<>();
+    private final ArrayList<BookingDetails> bookingDetailsList = new ArrayList<>();
+    private final ArrayList<Payment> paymentsList = new ArrayList<>();
+    private final ArrayList<TimeSlot> timeSlotList = new ArrayList<>();
 
     public Alley (MainProgramOperations po) {
         System.out.println("Inside : AlleyModel");
@@ -37,13 +37,11 @@ public class Alley {
             System.out.println(e);
         }
 
-        System.out.println("    ///////////////  ******************              Just before get Staff in alley");
         rSet = progOps.getStaff();
         try {
             while (rSet.next()) {
-                staffList.add(new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3),  rSet.getInt(4),
+                staffList.add(new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4),
                         rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8)));
-                System.out.println(rSet.getInt(1)+"\t"+ rSet.getString(2)+"\tEmail = "+  rSet.getString(8));
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -136,7 +134,7 @@ public class Alley {
 
     public ArrayList<TimeSlot> getTimeSlotList()
     {
-        System.out.println("Inside : getBookingList() in AlleyModel");
+        System.out.println("Inside : getTimeSlotList() in AlleyModel");
         return timeSlotList;
     }
 
@@ -166,6 +164,7 @@ public class Alley {
     }
 
     public void updateMember(Member m) {
+        System.out.println("Inside : updateMember() in AlleyModel");
         for (int i = 0; i < memList.size(); i++) {
             if (memList.get(i).getId() == (m.getId()))
                 memList.set(i, m);
@@ -174,7 +173,7 @@ public class Alley {
 
     public void addStaffLastRow()
     {
-        System.out.println("Inside : addStaff() in AlleyModel");
+        System.out.println("Inside : addStaffLastRow() in AlleyModel");
         rSet = progOps.getStaffLastRow();
         try {
             while (rSet.next()) {
@@ -188,6 +187,7 @@ public class Alley {
     }
 
     public void updateStaff(Staff s) {
+        System.out.println("Inside : updateStaff() in AlleyModel");
         for (int i = 0; i < staffList.size(); i++) {
             if (staffList.get(i).getId() == (s.getId()))
                 staffList.set(i, s);

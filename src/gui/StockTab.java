@@ -17,16 +17,15 @@ import java.util.ArrayList;
 /**
  * Created by Peter on 06/03/2015.
  */
-public class StockTab extends JPanel implements ActionListener{
+class StockTab extends JPanel implements ActionListener{
 
-    private JPanel p1, p2, p1a;
-    private JButton create, edit, delete;
+    private final JButton create;
+    private final JButton edit;
+    private final JButton delete;
     private DefaultTableModel model;
-    private JTable table;
-    private MainProgramOperations progOps;
-    private ArrayList<Stock> stockList = new ArrayList<Stock>();
-    private String header[] = new String[] { "Stock Id", "Shoe Size", "Description", "Quantity"};
-    private JTextField stockId, stockName;
+    private final JTable table;
+    private final MainProgramOperations progOps;
+    private ArrayList<Stock> stockList = new ArrayList<>();
 
     public StockTab(ArrayList<Stock> st, MainProgramOperations po) {
         System.out.println("Inside : StockTabGUI");
@@ -36,11 +35,11 @@ public class StockTab extends JPanel implements ActionListener{
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
 
-        p1 = new JPanel();
+        JPanel p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 290));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);
-        p1a = new JPanel();
+        JPanel p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
@@ -57,7 +56,7 @@ public class StockTab extends JPanel implements ActionListener{
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
 
-        p2 = new JPanel();
+        JPanel p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));
         p2.setBackground(Color.WHITE);
         model = new DefaultTableModel(0, 0) {
@@ -73,6 +72,7 @@ public class StockTab extends JPanel implements ActionListener{
                 return comp;
             }
         };
+        String[] header = new String[]{"Stock Id", "Shoe Size", "Description", "Quantity"};
         model.setColumnIdentifiers(header);
         table.setModel(model);
         table.getTableHeader().setReorderingAllowed(false);
@@ -95,12 +95,12 @@ public class StockTab extends JPanel implements ActionListener{
         add(p2, BorderLayout.EAST);
     }
 
-    public void fillTable(ArrayList<Stock> s) {
+    private void fillTable(ArrayList<Stock> s) {
         System.out.println("Inside : fillTable() in StockTabGUI");
         this.stockList = s;
-        for (int i = 0; i < stockList.size(); i ++) {
-            model.addRow(new Object[]{stockList.get(i).getId(), stockList.get(i).getShoeSize(), stockList.get(i).getDetails(),
-                    stockList.get(i).getQuantity()});
+        for (Stock aStockList : stockList) {
+            model.addRow(new Object[]{aStockList.getId(), aStockList.getShoeSize(), aStockList.getDetails(),
+                    aStockList.getQuantity()});
         }
     }
 
@@ -117,12 +117,12 @@ public class StockTab extends JPanel implements ActionListener{
         fillTable(stockList);
     }
 
-    public String searchStock() {
-        System.out.println("Inside : searchStaff() in StaffTabGUI");
+    private String searchStock() {
+        System.out.println("Inside : searchStock() in StockTabGUI");
         String query = "";
         NumberValidator numValidator = new NumberValidator();
-        stockId = new JTextField();
-        stockName = new JTextField();
+        JTextField stockId = new JTextField();
+        JTextField stockName = new JTextField();
         Object[] options = {
                 "Please Enter -\nStock Id:", stockId,
                 "Or\nStaff Name:", stockName
@@ -130,23 +130,20 @@ public class StockTab extends JPanel implements ActionListener{
 
         int option = JOptionPane.showConfirmDialog(null, options, "Search Stock", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
-            if (numValidator.isNumeric(stockId.getText()) == true) {
+            if (numValidator.isNumeric(stockId.getText())) {
                 query = "stockId = " + stockId.getText();
-            } else if (numValidator.isNumeric(stockName.getText()) == false) {
+            } else if (!numValidator.isNumeric(stockName.getText())) {
                 query = "shoeSize = '" + stockName.getText();
             } else {
                 throw new IllegalArgumentException("ID must be numeric!");
             }
         }
-        else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
-            System.exit(0);
-        }
         return query;
     }
 
-    public void updateStock(String s) {
+    private void updateStock(String s) {
         System.out.println("Inside : updateStock() in StockTabGUI");
-        UpdateStockGUI us = new UpdateStockGUI(this, progOps, s);
+        UpdateStockGUI us = new UpdateStockGUI(progOps, s);
     }
 
     public void actionPerformed(ActionEvent ae) {

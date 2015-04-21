@@ -1,45 +1,37 @@
 package gui;
 
 import db.MainProgramOperations;
-import model.Alley;
-import model.Member;
-import model.NumberValidator;
-import model.Staff;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Created by Peter on 19/03/2015.
  */
-public class UpdateStockGUI implements ActionListener {
-    private JDialog updateD;
-    private ResultSet rSet;
-    private MainProgramOperations progOps;
-    private StockTab sTab;
-    private GuiElements ge;
-    private JPanel updatePanel, bottomPanel;
-    private JButton updateB, cancel;
+class UpdateStockGUI implements ActionListener {
+    private final MainProgramOperations progOps;
+    private final GuiElements ge;
+    private final JButton updateB;
+    private final JButton cancel;
 
-    public UpdateStockGUI(StockTab st, MainProgramOperations po, String s) {
+    public UpdateStockGUI(MainProgramOperations po, String s) {
         System.out.println("Inside : UpdateStockGUI");
-        this.sTab = st;
         this.progOps = po;
 
-        updateD = new JDialog();
+        JDialog updateD = new JDialog();
         updateD.setTitle("Update Stock");
         updateD.setSize(new Dimension(300, 400));
         updateD.setLocationRelativeTo(null);
 
         ge = new GuiElements();
-        updatePanel = ge.stockGui();
+        JPanel updatePanel = ge.stockGui();
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.add(Box.createRigidArea(new Dimension(40, 0)));
@@ -62,27 +54,26 @@ public class UpdateStockGUI implements ActionListener {
         fillFields(s);
     }
 
-    public void fillFields(String s) {
+    private void fillFields(String s) {
         System.out.println("Inside : fillFields() in UpdateStockGUI");
         try {
-            rSet = progOps.searchStock(s);
+            ResultSet rSet = progOps.searchStock(s);
             while (rSet.next()) {
                 ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
                 ge.sizeTxt.setText(rSet.getString(2));
                 ge.detailsTxt.setText(rSet.getString(4));
                 ge.qtyTxt.setText(rSet.getString(3));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in UpdateStockGUI");
-        NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(updateB)) {
             try {
                 if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || ge.phoneTxt.getText().equals("") ||
-                        ge.loginTxt.getText().equals("") || ge.passwordTxt.getText().equals("") || ge.confPassTxt.getText().equals("")) {
+                        ge.loginTxt.getText().equals("") || ge.passwordTxt.getPassword().length == 0 || ge.confPassTxt.getPassword().length == 0) {
                     JOptionPane.showMessageDialog(null,
                             "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
@@ -91,7 +82,7 @@ public class UpdateStockGUI implements ActionListener {
                             "Passwords do not match, please retry", "ERROR", JOptionPane.WARNING_MESSAGE);
                     ge.passwordTxt.setText("");
                     ge.confPassTxt.setText("");
-                } else if (ge.secAnsTxt.getText() != ge.confSecAnsTxt.getText()) {
+                } else if (!Objects.equals(ge.secAnsTxt.getText(), ge.confSecAnsTxt.getText())) {
                     JOptionPane.showMessageDialog(null,
                             "Security Answers do not match, please retry", "ERROR", JOptionPane.WARNING_MESSAGE);
                     ge.secAnsTxt.setText("");
@@ -101,7 +92,7 @@ public class UpdateStockGUI implements ActionListener {
                     String lName = ge.lNameTxt.getText();
                     String phone = ge.phoneTxt.getText();
                     String login = ge.loginTxt.getText();
-                    String password = ge.passwordTxt.getText();
+                    char[] password = ge.passwordTxt.getPassword();
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
                     /*if (numValidator.isNumeric(fName) == false && numValidator.isNumeric(lName) == false && numValidator.isNumeric(phone) == true

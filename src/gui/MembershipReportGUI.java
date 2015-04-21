@@ -1,24 +1,16 @@
 package gui;
 
 import db.MainProgramOperations;
-import controller.ModifyDateAndTime;
 import controller.TableColumnAdjuster;
-import model.Alley;
-import model.Booking;
 import model.Stock;
 import org.jfree.chart.*;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.xml.DatasetReader;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.InputStream;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -33,21 +25,19 @@ import java.util.ArrayList;
 /**
  * Created by Diarmuid on 24/03/2015.
  */
-public class MembershipReportGUI extends JPanel implements ActionListener {
+class MembershipReportGUI extends JPanel implements ActionListener {
 
-    private JPanel p1, p2, p1a, p3;
-    private JButton members, barCharts,back,pieCharts;
-    private ArrayList<Stock> stockList = new ArrayList<Stock>();
-    private String header[] = new String[]{"First Name", "Last Name", "Number of Visits","Gender"};
-    //private String header1[] = new String[]{"", "", ""};
-    private String name;
-    private int numVisits;
-    private MainProgramOperations progOps;
+    private JPanel p3;
+    private final JButton members;
+    private final JButton barCharts;
+    private final JButton back;
+    private final JButton pieCharts;
+    private ArrayList<Stock> stockList = new ArrayList<>();
+    private final MainProgramOperations progOps;
     private ResultSet rSet;
-    private JTable table;
-    private DefaultTableModel model;
-    private DefaultPieDataset pieDataset = new DefaultPieDataset();
-    private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
+    private final DefaultTableModel model;
+    private final DefaultPieDataset pieDataset = new DefaultPieDataset();
+    private final DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
 
     public MembershipReportGUI(MainProgramOperations po) {
         System.out.println("Inside : MembershipReportGUI");
@@ -56,11 +46,11 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
 
-        p1 = new JPanel();
+        JPanel p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 290));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);
-        p1a = new JPanel();
+        JPanel p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
@@ -88,19 +78,20 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
 
-       p2 = new JPanel();
+        JPanel p2 = new JPanel();
 
-      model = new DefaultTableModel(null, header) {
+        String[] header = new String[]{"First Name", "Last Name", "Number of Visits", "Gender"};
+        model = new DefaultTableModel(null, header) {
            public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        table = new JTable(model) {
+        JTable table = new JTable(model) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component comp = super.prepareRenderer(renderer, row, column);
                 comp.setBackground(row % 2 == 0 ? Color.WHITE : Color.LIGHT_GRAY);
-               return comp;
+                return comp;
             }
         };
 
@@ -126,7 +117,7 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
 
 
 
-    public void fillTableMember() {
+    private void fillTableMember() {
         System.out.println("Inside : fillTable() in MembershipReportGUI");
 
 
@@ -151,16 +142,16 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
         }
     }
 
-    public void fillBarChartMember() {
+    private void fillBarChartMember() {
         System.out.println("Inside : fillBarChartMember() in MembershipReportGUI");
 
         try {
             rSet = progOps.getMember();
             while (rSet.next()){
-                name = rSet.getString(1);
-                numVisits = rSet.getInt(3);
+                String name = rSet.getString(1);
+                int numVisits = rSet.getInt(3);
 
-                barDataSet.setValue(numVisits,"Number of Visits",name);
+                barDataSet.setValue(numVisits,"Number of Visits", name);
             }
             JFreeChart chart = ChartFactory.createBarChart("Member Visits","Name","Number of Visits",barDataSet,PlotOrientation.VERTICAL,false,true,false);
 //
@@ -184,7 +175,7 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
 
     }
 
-    public void fillPieChartMemberGender() {
+    private void fillPieChartMemberGender() {
         System.out.println("Inside : FillPieChartMemberGender() in MembershipReportGUI");
 
         try {
@@ -233,10 +224,8 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
         System.out.println("Inside : ActionPerformed() in MembershipReportsGUI");
         if (e.getSource() == back){
             //this.setVisible(false);
-            AdminTab at = new AdminTab(progOps);
-            JPanel admin = at;
             this.removeAll();
-            this.add(admin);//Adding to content pane, not to Frame
+            this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
         }

@@ -3,7 +3,6 @@ package gui;
 import controller.SendMail;
 import db.MainProgramOperations;
 import model.Alley;
-import model.Member;
 import model.NumberValidator;
 import model.Staff;
 import javax.swing.*;
@@ -16,14 +15,14 @@ import java.util.Arrays;
 /**
  * Created by Peter on 10/03/2015.
  */
-public class AddStaffGUI extends Thread implements ActionListener  {
-    private JDialog addD;
-    private MainProgramOperations progOps;
-    private StaffTab sTab;
-    private ArrayList<Staff> staffList = new ArrayList<Staff>();
-    private GuiElements ge;
-    private JPanel addPanel, bottomPanel;
-    private JButton addB, clearB;
+class AddStaffGUI extends Thread implements ActionListener  {
+    private final JDialog addD;
+    private final MainProgramOperations progOps;
+    private final StaffTab sTab;
+    private ArrayList<Staff> staffList = new ArrayList<>();
+    private final GuiElements ge;
+    private final JButton addB;
+    private final JButton clearB;
 
     public AddStaffGUI(StaffTab st, MainProgramOperations po, ArrayList<Staff> s) {
         this.sTab = st;
@@ -37,10 +36,10 @@ public class AddStaffGUI extends Thread implements ActionListener  {
         addD.setLocationRelativeTo(null);
 
         ge = new GuiElements();
-        addPanel = ge.staffGui();
+        JPanel addPanel = ge.staffGui();
         ge.idTxt.setText(Integer.toString(staffList.size() + 1));
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.setBackground(Color.white);
@@ -64,10 +63,9 @@ public class AddStaffGUI extends Thread implements ActionListener  {
         System.out.println("Inside : ActionPerformed in AddStaffGUI");
         NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(addB)) {
-            System.out.println("      =================      \n\n      =================         username enetered = "+ge.loginTxt.getText());
             try {
                 if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || ge.phoneTxt.getText().equals("") ||
-                        ge.loginTxt.getText().equals("") || ge.passwordTxt.getPassword().equals("") || ge.confPassTxt.getPassword().equals("")) {
+                        ge.loginTxt.getText().equals("") || ge.passwordTxt.getPassword().length == 0 || ge.confPassTxt.getPassword().length == 0) {
                     JOptionPane.showMessageDialog(null,
                             "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
@@ -98,11 +96,10 @@ public class AddStaffGUI extends Thread implements ActionListener  {
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
                     String access = "N";
-                    if (numValidator.isNumeric(phone) == true) {
+                    if (numValidator.isNumeric(phone)) {
                         Staff s = new Staff(lName, fName, phone, login, email, password, secQuestion, secAnswer, access);
                         new SendMail(s).run();
 //                        SendMail registered= new SendMail(s);
-                        System.out.println("Object Staffs being passed to addStaff method. S fname = "+s.getfName());
                         progOps.addStaff(s);
                         Alley a = new Alley(progOps);
                         a.addStaffLastRow();

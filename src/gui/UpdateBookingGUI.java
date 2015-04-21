@@ -1,9 +1,7 @@
 package gui;
 
 import db.MainProgramOperations;
-import controller.ModifyDateAndTime;
 import model.Alley;
-import model.Booking;
 import model.NumberValidator;
 
 import javax.swing.*;
@@ -11,28 +9,25 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 
 /**
  * Created by Peter on 24/03/2015.
  */
-public class UpdateBookingGUI implements ActionListener
+class UpdateBookingGUI implements ActionListener
 
 {
-    private JDialog addD;
-    private MainProgramOperations progOps;
-    private ArrayList<Booking> bookingList = new ArrayList<Booking>();
-    private ResultSet rSet;
-    private GuiElements ge;
-    private BookingTab bTab;
-    private JPanel updatePanel, bottomPanel;
-    private JButton updateB, clearB, cancel;
+    private final JDialog addD;
+    private final MainProgramOperations progOps;
+    private final GuiElements ge;
+    private final BookingTab bTab;
+    private final JButton updateB;
+    private final JButton clearB;
+    private final JButton cancel;
 
-    public UpdateBookingGUI (BookingTab bt, MainProgramOperations po, ArrayList<Booking> b, String search) {
+    public UpdateBookingGUI(BookingTab bt, MainProgramOperations po, String search) {
         System.out.println("Inside : UpdateBookingGUI");
         this.bTab = bt;
         this.progOps = po;
-        this.bookingList = b;
 
         addD = new JDialog();
         addD.setTitle("Update Booking");
@@ -40,9 +35,9 @@ public class UpdateBookingGUI implements ActionListener
         addD.setLocationRelativeTo(null);
 
         ge = new GuiElements();
-        updatePanel = ge.bookingGui();
+        JPanel updatePanel = ge.bookingGui();
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.setBackground(Color.white);
@@ -68,21 +63,19 @@ public class UpdateBookingGUI implements ActionListener
         fillFields(search);
     }
 
-    public void fillFields(String search) {
+    private void fillFields(String search) {
         System.out.println("Inside : fillFields() in UpdateBookingGUI");
-        ModifyDateAndTime mdt = new ModifyDateAndTime();
         try {
-            rSet = progOps.searchBookings(search);
+            ResultSet rSet = progOps.searchBookings(search);
             while (rSet.next()) {
                 ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
                 ge.staffIdTxt.setText(Integer.toString(rSet.getInt(2) + 1));
-                //ge.nameTxt.setText(rSet.getString(3));
                 ge.laneTxt.setText(rSet.getString(3));
-                ge.dateInTxt.setText(mdt.modifyDateLayout(rSet.getString(4)));
-                ge.startTimeTxt.setText(mdt.modifyTimeLayout(rSet.getString(4)));
-                ge.endTimeTxt.setText(mdt.modifyTimeLayout(rSet.getString(5)));
+                ge.dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(rSet.getString(4)));
+                ge.startTimeTxt.setText(new java.text.SimpleDateFormat("HH:mm").format(rSet.getString(4)));
+                ge.endTimeTxt.setText(new java.text.SimpleDateFormat("HH:mm").format(rSet.getString(5)));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -97,16 +90,13 @@ public class UpdateBookingGUI implements ActionListener
                             "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
                 else {
-                    int lane = Integer.parseInt(ge.laneTxt.getText());
                     String [] srt = ge.startTimeTxt.getText().split(" ");
                     String [] en = ge.endTimeTxt.getText().split(" ");
                     String date = ge.dateTxt.getText();
                     System.out.println(date + srt[0]);
                     String start = date + " " + srt[0];
                     String end = date + " " + en[0];
-                    if (numValidator.isNumeric(date) == false && numValidator.isNumeric(start) == false && numValidator.isNumeric(end) == false) {
-                        /**Booking b = new Booking(memId, lane, start, end );
-                        progOps.addBooking(b);**/
+                    if (!numValidator.isNumeric(date) && !numValidator.isNumeric(start) && !numValidator.isNumeric(end)) {
                         Alley a = new Alley(progOps);
                         a.addBooking();
                         bTab.refreshTable();

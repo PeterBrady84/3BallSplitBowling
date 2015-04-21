@@ -3,13 +3,8 @@ package gui;
 import controller.TableColumnAdjuster;
 import db.MainProgramOperations;
 import model.Stock;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.data.general.PieDataset;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -25,16 +20,12 @@ import java.util.ArrayList;
 /**
  * Created by Diarmuid on 24/03/2015.
  */
-public class FinancialReportsGUI extends JPanel implements ActionListener{
+class FinancialReportsGUI extends JPanel implements ActionListener{
 
-    private JPanel p1, p2, p1a;
-    private JButton walkIn, member, quarterly,back;
-    private ArrayList<Stock> stockList = new ArrayList<Stock>();
-    private String header[] = new String[]{"Stock Id", "Shoe Size", "Description", "Quantity"};
-    private MainProgramOperations progOps;
-    private ResultSet rSet;
-    private JTable table;
-    private DefaultTableModel model;
+    private final JButton back;
+    private ArrayList<Stock> stockList = new ArrayList<>();
+    private final MainProgramOperations progOps;
+    private final DefaultTableModel model;
     private DefaultPieDataset pieDataset = new DefaultPieDataset();
     private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
 
@@ -45,19 +36,19 @@ public class FinancialReportsGUI extends JPanel implements ActionListener{
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
 
-        p1 = new JPanel();
+        JPanel p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 290));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);
-        p1a = new JPanel();
+        JPanel p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
-        member = new JButton("Member Totals");
+        JButton member = new JButton("Member Totals");
         //staffBookings.addActionListener(this);
-        walkIn = new JButton("Walk-In Totals");
+        JButton walkIn = new JButton("Walk-In Totals");
         //staffHours.addActionListener(this);
-        quarterly = new JButton("Quarterly Totals");
+        JButton quarterly = new JButton("Quarterly Totals");
         //staffSomething.addActionListener(this);
         back = new JButton("Back");
         back.addActionListener(this);
@@ -78,14 +69,15 @@ public class FinancialReportsGUI extends JPanel implements ActionListener{
         //p1a.add(add(Box.createVerticalStrut(20)));
 
 
-        p2 = new JPanel();
+        JPanel p2 = new JPanel();
 
+        String[] header = new String[]{"Stock Id", "Shoe Size", "Description", "Quantity"};
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        table = new JTable(model) {
+        JTable table = new JTable(model) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component comp = super.prepareRenderer(renderer, row, column);
@@ -119,7 +111,7 @@ public class FinancialReportsGUI extends JPanel implements ActionListener{
 
 
         try {
-            rSet = progOps.getMember();
+            ResultSet rSet = progOps.getMember();
             PrintWriter pw = new PrintWriter(new FileWriter("members.txt"));
             while (rSet.next()){
                 String fname = rSet.getString(1);
@@ -144,10 +136,8 @@ public class FinancialReportsGUI extends JPanel implements ActionListener{
         System.out.println("Inside : actionPerformed() in FinancialReportsGUI");
         if (e.getSource() == back){
             //this.setVisible(false);
-            AdminTab at = new AdminTab(progOps);
-            JPanel admin = at;
             this.removeAll();
-            this.add(admin);//Adding to content pane, not to Frame
+            this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
         }

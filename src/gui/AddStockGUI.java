@@ -3,11 +3,9 @@ package gui;
 import db.MainProgramOperations;
 import model.Alley;
 import model.NumberValidator;
-import model.Staff;
 import model.Stock;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,21 +14,18 @@ import java.util.ArrayList;
 /**
  * Created by Peter on 19/03/2015.
  */
-public class AddStockGUI implements ActionListener {
+class AddStockGUI implements ActionListener {
 
-    private JDialog addD;
-    private MainProgramOperations progOps;
-    private GuiElements ge;
-    private StockTab sTab;
-    private ArrayList<Stock> stockList = new ArrayList<Stock>();
-    private JPanel addPanel, bottomPanel;
-    private JButton addB, clearB;
+    private final JDialog addD;
+    private final MainProgramOperations progOps;
+    private final GuiElements ge;
+    private final StockTab sTab;
+    private final JButton addB;
 
     public AddStockGUI(StockTab st, MainProgramOperations po, ArrayList<Stock> s) {
         this.sTab = st;
         this.progOps = po;
-        this.stockList = s;
-        System.out.println("Add Stock GUI");
+        System.out.println("Inside : Add Stock GUI");
 
         addD = new JDialog();
         addD.setTitle("Add Stock Items");
@@ -38,10 +33,10 @@ public class AddStockGUI implements ActionListener {
         addD.setLocationRelativeTo(null);
 
         ge = new GuiElements();
-        addPanel = ge.stockGui();
-        ge.idTxt.setText(Integer.toString(stockList.size() + 1));
+        JPanel addPanel = ge.stockGui();
+        ge.idTxt.setText(Integer.toString(s.size() + 1));
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.setBackground(Color.white);
@@ -50,7 +45,7 @@ public class AddStockGUI implements ActionListener {
         addB.addActionListener(this);
         bottomPanel.add(addB);
 
-        clearB = new JButton("Clear");
+        JButton clearB = new JButton("Clear");
         clearB.addActionListener(this);
         bottomPanel.add(clearB);
 
@@ -73,8 +68,8 @@ public class AddStockGUI implements ActionListener {
                     String shoeSize = ge.sizeTxt.getText();
                     String quantity = ge.qtyTxt.getText();
                     String details = ge.detailsTxt.getText();
-                    if (numValidator.isNumeric(shoeSize) == false && numValidator.isNumeric(quantity) == true &&
-                            numValidator.isNumeric(details) == false) {
+                    if (!numValidator.isNumeric(shoeSize) && numValidator.isNumeric(quantity) &&
+                            !numValidator.isNumeric(details)) {
                         int quantityIn = Integer.parseInt(quantity);
                         Stock s = new Stock(shoeSize, quantityIn, details);
                         progOps.addStock(s);

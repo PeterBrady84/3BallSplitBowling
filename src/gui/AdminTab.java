@@ -10,10 +10,12 @@ import java.awt.event.ActionListener;
 /**
  * Created by Peter on 06/03/2015.
  */
-public class AdminTab extends JPanel implements ActionListener {
+class AdminTab extends JPanel implements ActionListener {
 
-    JButton staff, games, members, accounts;
-    private MainProgramOperations progOps;
+    private final JButton staff;
+    private final JButton games;
+    private final JButton members;
+    private final MainProgramOperations progOps;
 
     public AdminTab(MainProgramOperations po) {
         System.out.println("Inside : AdminTabGUI");
@@ -35,7 +37,7 @@ public class AdminTab extends JPanel implements ActionListener {
         games.addActionListener(this);
         members = new JButton("Membership Reports");
         members.addActionListener(this);
-        accounts = new JButton("Financial Reports");
+        JButton accounts = new JButton("Financial Reports");
         accounts.addActionListener(this);
         p2.add(staff);
         p2.add(games);
@@ -54,35 +56,27 @@ public class AdminTab extends JPanel implements ActionListener {
         System.out.println("Inside : actionPerformed() in AdminTabGUI");
         if (e.getSource() == staff){
         //this.setVisible(false);
-        StaffReportsGUI sr = new StaffReportsGUI(progOps);
-        JPanel staff = sr;
-        this.removeAll();
-        this.add(staff);//Adding to content pane, not to Frame
+            this.removeAll();
+        this.add(new StaffReportsGUI(progOps));//Adding to content pane, not to Frame
         repaint();
         printAll(getGraphics());//Extort print all content
          }
         else if(e.getSource() == games){
             this.setVisible(false);
-            GamesReportGUI gr = new GamesReportGUI(progOps);
-            JPanel staff = gr;
             this.removeAll();
-            this.add(staff);//Adding to content pane, not to Frame
+            this.add(new GamesReportGUI(progOps));//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
         }
         else if(e.getSource() == members){
-            MembershipReportGUI mr = new MembershipReportGUI(progOps);
-            JPanel staff = mr;
             this.removeAll();
-            this.add(staff);//Adding to content pane, not to Frame
+            this.add(new MembershipReportGUI(progOps));//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
         }
         else {
-            FinancialReportsGUI fr = new FinancialReportsGUI(progOps);
-            JPanel staff = fr;
             this.removeAll();
-            this.add(staff);//Adding to content pane, not to Frame
+            this.add(new FinancialReportsGUI(progOps));//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
         }

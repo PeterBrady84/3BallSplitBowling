@@ -1,29 +1,47 @@
 package gui;
 
-import model.Staff;
-import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
-import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
-import net.sourceforge.jdatepicker.impl.UtilDateModel;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
 
 /**
  * Created by Peter on 10/03/2015.
  */
-public class GuiElements implements ItemListener {
+class GuiElements implements ItemListener {
 
-    public JTextField idTxt, fNameTxt, lNameTxt, phoneTxt, emailTxt, addTxt, townTxt, visTxt,
-            loginTxt, secAnsTxt, confSecAnsTxt, sizeTxt, detailsTxt, qtyTxt, staffIdTxt, memberIdTxt, noGamesTxt, nameTxt, laneTxt, dateTxt, startTimeTxt, endTimeTxt;
+    public JTextField idTxt;
+    public JTextField fNameTxt;
+    public JTextField lNameTxt;
+    public JTextField phoneTxt;
+    public JTextField emailTxt;
+    public JTextField addTxt;
+    public JTextField townTxt;
+    public JTextField visTxt;
+    public JTextField loginTxt;
+    public JTextField secAnsTxt;
+    public JTextField confSecAnsTxt;
+    public JTextField sizeTxt;
+    public JTextField detailsTxt;
+    public JTextField qtyTxt;
+    public JTextField staffIdTxt;
+    public JTextField nameTxt;
+    public JTextField laneTxt;
+    public JTextField dateTxt;
+    public JTextField startTimeTxt;
+    public JTextField endTimeTxt;
     public JFormattedTextField dateInTxt;
     public JPasswordField passwordTxt, confPassTxt;
-    public JRadioButton male, female, perGame, perHour;
-    public JComboBox<String> coCombo, quest, startHr, startMin, endHr, endMin, typeCombo;
-    final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
+    public JRadioButton male;
+    public JRadioButton female;
+    public JComboBox<String> coCombo;
+    public JComboBox<String> quest;
+    private JComboBox<String> startHr;
+    private JComboBox<String> startMin;
+    private JComboBox<String> endHr;
+    private JComboBox<String> endMin;
+    private final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
 
 
     public GuiElements() {
@@ -106,12 +124,12 @@ public class GuiElements implements ItemListener {
 
         coLbl = new JLabel("County:");
         topPanel.add(coLbl);
-        coCombo = new JComboBox<String>();
+        coCombo = new JComboBox<>();
         coCombo.setBackground(Color.white);
         topPanel.add(coCombo);
         // Populate the combobox list
-        for (int i = 0; i < COUNTY.length; i++) {
-            coCombo.addItem(COUNTY[i]);
+        for (String aCOUNTY : COUNTY) {
+            coCombo.addItem(aCOUNTY);
         }
 
         visLbl = new JLabel("No Of Visits:");
@@ -175,8 +193,6 @@ public class GuiElements implements ItemListener {
         loginLbl = new JLabel("Email:");
         topPanel.add(loginLbl);
         loginTxt = new JTextField(15);
-        /*loginTxt.setEditable(false);
-        loginTxt.setBackground(Color.white);*/
         topPanel.add(loginTxt);
 
         passLbl = new JLabel("Password:");
@@ -191,7 +207,7 @@ public class GuiElements implements ItemListener {
 
         secQuestionLbl = new JLabel("Security Question:");
         topPanel.add(secQuestionLbl);
-        quest = new JComboBox<String>(secQs);
+        quest = new JComboBox<>(secQs);
         quest.setBackground(Color.white);
         topPanel.add(quest);
 
@@ -288,20 +304,20 @@ public class GuiElements implements ItemListener {
 
         memberIdLbl = new JLabel("Member Id");
         topPanel.add(memberIdLbl);
-        memberIdTxt = new JTextField(15);
+        JTextField memberIdTxt = new JTextField(15);
         memberIdTxt.setBackground(Color.white);
         topPanel.add(memberIdTxt);
 
         gameLbl = new JLabel("Game Type:");
         topPanel.add(gameLbl);
 
-        perGame = new JRadioButton("Play Per Game");
+        JRadioButton perGame = new JRadioButton("Play Per Game");
         perGame.setBackground(Color.white);
         topPanel.add(perGame);
 
         topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
 
-        perHour = new JRadioButton("Play Per Hour", true);
+        JRadioButton perHour = new JRadioButton("Play Per Hour", true);
         perHour.setBackground(Color.white);
         topPanel.add(perHour);
 
@@ -311,18 +327,18 @@ public class GuiElements implements ItemListener {
 
         noGamesLbl = new JLabel("Number of Games: ");
         topPanel.add(noGamesLbl);
-        noGamesTxt = new JTextField(15);
+        JTextField noGamesTxt = new JTextField(15);
         noGamesTxt.setBackground(Color.white);
         topPanel.add(noGamesTxt);
 
         typeLbl = new JLabel("Booking Type:");
         topPanel.add(typeLbl);
-        typeCombo = new JComboBox<>();
+        JComboBox<String> typeCombo = new JComboBox<>();
         typeCombo.setBackground(Color.white);
         topPanel.add(typeCombo);
         // Populate the combobox list
-        for (int i = 0; i < TYPE.length; i++) {
-            typeCombo.addItem(TYPE[i]);
+        for (String aTYPE : TYPE) {
+            typeCombo.addItem(aTYPE);
         }
 
         addPanel.add(topPanel, BorderLayout.NORTH);
