@@ -64,8 +64,6 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
-        members = new JButton("Members");
-        members.addActionListener(this);
         barCharts = new JButton("Bar Charts");
         barCharts.addActionListener(this);
         pieCharts = new JButton("Pie Charts");
@@ -74,8 +72,7 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
         back.addActionListener(this);
 
 
-        p1a.add(members);
-        p1a.add(add(Box.createVerticalStrut(20)));
+
         p1a.add(barCharts);
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
@@ -106,7 +103,7 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
 
         table.getTableHeader().setReorderingAllowed(false);
 
-        //fillTable();
+        fillTableMember();
 
         //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
@@ -202,7 +199,7 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
                 pieDataset.setValue(gender, genderTotal); //Convert data source from table to Pie Chart Data Source
             }
                 /* Create Logical Chart */
-        JFreeChart PieChartObject=ChartFactory.createPieChart("Male Vs Female Members - Pie Chart", pieDataset, true, true, false);
+        JFreeChart PieChartObject=ChartFactory.createPieChart("Male V's Female Members - Pie Chart", pieDataset, true, true, false);
                 /* Close JDBC specific objects */
         rSet.close();
 
@@ -239,10 +236,6 @@ public class MembershipReportGUI extends JPanel implements ActionListener {
             this.add(admin);//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
-        }
-        else if(e.getSource() == members ) {
-
-            fillTableMember();
         }
         else if (e.getSource() == barCharts) {
 

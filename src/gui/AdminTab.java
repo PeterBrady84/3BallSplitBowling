@@ -62,7 +62,7 @@ public class AdminTab extends JPanel implements ActionListener {
         printAll(getGraphics());//Extort print all content
          }
         else if(e.getSource() == games){
-            this.setVisible(false);
+            this.setVisible(true);
             GamesReportGUI gr = new GamesReportGUI(progOps);
             JPanel staff = gr;
             this.removeAll();

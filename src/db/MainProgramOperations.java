@@ -135,7 +135,7 @@ public class MainProgramOperations {
         int id = -1;
         try {
             id = rSet.getInt(1);
-            System.out.println("member id returned was "+(id));
+            System.out.println("member id returned was " + (id));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -263,6 +263,32 @@ public class MainProgramOperations {
     public ResultSet getStaffMembers() {
         System.out.println("Inside : getStaffBookings() in MainProgramOperations");
         String sqlStatement = "select staffId, lname,bookings from staff order by BOOKINGS desc";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+    public ResultSet getGameType() {
+        System.out.println("Inside : getGameType() in MainProgramOperations");
+        String sqlStatement = "select BOOKINGTYPE,count(bookingtype)from bookings group by BOOKINGTYPE";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+    public ResultSet getLaneInfo() {
+        System.out.println("Inside : getLaneInfo() in MainProgramOperations");
+        String sqlStatement = "select * from lanes order by LANEID";
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();

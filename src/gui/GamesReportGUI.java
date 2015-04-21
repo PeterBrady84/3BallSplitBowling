@@ -3,9 +3,7 @@ package gui;
 import controller.TableColumnAdjuster;
 import db.MainProgramOperations;
 import model.Stock;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
+import org.jfree.chart.*;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
@@ -17,6 +15,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
@@ -29,8 +28,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
 
     private JPanel p1, p2, p1a;
     private JButton charts, gameStats, back;
-    private ArrayList<Stock> stockList = new ArrayList<Stock>();
-    private String header[] = new String[]{"Stock Id", "Shoe Size", "Description", "Quantity"};
+    private String header[] = new String[]{"Lane ID","Lane No", "Max Players"};
     private MainProgramOperations progOps;
     private ResultSet rSet;
     private JTable table;
@@ -54,16 +52,12 @@ public class GamesReportGUI extends JPanel implements ActionListener{
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
 
-
-        gameStats = new JButton("Games Data");
-        gameStats.addActionListener(this);
-        charts = new JButton("Charts");
+        charts = new JButton(" Pie Charts");
         charts.addActionListener(this);
         back = new JButton("Back");
         back.addActionListener(this);
 
-        p1a.add(gameStats);
-        p1a.add(add(Box.createVerticalStrut(20)));
+
         p1a.add(charts);
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
@@ -91,7 +85,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
 
         table.getTableHeader().setReorderingAllowed(false);
 
-        //fillTable();
+        fillTableLane();
 
         //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
@@ -109,23 +103,23 @@ public class GamesReportGUI extends JPanel implements ActionListener{
         add(p2, BorderLayout.EAST);
     }
 
-    public void fillTableMember() {
-        System.out.println("Inside : fillTable() in MembershipReportGUI");
+    public void fillTableLane() {
+        System.out.println("Inside : fillTableLane() in MembershipReportGUI");
 
 
         try {
-            rSet = progOps.getMember();
-            PrintWriter pw = new PrintWriter(new FileWriter("members.txt"));
+            rSet = progOps.getLaneInfo();
+            PrintWriter pw = new PrintWriter(new FileWriter("lanes.txt"));
             while (rSet.next()){
-                String fname = rSet.getString(1);
-                String lname = rSet.getString(2);
-                int visit = rSet.getInt(3);
-                String gender = rSet.getString(4);
-                model.addRow(new Object[]{rSet.getString(1), rSet.getString(2), rSet.getInt(3), rSet.getString(4)});
-                pw.println("First Name: " + fname);
-                pw.println("Last Name: " + lname);
-                pw.println("Gender: " + gender );
-                pw.println("Number of Visits: " + visit +"\n");
+                int laneID = rSet.getInt(1);
+                String laneName = rSet.getString(2);
+                int maxPlayers = rSet.getInt(3);
+                //String gender = rSet.getString(4);
+                model.addRow(new Object[]{rSet.getInt(1), rSet.getString(2), rSet.getInt(3)});
+                pw.println("Lane ID: " + laneID);
+                pw.println("Lane Name: " + laneName);
+                pw.println("Max Players: " + maxPlayers );
+                //pw.println("Number of Visits: " + visit +"\n");
 
             }
             pw.close();
@@ -133,6 +127,47 @@ public class GamesReportGUI extends JPanel implements ActionListener{
             System.out.println(e);
         }
     }
+
+    public void fillPieChartGameType() {
+        System.out.println("Inside : fillPieChartGameType() in GamesReportGUI");
+
+        try {
+            rSet = progOps.getGameType();
+            PrintWriter pw = new PrintWriter(new FileWriter("gameType.txt"));
+            while (rSet.next()){
+                //////////////for text file//////////////
+                String gameType = rSet.getString(1);
+                int total = rSet.getInt(2);
+                ////For DataSet////////////////////////
+                //String gender = rSet.getString(1);
+                //int genderTotal = rSet.getInt(2);
+                pw.println("Game Type: " + gameType);
+                pw.println("Total: " + total);
+                pieDataset.setValue(gameType, total); //Convert data source from table to Pie Chart Data Source
+            }
+                /* Create Logical Chart */
+            JFreeChart PieChartObject=ChartFactory.createPieChart("Game Type - Pie Chart", pieDataset, true, true, false);
+                /* Close JDBC specific objects */
+            rSet.close();
+
+            ////////////////Create a frame to display pie chart///////////
+            ChartFrame frame = new ChartFrame("Pie Chart for Displaying Types of Games Played",PieChartObject);
+            frame.setVisible(true);
+            frame.setSize(400, 500);
+
+                /* Specify dimensions and quality factor for Pie Chart */
+            int width=640;
+            int height=480;
+            float quality=1; /* Quality factor */
+                /* Write Pie Chart as a JPEG file */
+            File PieChart=new File("SQL2PieChartGameType.png");
+            ChartUtilities.saveChartAsJPEG(PieChart, quality, PieChartObject, width, height);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -145,6 +180,9 @@ public class GamesReportGUI extends JPanel implements ActionListener{
             this.add(admin);//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
+        }
+        else if (e.getSource() == charts){
+            fillPieChartGameType();
         }
     }
 
