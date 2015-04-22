@@ -52,17 +52,13 @@ class StaffReportsGUI extends JPanel implements ActionListener {
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
-        staffDetails = new JButton("Staff Details");
-        staffDetails.addActionListener(this);
+
         barCharts = new JButton("Bar Charts");
         barCharts.addActionListener(this);
         JButton staffHours = new JButton("Staff Hours Worked");
         //staffHours.addActionListener(this);
         back = new JButton("Back");
         back.addActionListener(this);
-
-        p1a.add(staffDetails);
-        p1a.add(add(Box.createVerticalStrut(20)));
         p1a.add(barCharts);
         p1a.add(add(Box.createVerticalStrut(20)));
         p1a.add(back);
@@ -89,7 +85,7 @@ class StaffReportsGUI extends JPanel implements ActionListener {
 
         table.getTableHeader().setReorderingAllowed(false);
 
-        //fillTable();
+        fillTableStaff();
 
         //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
@@ -105,6 +101,8 @@ class StaffReportsGUI extends JPanel implements ActionListener {
         sp.setBackground(Color.WHITE);
         p2.add(sp);
         add(p2, BorderLayout.EAST);
+
+
     }
 
     private void fillTableStaff() {
@@ -177,11 +175,6 @@ class StaffReportsGUI extends JPanel implements ActionListener {
             this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
-        }
-        else if (e.getSource() == staffDetails){
-
-            fillTableStaff();
-
         }
         else if (e.getSource() == barCharts){
 
