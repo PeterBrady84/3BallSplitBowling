@@ -104,7 +104,7 @@ class BookingTab extends JPanel implements ActionListener {
                 String laneName = "Lane " + rSet.getInt(1);
                 String lName = rSet.getString(2);
                 String fName = rSet.getString(3);
-                String date = rSet.getDate(4).toString();
+                String date = new java.text.SimpleDateFormat("dd-MMM-yyyy").format(rSet.getDate(4));
                 String start = rSet.getString(5);
                 String end = rSet.getString(6);
                 int players = rSet.getInt(7);

@@ -1,10 +1,7 @@
 package gui;
 
 import db.MainProgramOperations;
-import model.Booking;
-import model.BookingDetails;
-import model.Member;
-import model.Staff;
+import model.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -102,24 +99,29 @@ class AddBookingGUI implements ActionListener {
                     townTxt.setText("");
                     county.setSelectedItem(1);
                 } else if (isMem.isSelected()){
-                    isMember = true;
-                    String id = JOptionPane.showInputDialog("Enter Member id:");
-                    customer = progOps.findMemberByID(id);
-                    fNameTxt.setText(customer.getfName());
-                    fNameTxt.setEditable(false);
-                    lNameTxt.setText(customer.getlName());
-                    lNameTxt.setEditable(false);
-                    phoneTxt.setText(customer.getPhone());
-                    phoneTxt.setEditable(false);
-                    emailTxt.setText(customer.getEmail());
-                    emailTxt.setEditable(false);
-                    addTxt.setText(customer.getAddress());
-                    addTxt.setEditable(false);
-                    townTxt.setText(customer.getTown());
-                    townTxt.setEditable(false);
-                    county.setSelectedItem(customer.getCounty());
-                    county.setEnabled(false);
-                    memberId = customer.getId();
+                    try {
+                        isMember = true;
+                        String id = JOptionPane.showInputDialog("Enter Member id:");
+                        customer = progOps.findMemberByID(id);
+                        fNameTxt.setText(customer.getfName());
+                        fNameTxt.setEditable(false);
+                        lNameTxt.setText(customer.getlName());
+                        lNameTxt.setEditable(false);
+                        phoneTxt.setText(customer.getPhone());
+                        phoneTxt.setEditable(false);
+                        emailTxt.setText(customer.getEmail());
+                        emailTxt.setEditable(false);
+                        addTxt.setText(customer.getAddress());
+                        addTxt.setEditable(false);
+                        townTxt.setText(customer.getTown());
+                        townTxt.setEditable(false);
+                        county.setSelectedItem(customer.getCounty());
+                        county.setEnabled(false);
+                        memberId = customer.getId();
+                    }
+                    catch (NullPointerException np){
+                        notMem.setSelected(true);
+                    }
                 }
             }
         };
@@ -236,9 +238,14 @@ class AddBookingGUI implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (perGame.isSelected()) {
-                    String games = JOptionPane.showInputDialog("Enter amount of games:");
-                    games_hours = Integer.parseInt(games);
-                    isPerHour = "N";
+                    try {
+                        String games = JOptionPane.showInputDialog("Enter amount of games:");
+                        games_hours = Integer.parseInt(games);
+                        isPerHour = "N";
+                    }
+                    catch (NumberFormatException nf) {
+                        perHour.setSelected(true);
+                    }
                 } else if (perHour.isSelected()) {
                     isPerHour = "Y";
                 }
@@ -276,14 +283,19 @@ class AddBookingGUI implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in AddBookingGUI");
+        EmailValidator emailValidator = new EmailValidator();
+        NumberValidator numValidator = new NumberValidator();
         if (e.getSource().equals(back)) {
             CheckAvailabilityGUI back = check;
         }
         else if (e.getSource().equals(calcPrice)) {
-            if ((fNameTxt.getText().equals("")) || ((phoneTxt.getText().equals("")) ||
-                    (emailTxt.getText().equals("")))) {
+            if ((fNameTxt.getText().equals("")) || (lNameTxt.getText().equals("")) ||
+                    ((phoneTxt.getText().equals("")) || (emailTxt.getText().equals("")))) {
                 JOptionPane.showMessageDialog(null, "Name, phone or email fields cannot be blank.", "ERROR", JOptionPane.WARNING_MESSAGE);
-            } else {
+            }else if (emailValidator.validate(emailTxt.getText())) {
+                JOptionPane.showMessageDialog(null, "Email address is not valid", "ERROR", JOptionPane.WARNING_MESSAGE);
+            } else if (!numValidator.isNumeric(fNameTxt.getText()) && !numValidator.isNumeric(lNameTxt.getText()) && numValidator.isNumeric(phoneTxt.getText())
+                    && !numValidator.isNumeric(emailTxt.getText())) {
                 if (!isMember) {
                     customer = new Member(fNameTxt.getText(), lNameTxt.getText(), phoneTxt.getText(), emailTxt.getText(),
                             addTxt.getText(), townTxt.getText(), county.getSelectedItem().toString());
@@ -295,6 +307,9 @@ class AddBookingGUI implements ActionListener {
                         noPlayers, isPerHour, bookingType);
                 PaymentsGUI receipt = new PaymentsGUI(b, timeSlots, customer, progOps);
                 addD.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null,
+                        "Only Phone Field may be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
             }
         }
         else if (e.getSource() .equals(cancelB)) {

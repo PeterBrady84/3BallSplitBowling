@@ -236,11 +236,13 @@ public class MainScreen extends JFrame implements ActionListener {
             CheckAvailabilityGUI ca = new CheckAvailabilityGUI(progOps, bookingList, user);
         }
         else if (e.getSource() == mainDatePanel) {
-            System.out.println("HERE");
             juDate = (Date) mainDatePicker.getModel().getValue();
             dt = new DateTime(juDate);
 
             dateSelected = dt.toDate();
+            //if (dateSelected.before(new java.util.Date())) {
+                //dateSelected = new java.util.Date();
+            //}
             refreshTabbedPane(dateSelected);
         }
         else if (e.getSource() == bowl) {

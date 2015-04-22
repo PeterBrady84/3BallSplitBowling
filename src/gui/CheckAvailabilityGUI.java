@@ -70,7 +70,7 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
         checkPanel.setLayout(new BorderLayout());
 
         Border etched = BorderFactory.createEtchedBorder();
-        Border titled = BorderFactory.createTitledBorder(etched, "Check Availability");
+        Border titled = BorderFactory.createTitledBorder(etched, "Check Availability   (Page 1 / 3)");
         checkPanel.setBorder(titled);
 
         JPanel topPanel = new JPanel();
@@ -167,6 +167,7 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
         DefaultCaret caret = (DefaultCaret)display.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         display.setBackground(Color.WHITE);
+        display.setText("Please input number of players,\nThen select 'Check' to\ncalculate no of lanes required");
 
         JPanel midPanel = new JPanel();
         midPanel.setBackground(Color.WHITE);
@@ -223,9 +224,9 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
                             "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
-                else if (endHr.getSelectedIndex() < startHr.getSelectedIndex()) {
+                else if (endHr.getSelectedIndex() <= startHr.getSelectedIndex()) {
                     JOptionPane.showMessageDialog(null,
-                            "END TIME cannot be before START TIME!\n" +
+                            "END TIME cannot be the same, or before START TIME!\n" +
                                     "Please fix the times.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
                 else {
@@ -262,6 +263,7 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
                     else {
                         JOptionPane.showMessageDialog(null,
                                 "No of Players must be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
+                        playerTxt.setText("");
                     }
                 }
             }
@@ -287,7 +289,6 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
                 games_hours = progOps.getNumHours(startTimeTxt.getText(), endTimeTxt.getText());
                 for (int slot : slots) {
                     BookingDetails bd = new BookingDetails(progOps.getNumBookings() + 1, freeLanes[i], slot, date);
-                    //progOps.addBookingDetails(bd);
                     timeslots.add(bd);
                 }
             }
@@ -295,11 +296,16 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
             addD.dispose();
         }
         else if (e.getSource().equals(clearB)) {
+            dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
+            startHr.setSelectedIndex(0);
+            startMin.setSelectedIndex(0);
             startTimeTxt.setText("");
+            endHr.setSelectedIndex(0);
+            endMin.setSelectedIndex(0);
             endTimeTxt.setText("");
             noLanes.removeAllItems();
             playerTxt.setText("");
-            display.setText("");
+            display.setText("Please input number of players,\nThen select 'Check' to\ncalculate no of lanes required");
             create.setVisible(false);
         }
         else if (e.getSource().equals(cancel)) {
