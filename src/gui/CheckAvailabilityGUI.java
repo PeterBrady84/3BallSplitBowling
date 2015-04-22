@@ -1,7 +1,6 @@
 package gui;
 
 import db.MainProgramOperations;
-import controller.ModifyDateAndTime;
 import model.Booking;
 import model.BookingDetails;
 import model.NumberValidator;
@@ -12,8 +11,6 @@ import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -23,7 +20,6 @@ import java.awt.event.ItemListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,77 +27,76 @@ import java.util.Date;
 /**
  * Created by Peter on 20/03/2015.
  */
-public class CheckAvailabilityGUI implements ActionListener, ItemListener {
+class CheckAvailabilityGUI implements ActionListener, ItemListener {
 
-    private JDialog addD;
-    private MainProgramOperations progOps;
-    private MainScreen ms;
-    private BookingTab bt;
-    private ArrayList<Booking> bookingList;
-    private ArrayList<BookingDetails> timeslots;
-    private Staff user;
-    private ResultSet rSet;
+    private final JDialog addD;
+    private final MainProgramOperations progOps;
+    private final ArrayList<Booking> bookingList;
+    private final ArrayList<BookingDetails> timeslots;
+    private final Staff user;
     private UtilDateModel model;
-    private JDatePanelImpl datePanel;
-    private JDatePickerImpl datePicker;
-    private JFormattedTextField dateInTxt;
-    private JLabel dateLbl, startTime, endTime, playerLbl, laneLbl;
-    private JComboBox startHr, startMin, endHr, endMin, noLanes;
-    private JTextField startTimeTxt, endTimeTxt, playerTxt;
-    private JTextArea display;
-    private JPanel checkPanel, topPanel, bottomPanel;
-    private JButton create, checkB, clearB, cancel;
+    private final JFormattedTextField dateInTxt;
+    private final JComboBox<String> startHr;
+    private final JComboBox<String> startMin;
+    private final JComboBox<String> endHr;
+    private final JComboBox<String> endMin;
+    private final JComboBox<Integer> noLanes;
+    private final JTextField startTimeTxt;
+    private final JTextField endTimeTxt;
+    private final JTextField playerTxt;
+    private final JTextArea display;
+    private final JButton create;
+    private final JButton checkB;
+    private final JButton clearB;
+    private final JButton cancel;
     private final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
-    private final String [] HOURS = {"10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm",
-            "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
-    private final String [] MINUTES = {"00", "15", "30", "45"};
     private final int [] LANES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     private int games_hours;
 
-    public CheckAvailabilityGUI (MainScreen ms, BookingTab bt, MainProgramOperations po, ArrayList<Booking> b, Staff user) {
+    public CheckAvailabilityGUI(MainProgramOperations po, ArrayList<Booking> b, Staff user) {
         System.out.println("Inside : CheckAvailabilityGUI");
         this.progOps = po;
-        this.ms = ms;
-        this.bt = bt;
         this.bookingList = b;
         this.user = user;
 
-        timeslots = new ArrayList<BookingDetails>();
+        timeslots = new ArrayList<>();
 
         addD = new JDialog();
         addD.setTitle("Check For Availability");
         addD.setSize(new Dimension(300, 500));
         addD.setLocationRelativeTo(null);
 
-        checkPanel = new JPanel();
+        JPanel checkPanel = new JPanel();
         checkPanel.setLayout(new BorderLayout());
 
         Border etched = BorderFactory.createEtchedBorder();
-        Border titled = BorderFactory.createTitledBorder(etched, "Check Availability");
+        Border titled = BorderFactory.createTitledBorder(etched, "Check Availability   (Page 1 / 3)");
         checkPanel.setBorder(titled);
 
-        topPanel = new JPanel();
+        JPanel topPanel = new JPanel();
         topPanel.setLayout(new GridLayout(9, 2));
         topPanel.setBackground(Color.white);
 
-        dateLbl = new JLabel("Date:");
+        JLabel dateLbl = new JLabel("Date:");
         topPanel.add(dateLbl);
-        datePanel = new JDatePanelImpl(new UtilDateModel());
-        datePicker = new JDatePickerImpl(datePanel);
+        JDatePanelImpl datePanel = new JDatePanelImpl(new UtilDateModel());
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
         dateInTxt = datePicker.getJFormattedTextField();
         dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
         dateInTxt.setBackground(Color.WHITE);
         topPanel.add(datePicker);
 
-        startTime = new JLabel("Start Time:");
+        JLabel startTime = new JLabel("Start Time:");
         topPanel.add(startTime);
 
         startHr = new JComboBox<>();
         startHr.setBackground(Color.white);
         topPanel.add(startHr);
         // Populate the hourComboBox list
-        for (int i = 0; i < HOURS.length; i++) {
-            startHr.addItem(HOURS[i]);
+        String[] HOURS = {"10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm",
+                "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
+        for (String HOUR1 : HOURS) {
+            startHr.addItem(HOUR1);
         }
         startHr.addItemListener(this);
 
@@ -112,8 +107,9 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
         startMin.setBackground(Color.white);
         topPanel.add(startMin);
         // Populate the hourComboBox list
-        for (int i = 0; i < MINUTES.length; i++) {
-            startMin.addItem(MINUTES[i]);
+        String[] MINUTES = {"00", "15", "30", "45"};
+        for (String MINUTE1 : MINUTES) {
+            startMin.addItem(MINUTE1);
         }
         startMin.addItemListener(this);
 
@@ -124,15 +120,15 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
         startTimeTxt.setEditable(false);
         topPanel.add(startTimeTxt);
 
-        endTime = new JLabel("End Time:");
+        JLabel endTime = new JLabel("End Time:");
         topPanel.add(endTime);
 
         endHr = new JComboBox<>();
         endHr.setBackground(Color.white);
         topPanel.add(endHr);
         // Populate the hourComboBox list
-        for (int i = 0; i < HOURS.length; i++) {
-            endHr.addItem(HOURS[i]);
+        for (String HOUR : HOURS) {
+            endHr.addItem(HOUR);
         }
         endHr.addItemListener(this);
 
@@ -142,8 +138,8 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
         endMin.setBackground(Color.white);
         topPanel.add(endMin);
         // Populate the hourComboBox list
-        for (int i = 0; i < MINUTES.length; i++) {
-            endMin.addItem(MINUTES[i]);
+        for (String MINUTE : MINUTES) {
+            endMin.addItem(MINUTE);
         }
         endMin.addItemListener(this);
 
@@ -154,13 +150,13 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
         endTimeTxt.setEditable(false);
         topPanel.add(endTimeTxt);
 
-        playerLbl = new JLabel("No of Players:");
+        JLabel playerLbl = new JLabel("No of Players:");
         topPanel.add(playerLbl);
         playerTxt = new JTextField(15);
         playerTxt.setBackground(Color.white);
         topPanel.add(playerTxt);
 
-        laneLbl = new JLabel("No Of Lanes:");
+        JLabel laneLbl = new JLabel("No Of Lanes:");
         topPanel.add(laneLbl);
         noLanes = new JComboBox<>();
         noLanes.setBackground(Color.white);
@@ -171,6 +167,7 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
         DefaultCaret caret = (DefaultCaret)display.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         display.setBackground(Color.WHITE);
+        display.setText("Please input number of players,\nThen select 'Check' to\ncalculate no of lanes required");
 
         JPanel midPanel = new JPanel();
         midPanel.setBackground(Color.WHITE);
@@ -191,7 +188,7 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
 
         checkPanel.add(midPanel, BorderLayout.CENTER);
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
 
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -227,6 +224,11 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
                             "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
+                else if (endHr.getSelectedIndex() <= startHr.getSelectedIndex()) {
+                    JOptionPane.showMessageDialog(null,
+                            "END TIME cannot be the same, or before START TIME!\n" +
+                                    "Please fix the times.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                }
                 else {
                     String d = dateInTxt.getText();
                     String st = startTimeTxt.getText();
@@ -239,7 +241,7 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
                             noLanes.addItem(LANES[i]);
                         }
                         int available = 0;
-                        rSet = progOps.checkAvailability(d, st, et);
+                        ResultSet rSet = progOps.checkAvailability(d, st, et);
                         try {
                             while (rSet.next()) {
                                 available = rSet.getInt(1);
@@ -261,6 +263,7 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
                     else {
                         JOptionPane.showMessageDialog(null,
                                 "No of Players must be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
+                        playerTxt.setText("");
                     }
                 }
             }
@@ -284,22 +287,25 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
             for (int i = 0; i < (Integer)noLanes.getSelectedItem(); i ++) {
                 int [] slots = progOps.getTimes(startTimeTxt.getText(), endTimeTxt.getText());
                 games_hours = progOps.getNumHours(startTimeTxt.getText(), endTimeTxt.getText());
-                for (int j = 0; j < slots.length; j ++) {
-                    BookingDetails bd = new BookingDetails(progOps.getNumBookings()+1, freeLanes[i], slots[j], date);
-                    //progOps.addBookingDetails(bd);
+                for (int slot : slots) {
+                    BookingDetails bd = new BookingDetails(progOps.getNumBookings() + 1, freeLanes[i], slot, date);
                     timeslots.add(bd);
                 }
             }
-            //AddBookingGUI ab = new AddBookingGUI(ms, bt, progOps, bookingList, user, lanes, players);
-            BookingForm reserve = new BookingForm(user, ms, bt, this, progOps, bookingList, games_hours, lanes, players, timeslots);
+            AddBookingGUI reserve = new AddBookingGUI(user, progOps, bookingList, games_hours, lanes, players, timeslots);
             addD.dispose();
         }
         else if (e.getSource().equals(clearB)) {
+            dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
+            startHr.setSelectedIndex(0);
+            startMin.setSelectedIndex(0);
             startTimeTxt.setText("");
+            endHr.setSelectedIndex(0);
+            endMin.setSelectedIndex(0);
             endTimeTxt.setText("");
             noLanes.removeAllItems();
             playerTxt.setText("");
-            display.setText("");
+            display.setText("Please input number of players,\nThen select 'Check' to\ncalculate no of lanes required");
             create.setVisible(false);
         }
         else if (e.getSource().equals(cancel)) {
@@ -309,7 +315,7 @@ public class CheckAvailabilityGUI implements ActionListener, ItemListener {
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-        System.out.println("Inside : itemStateChanged() for Bookings in GuiElements");
+        System.out.println("Inside : itemStateChanged() in CheckAvailabilityGUI");
         startTimeTxt.setText(HRS24[startHr.getSelectedIndex()] + ":" + startMin.getSelectedItem().toString());
         endTimeTxt.setText(HRS24[endHr.getSelectedIndex()] + ":" + endMin.getSelectedItem().toString());
     }

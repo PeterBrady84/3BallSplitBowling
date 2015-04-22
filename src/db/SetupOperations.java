@@ -3,40 +3,30 @@ package db;
 import model.Booking;
 import oracle.jdbc.pool.OracleDataSource;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 
 import java.sql.*;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
 /**
  * Created by Peter on 06/03/2015.
  */
-public class SetupOperations {
+class SetupOperations {
     private final int ONE_WEEK = 7;
-    private final int ONE_MONTH = 30;
-    private final int NUMBER_LANES = 16;
-    private final int HOURS_OPEN = 14;
     private static int numSlots;
     private Connection conn = null;
     private PreparedStatement pStmt;
-    private PreparedStatement pStmt2;
-    private PreparedStatement pStmt3;
-    private Statement stmt = null;
     private ResultSet rSet;
     private java.util.Date juDate ;
     private DateTime dt;
-    private ArrayList<String> times;
 
-    public SetupOperations()
+    private SetupOperations()
     {
         conn = openDB();
     }
 
-    public Connection openDB() {
+    private Connection openDB() {
         Scanner in = new Scanner(System.in);
         try {
             // Load the Oracle JDBC driver
@@ -47,24 +37,26 @@ public class SetupOperations {
             String user = "", pass = "";
 
             // Peter Brady Login
-            if (val .equals("pb")) {
-                user = "Peter";
-                pass = "database";
-            }
-            // Luke Byrne Login
-            else if (val .equals("lb")) {
-                user = "system";
-                pass = "passhr";
-            }
-            // Peter Connel Login
-            else if (val .equals("pc")) {
-                user = "hr";
-                pass = "passhr";
-            }
-            // Dylan Byrne login
-            else if (val .equals("db")) {
-                user = "Dylan Byrne's Username";
-                pass = "Dylan Byrne's Password";
+            switch (val) {
+                case "pb":
+                    user = "Peter";
+                    pass = "database";
+                    break;
+                // Luke Byrne Login
+                case "lb":
+                    user = "system";
+                    pass = "passhr";
+                    break;
+                // Peter Connel Login
+                case "pc":
+                    user = "hr";
+                    pass = "passhr";
+                    break;
+                // Dylan Byrne login
+                case "db":
+                    user = "Dylan Byrne's Username";
+                    pass = "Dylan Byrne's Password";
+                    break;
             }
 
             ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
@@ -79,7 +71,7 @@ public class SetupOperations {
         return conn;
     }
 
-    public void closeDB() {
+    private void closeDB() {
         try {
             conn.close();
             System.out.print("Connection closed");
@@ -89,12 +81,12 @@ public class SetupOperations {
         }
     }
 
-    public void dropTables() {
+    private void dropTables() {
         System.out.println("Checking for existing tables.");
 
         try {
             // Get a Statement object.
-            stmt = conn.createStatement();
+            Statement stmt = conn.createStatement();
 
             // Drop the Payments Table and Payments Sequence
             try {
@@ -231,7 +223,7 @@ public class SetupOperations {
         }
     }
 
-    public void createTables() {
+    private void createTables() {
         createMembers();
         createStaff();
         createRosterTable();
@@ -243,7 +235,7 @@ public class SetupOperations {
         createBookingDetails();
     }
 
-    public void createMembers() {
+    private void createMembers() {
         try
         {
             System.out.println("Inside Create Members Method");
@@ -397,7 +389,7 @@ public class SetupOperations {
     }
 
     //Method to create and populate Staff Table(pc)
-    public void createStaff() {
+    private void createStaff() {
         try {
             System.out.println("Inside createStaff Method");
             // Create a Table
@@ -459,7 +451,7 @@ public class SetupOperations {
         //getBookingCount();
     }
 
-    public void setBookingCount(){
+    private void setBookingCount(){
         try {
             String countBookings = "UPDATE staff SET bookings = ? WHERE staffid = ?";
             String getCount = "select count(staffid), staffid from bookings group by staffid";
@@ -483,7 +475,7 @@ public class SetupOperations {
     }
 
     //Create Table Roster(PC)
-    public void createRosterTable()
+    private void createRosterTable()
     {
         try {
             Timestamp time;
@@ -512,7 +504,7 @@ public class SetupOperations {
                 for (int i = 0; i < ONE_WEEK; i++){
                     String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(?, ?, ?)";
                     pStmt = conn.prepareStatement(insertString);
-                    String now = "";
+                    String now;
                     String b = dt.toString("yyyy-MM-dd ");
                     now = starts[new Random().nextInt(starts.length)];
                     b = b + now;
@@ -543,7 +535,7 @@ public class SetupOperations {
     }
 
 
-    public void createStock() {
+    private void createStock() {
         try {
             System.out.println("Inside Create Stock Method");
             // Create a Table
@@ -691,7 +683,7 @@ public class SetupOperations {
         }
     }
 
-    public void createLanes () {
+    private void createLanes() {
         System.out.println("Inside CreateLanes Method");
         try {
             String addLanes = "CREATE TABLE lane(" +
@@ -715,6 +707,7 @@ public class SetupOperations {
                     "values (laneNumber_seq.nextVal, ?)";
             pStmt = conn.prepareStatement(insertTimeSlots);
 
+            int NUMBER_LANES = 16;
             for (int i = 0; i < NUMBER_LANES; i++) {
                 pStmt.setString(1, "Lane " + (i + 1));
                 pStmt.execute();
@@ -726,7 +719,7 @@ public class SetupOperations {
         }
     }
 
-    public void createTimeSlots () {
+    private void createTimeSlots() {
         System.out.println("Inside Create TimeSlots Method");
         try {
             // Create a TimeSlots Table
@@ -751,6 +744,7 @@ public class SetupOperations {
             pStmt = conn.prepareStatement(insertTimeSlots);
 
             String[] minutes = {":00", ":15", ":30", ":45"};
+            int HOURS_OPEN = 14;
             for (int i = 0; i < HOURS_OPEN; i++) {
                 for (String min : minutes) {
                     String timeDesc = (i + 10) + min;
@@ -766,7 +760,7 @@ public class SetupOperations {
         }
     }
 
-    public void createBookings() {
+    private void createBookings() {
         System.out.println("Inside Create Bookings Method");
         try {
             // Create Bookings Table
@@ -799,7 +793,7 @@ public class SetupOperations {
         }
     }
 
-    public void createBookingDetails () {
+    private void createBookingDetails() {
         System.out.println("Inside Create BookingDetails Method");
         try {
             String details = "CREATE TABLE bookingDetails(" +
@@ -827,7 +821,7 @@ public class SetupOperations {
         }
     }
 
-    public void createPayments () {
+    private void createPayments() {
         System.out.println("Inside Create Payments Method");
         try {
             // Create a TimeSlots Table
@@ -855,7 +849,7 @@ public class SetupOperations {
     }
 
 
-    public void populateBookings() {
+    private void populateBookings() {
         System.out.println("Inside populateBookings Method");
 
         //double deposits[] = {5.50,10.0,7.50,20};
@@ -947,7 +941,6 @@ public class SetupOperations {
                             bookingType = "Party";
                             break;
                         case 2:  bookingType = "Walk-In";
-                            deposit = 0;
                             fullyPaid = "Y";
                             break;
                     }
@@ -991,7 +984,7 @@ public class SetupOperations {
                         int timeSlot = getTimeSlots(now) + 1;
                         for (int s = 0; (s < hours_games * SLOTS_PER_HOUR) && (s < numSlots); s ++) {
                             try {
-                                pStmt2 = null;
+                                PreparedStatement pStmt2;
                                 pStmt2 = conn.prepareStatement(bookingDetails);
 
                                 System.out.println("Now " + now);
@@ -1035,7 +1028,7 @@ public class SetupOperations {
                             "fullyPaid, " +
                             "paymentMethod)" +
                             "VALUES(paymentId_seq.nextVal, ?, ?, ?, ?, ?)";
-                    pStmt3 = conn.prepareStatement(paymentInsert);
+                    PreparedStatement pStmt3 = conn.prepareStatement(paymentInsert);
                     pStmt3.setInt(1, bookingId);
                     pStmt3.setDouble(2, deposit);
                     pStmt3.setDouble(3, totalPrice);
@@ -1055,7 +1048,7 @@ public class SetupOperations {
         setBookingCount();
     }
 
-    public int getBookingId() throws SQLException {
+    private int getBookingId() {
         System.out.println("Inside : getBookingId() in SetupOperations");
         String sqlStatement = "SELECT count(*) FROM Bookings";
         int count = 0;
@@ -1072,7 +1065,7 @@ public class SetupOperations {
         return count;
     }
 
-    public int getNumberSlots() throws SQLException {
+    private int getNumberSlots() {
         System.out.println("Inside : getNumberSlots() in SetupOperations");
         String sqlStatement = "SELECT count(*) FROM timeSlots";
         int count = 0;
@@ -1091,7 +1084,7 @@ public class SetupOperations {
 
 
 
-    public int getTimeSlots(String selectedTime) {
+    private int getTimeSlots(String selectedTime) {
         System.out.println("Inside : getTimeSlots() in SetupOperations");
         //ArrayList<String> times = new ArrayList<>();
         int timeSlot = 0;
@@ -1111,18 +1104,7 @@ public class SetupOperations {
         return timeSlot;
     }
 
-    /**public int assignTimeSlot(String selectedTime) {
-        System.out.println("Inside assignTimeSlots Method");
-        int timeslot = 0;
-        ArrayList <String> times = getTimeSlots();
-        for(String time:times){
-            if(selectedTime.equals(time))
-              timeslot=times.indexOf(time)+1;
-        }
-        return timeslot;
-    }**/
-
-    public void queryTables() {
+    private void queryTables() {
         queryMembers();
         queryStaff();
         queryLanes();
@@ -1130,7 +1112,7 @@ public class SetupOperations {
         queryBookings();
     }
 
-    public void queryMembers() {
+    private void queryMembers() {
         try {
             String queryString = "SELECT * FROM members";
             pStmt = conn.prepareStatement(queryString);
@@ -1149,7 +1131,7 @@ public class SetupOperations {
         }
     }
 
-    public void queryStaff() {
+    private void queryStaff() {
         try {
             String queryString = "SELECT * FROM staff";
             pStmt = conn.prepareStatement(queryString);
@@ -1167,7 +1149,7 @@ public class SetupOperations {
         }
     }
 
-    public void queryLanes() {
+    private void queryLanes() {
         try {
             String queryString = "SELECT * FROM lane";
             pStmt = conn.prepareStatement(queryString);
@@ -1183,7 +1165,7 @@ public class SetupOperations {
         }
     }
 
-    public void queryStock() {
+    private void queryStock() {
         try {
             String queryString = "SELECT * FROM stock";
             pStmt = conn.prepareStatement(queryString);
@@ -1200,7 +1182,7 @@ public class SetupOperations {
         }
     }
 
-    public void queryBookings() {
+    private void queryBookings() {
         try {
             String queryString = "SELECT * FROM bookings";
             pStmt = conn.prepareStatement(queryString);

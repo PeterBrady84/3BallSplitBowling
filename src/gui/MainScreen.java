@@ -1,6 +1,5 @@
 package gui;
 
-import controller.WelcomeAnimation;
 import db.MainProgramOperations;
 import model.*;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
@@ -16,68 +15,51 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.text.Format;
-import java.text.SimpleDateFormat;
 
 /**
  * Created by Peter on 06/03/2015.
  */
 public class MainScreen extends JFrame implements ActionListener {
 
-    private JPanel p1, p2, p3, jp1, jp2, jp3, jp4, jp5, jp6;
-    private JLabel header, button, loggedIn;
-    private JButton bowl, help, checkAvailability, logout;
+    private final JPanel p2;
+    private final JButton bowl;
+    private final JButton help;
+    private final JButton checkAvailability;
+    private final JButton logout;
     private JTabbedPane jtp;
-    private MainProgramOperations progOps;
-    private BookingTab bt;
-    private ArrayList<Member> memList;
-    private ArrayList<Staff> staffList;
-    private ArrayList<Stock> stockList;
-    private ArrayList<Booking> bookingList = new ArrayList<Booking>();
-    private ArrayList<Lane> laneList;
-    private ArrayList<TimeSlot> timeSlotList;
-    private ArrayList<BookingDetails> bookingDetailsList;
-    private ArrayList<Payment> paymentsList;
-    private UtilDateModel model;
-    public JDatePanelImpl mainDatePanel;
-    public JDatePickerImpl mainDatePicker;
-    public JFormattedTextField dateInTxt;
+    private final MainProgramOperations progOps;
+    private final ArrayList<Member> memList;
+    private final ArrayList<Staff> staffList;
+    private final ArrayList<Stock> stockList;
+    private ArrayList<Booking> bookingList = new ArrayList<>();
+    private final JDatePanelImpl mainDatePanel;
+    private final JDatePickerImpl mainDatePicker;
+    private final JFormattedTextField dateInTxt;
     public static Date dateSelected;
     private java.util.Date juDate ;
     private DateTime dt;
-    private Format formatter;
-    private Alley list;
-    private Staff user;
+    private final Staff user;
 
     public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b,
-                      ArrayList<Lane> l, ArrayList<TimeSlot> t, ArrayList<BookingDetails> bd, ArrayList<Payment> p, MainProgramOperations po) {
+                      MainProgramOperations po) {
         System.out.println("Inside : MainScreenGUI");
-
-        /*boolean administrator;
-        UserLogged = user;
-        if (user.isAdmin()) administrator = true;
-        else administrator = false;*/
 
         this.progOps = po;
         this.memList = m;
         this.staffList = s;
         this.stockList = st;
         this.bookingList = b;
-        this.laneList = l;
-        this.timeSlotList = t;
-        this.bookingDetailsList = bd;
-        this.paymentsList = p;
         this.user = user;
 
         //This the calendar panel for the mainscreen which sets a date in dd-MMM-yy format
         //String dateSelected can be used by all the tabs for all DB queries.
-        model = new UtilDateModel();
+        UtilDateModel model = new UtilDateModel();
         mainDatePanel = new JDatePanelImpl(model);
         mainDatePicker = new JDatePickerImpl(mainDatePanel);
         juDate = (Date) mainDatePicker.getModel().getValue();
         dt = new DateTime(juDate);
 
-        this.dateSelected = dt.toDate();
+        dateSelected = dt.toDate();
 
         setTitle("3-Ball-Strike Bowling");
         setSize(850, 600);
@@ -89,7 +71,7 @@ public class MainScreen extends JFrame implements ActionListener {
 
         // Add panels to Frame
         // Add Panel 1
-        p1 = new JPanel();
+        JPanel p1 = new JPanel();
 
         p1.setPreferredSize(new Dimension(700, 100));
         p1.setLayout(new BorderLayout());
@@ -106,7 +88,7 @@ public class MainScreen extends JFrame implements ActionListener {
         p1.add(bowl, BorderLayout.WEST);
         bowl.addActionListener(this);
 
-        header = new JLabel("3-Ball-Strike Bowling System", SwingConstants.CENTER);
+        JLabel header = new JLabel("3-Ball-Strike Bowling System", SwingConstants.CENTER);
         header.setFont(header.getFont().deriveFont(40.0f));
         p1.add(header, BorderLayout.CENTER);
 
@@ -138,13 +120,12 @@ public class MainScreen extends JFrame implements ActionListener {
         }
         add(p2);
 
-        p3 = new JPanel();
+        JPanel p3 = new JPanel();
         p3.setPreferredSize(new Dimension(800, 100));
         p3.setBackground(Color.WHITE);
 
         String userID = "USERNAME: "+user.getUsername();
-        System.out.println(userID);
-        loggedIn = new JLabel(userID);
+        JLabel loggedIn = new JLabel(userID);
         p3.add(loggedIn);
 
         /*
@@ -170,7 +151,7 @@ public class MainScreen extends JFrame implements ActionListener {
         p3.add(logout);
 
         ImageIcon icon = new ImageIcon("src/lib/files/quck_play.png");
-        button = new JLabel(icon);
+        JLabel button = new JLabel(icon);
         p3.add(button);
 
         add(p3, BorderLayout.SOUTH);
@@ -188,42 +169,42 @@ public class MainScreen extends JFrame implements ActionListener {
         });
     }
 
-    public JTabbedPane createTabbedPane(Date d) {
+    private JTabbedPane createTabbedPane(Date d) {
         System.out.println("Inside : createTabbedPane() in MainScreenGUI");
-        this.dateSelected = d;
+        dateSelected = d;
 
         // Panel for Home Tab
-        jp1 = new HomeTab(dateSelected, bookingList, bookingDetailsList, memList, timeSlotList, laneList, progOps);
+        JPanel jp1 = new HomeTab(dateSelected, progOps);
         jp1.setPreferredSize(new Dimension(800, 310));
         jp1.setBackground(Color.WHITE);
 
         // Panel for Book Tab
-        jp2 = new JPanel();
-        bt = new BookingTab(this, dateSelected, bookingList, memList, laneList, progOps, user);
+        JPanel jp2 = new JPanel();
+        BookingTab bt = new BookingTab(this, bookingList, progOps, user);
         jp2.add(bt);
         jp2.setPreferredSize(new Dimension(800, 310));
         jp2.setBackground(Color.WHITE);
 
         // Panel for Members Tab
-        jp3 = new JPanel();
+        JPanel jp3 = new JPanel();
         jp3.add(new MemberTab(memList, progOps));
         jp3.setPreferredSize(new Dimension(800, 310));
         jp3.setBackground(Color.WHITE);
 
         // Panel for Stock Tab
-        jp4 = new JPanel();
+        JPanel jp4 = new JPanel();
         jp4.add(new StockTab(stockList, progOps));
         jp4.setPreferredSize(new Dimension(800, 310));
         jp4.setBackground(Color.WHITE);
 
         // Panel for Staff Tab
-        jp5 = new JPanel();
-        jp5.add(new StaffTab(dateSelected, staffList, progOps));
+        JPanel jp5 = new JPanel();
+        jp5.add(new StaffTab(staffList, progOps));
         jp5.setPreferredSize(new Dimension(800, 310));
         jp5.setBackground(Color.WHITE);
 
         // Panel for Administrator Tab
-        jp6 = new JPanel();
+        JPanel jp6 = new JPanel();
         jp6.add(new AdminTab(progOps));
         jp6.setPreferredSize(new Dimension(800, 310));
         jp6.setBackground(Color.WHITE);
@@ -239,9 +220,9 @@ public class MainScreen extends JFrame implements ActionListener {
         return jtp;
     }
 
-    public void refreshTabbedPane (Date d) {
+    private void refreshTabbedPane(Date d) {
         System.out.println("Inside : refreshTabbedPane() in MainScreenGUI");
-        this.dateSelected = d;
+        dateSelected = d;
         Alley a = new Alley(progOps);
         p2.removeAll();
         p2.add(createTabbedPane(d));
@@ -249,27 +230,19 @@ public class MainScreen extends JFrame implements ActionListener {
         p2.repaint();
     }
 
-
-    private void itemStateChanged(javax.swing.event.ChangeEvent evt)
-    {
-        if (jtp.getTitleAt(jtp.getSelectedIndex()).equals("Staff"))
-        {
-            // what you wish to do when tab is selected here ....
-        }
-    }
-
-
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in MainScreenGUI");
         if (e.getSource() == checkAvailability) {
-            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(this, bt, progOps, bookingList, user);
+            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(progOps, bookingList, user);
         }
         else if (e.getSource() == mainDatePanel) {
-            System.out.println("HERE");
             juDate = (Date) mainDatePicker.getModel().getValue();
             dt = new DateTime(juDate);
 
             dateSelected = dt.toDate();
+            //if (dateSelected.before(new java.util.Date())) {
+                //dateSelected = new java.util.Date();
+            //}
             refreshTabbedPane(dateSelected);
         }
         else if (e.getSource() == bowl) {
@@ -285,32 +258,25 @@ public class MainScreen extends JFrame implements ActionListener {
                 if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Home"))
                 {
                     helpPDF = new File("src/lib/files/helpManuals/home.pdf");
-                    System.out.println("HOME PDF");
                 }
                 else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Booking"))
                 {
                     helpPDF = new File("src/lib/files/helpManuals/booking.pdf");
-                    System.out.println("BOOKING PDF");
                 }
                 else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Members"))
                 {
                     helpPDF = new File("src/lib/files/helpManuals/members.pdf");
-                    System.out.println("MEMBERS PDF");
                 }
                 else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Stock"))
                 {
                     helpPDF = new File("src/lib/files/helpManuals/stock.pdf");
-                    System.out.println("STOCK PDF");
                 }
                 else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Staff"))
                 {
                     helpPDF = new File("src/lib/files/helpManuals/staff.pdf");
-                    System.out.println("STAFF PDF");
                 }
-                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Administrator"))
-                {
+                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Administrator")) {
                     helpPDF = new File("src/lib/files/helpManuals/administrator.pdf");
-                    System.out.println("ADMINISTRATOR PDF");
                 }
                 try {
                     Desktop.getDesktop().open(helpPDF);

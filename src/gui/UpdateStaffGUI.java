@@ -2,7 +2,6 @@ package gui;
 
 import db.MainProgramOperations;
 import model.Alley;
-import model.Member;
 import model.NumberValidator;
 import model.Staff;
 
@@ -11,20 +10,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Created by Peter on 10/03/2015.
  */
-public class UpdateStaffGUI implements ActionListener {
-    private JDialog updateD;
-    private ResultSet rSet;
-    private MainProgramOperations progOps;
-    private StaffTab sTab;
-    private GuiElements ge;
-    private JPanel updatePanel, bottomPanel;
-    private JButton updateB, cancel;
+class UpdateStaffGUI implements ActionListener {
+    private final JDialog updateD;
+    private final MainProgramOperations progOps;
+    private final StaffTab sTab;
+    private final GuiElements ge;
+    private final JButton updateB;
+    private final JButton cancel;
 
     public UpdateStaffGUI(StaffTab st, MainProgramOperations po, String s) {
         System.out.println("Inside : UpdateStaffGUI");
@@ -37,9 +34,9 @@ public class UpdateStaffGUI implements ActionListener {
         updateD.setLocationRelativeTo(null);
 
         ge = new GuiElements();
-        updatePanel = ge.staffGui();
+        JPanel updatePanel = ge.staffGui();
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.add(Box.createRigidArea(new Dimension(40, 0)));
@@ -62,10 +59,10 @@ public class UpdateStaffGUI implements ActionListener {
         fillFields(s);
     }
 
-    public void fillFields(String s) {
+    private void fillFields(String s) {
         System.out.println("Inside : fillFields() in UpdateStaffGUI");
         try {
-            rSet = progOps.searchStaff(s);
+            ResultSet rSet = progOps.searchStaff(s);
             while (rSet.next()) {
                 ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
                 ge.fNameTxt.setText(rSet.getString(3));
@@ -75,7 +72,7 @@ public class UpdateStaffGUI implements ActionListener {
                 ge.loginTxt.setText(rSet.getString(6));
                 ge.passwordTxt.setText(rSet.getString(8));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -85,7 +82,7 @@ public class UpdateStaffGUI implements ActionListener {
         if (e.getSource().equals(updateB)) {
             try {
                 if (ge.fNameTxt.getText().equals("") || ge.lNameTxt.getText().equals("") || ge.phoneTxt.getText().equals("") ||
-                        ge.loginTxt.getText().equals("") || ge.passwordTxt.getText().equals("") || ge.confPassTxt.getText().equals("")) {
+                        ge.loginTxt.getText().equals("") || ge.passwordTxt.getPassword().equals("") || ge.confPassTxt.getPassword().equals("")) {
                     JOptionPane.showMessageDialog(null,
                             "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
@@ -111,7 +108,7 @@ public class UpdateStaffGUI implements ActionListener {
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
                     String access = "N";
-                    if (numValidator.isNumeric(phone)==true) {
+                    if (numValidator.isNumeric(phone)) {
                         progOps.updateStaffinDB(ge.idTxt.getText(), lName, fName,  phone, login, email, password, secQuestion, secAnswer);
                         Alley a = new Alley(progOps);
                         a.updateStaff(new Staff(lName, fName, phone, login, email, password, secQuestion, secAnswer, access));

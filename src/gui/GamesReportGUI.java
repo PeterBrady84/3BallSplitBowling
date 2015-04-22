@@ -108,7 +108,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
 
 
         try {
-            rSet = progOps.getLaneInfo();
+            rSet = progOps.getLanes();
             PrintWriter pw = new PrintWriter(new FileWriter("lanes.txt"));
             while (rSet.next()){
                 int laneID = rSet.getInt(1);

@@ -5,15 +5,13 @@ import model.Staff;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;
-import java.util.Scanner;
 
 /**
  * Created by User on 13/03/2015.
  */
 public class SendMail implements Runnable {
 
-    private Staff recepient;
-    String emailContent;
+    private final Staff recepient;
 
     public SendMail(Staff newStaff) {
         recepient = newStaff;
@@ -21,7 +19,8 @@ public class SendMail implements Runnable {
 
     @Override
     public void run() {
-        emailContent = "Welcome to the team " + recepient.getfName() + "!!\nYour username is " + recepient.getUsername();
+        System.out.println("Inside : run() in SendMail");
+        String emailContent = "Welcome to the team " + recepient.getfName() + "!!\nYour username is " + recepient.getUsername();
         // Recipient's email ID needs to be mentioned.
         String to = "buntmcbunt@gmail.com";
 

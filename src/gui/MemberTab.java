@@ -17,17 +17,15 @@ import java.util.ArrayList;
 /**
  * Created by Peter on 06/03/2015.
  */
-public class MemberTab extends JPanel implements ActionListener {
+class MemberTab extends JPanel implements ActionListener {
 
-    private JPanel p1, p2, p1a;
-    private JButton create, edit, delete;
+    private final JButton create;
+    private final JButton edit;
+    private final JButton delete;
     private DefaultTableModel model;
-    private JTable table;
-    private JTextField memId, memName;
-    private ArrayList<Member> memList = new ArrayList<Member>();
-    private MainProgramOperations progOps;
-    private String header[] = new String[] { "Member Id", "Surname", "Name", "Gender", "Phone", "Email",
-            "Address 1", "Town/City", "County", "No Visits"};
+    private final JTable table;
+    private ArrayList<Member> memList = new ArrayList<>();
+    private final MainProgramOperations progOps;
 
     public MemberTab(ArrayList<Member> m, MainProgramOperations po) {
         System.out.println("Inside : MemberTabGUI");
@@ -38,11 +36,11 @@ public class MemberTab extends JPanel implements ActionListener {
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
 
-        p1 = new JPanel();
+        JPanel p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 290));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);
-        p1a = new JPanel();
+        JPanel p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
@@ -62,9 +60,11 @@ public class MemberTab extends JPanel implements ActionListener {
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
 
-        p2 = new JPanel();
+        JPanel p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));
         p2.setBackground(Color.WHITE);
+        String[] header = new String[]{"Member Id", "Surname", "Name", "Gender", "Phone", "Email",
+                "Address 1", "Town/City", "County", "No Visits"};
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -98,13 +98,13 @@ public class MemberTab extends JPanel implements ActionListener {
         add(p2, BorderLayout.EAST);
     }
 
-    public void fillTable(ArrayList<Member> m) {
+    private void fillTable(ArrayList<Member> m) {
         System.out.println("Inside : fillTable() in MemberTabGUI");
         memList = m;
-        for (int i = 0; i < memList.size(); i ++) {
-            model.addRow(new Object[]{memList.get(i).getId(), memList.get(i).getlName(), memList.get(i).getfName(),
-                    memList.get(i).getGender(), memList.get(i).getPhone(), memList.get(i).getEmail(), memList.get(i).getAddress(),
-                    memList.get(i).getTown(), memList.get(i).getCounty(), memList.get(i).getNumVisits()});
+        for (Member aMemList : memList) {
+            model.addRow(new Object[]{aMemList.getId(), aMemList.getlName(), aMemList.getfName(),
+                    aMemList.getGender(), aMemList.getPhone(), aMemList.getEmail(), aMemList.getAddress(),
+                    aMemList.getTown(), aMemList.getCounty(), aMemList.getNumVisits()});
         }
     }
 
@@ -121,12 +121,12 @@ public class MemberTab extends JPanel implements ActionListener {
         fillTable(memList);
     }
 
-    public String searchMember() {
+    private String searchMember() {
         System.out.println("Inside : searchMember() in MemberTabGUI");
         String query;
         NumberValidator numValidator = new NumberValidator();
-        memId = new JTextField();
-        memName = new JTextField();
+        JTextField memId = new JTextField();
+        JTextField memName = new JTextField();
         Object[] options = {
                 "Please Enter -\nMember Id:", memId,
                 "Or\nMember Name:", memName
@@ -136,7 +136,7 @@ public class MemberTab extends JPanel implements ActionListener {
         if (option == JOptionPane.OK_OPTION) {
             if (numValidator.isNumeric(memId.getText())) {
                 query = "memberId = " + memId.getText();
-            } else if (numValidator.isNumeric(memName.getText()) == false && memName.getText().contains(" ")) {
+            } else if (!numValidator.isNumeric(memName.getText()) && memName.getText().contains(" ")) {
                 String[] name = memName.getText().split(" ");
                 if (name.length < 2) {
                     throw new IllegalArgumentException("String not in correct format");
@@ -161,7 +161,7 @@ public class MemberTab extends JPanel implements ActionListener {
         else if (ae.getSource() == edit) {
             String s = searchMember();
             if (!s.equals("cancel")) {
-                UpdateMemberGUI um = new UpdateMemberGUI(this, progOps, memList, s);
+                UpdateMemberGUI um = new UpdateMemberGUI(this, progOps, s);
             }
         }
         else if (ae.getSource() == delete) {

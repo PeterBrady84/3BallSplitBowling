@@ -1,6 +1,5 @@
 package gui;
 
-//import controller.PinAnimation;
 import controller.WelcomeAnimation;
 import db.MainProgramOperations;
 import model.Alley;
@@ -12,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -20,19 +18,19 @@ import java.util.Date;
  */
 public class LoginGUI extends JFrame implements ActionListener {
 
-    private MainProgramOperations progOps;
-    private JPanel p1, p2, p3, p4, sub1, sub2, sub3;
-    private JLabel userLbl, passLbl, bowl, header;
-    private JButton help, login, forgot, exit;
-    private JTextField userTxt;
-    private JPasswordField passTxt;
-    private Date dateSelected;
+    private final MainProgramOperations progOps;
+    private final JPanel p1;
+    private final JButton help;
+    private final JButton login;
+    private final JButton forgot;
+    private final JButton exit;
+    private final JTextField userTxt;
+    private final JPasswordField passTxt;
     public static Staff user;
-    public static boolean administrator;
 
     public LoginGUI(MainProgramOperations po) {
         System.out.println("Inside : LoginGUI");
-        this.dateSelected = new Date();
+        Date dateSelected = new Date();
         this.progOps = po;
         this.setBackground(Color.WHITE);
 
@@ -51,10 +49,10 @@ public class LoginGUI extends JFrame implements ActionListener {
         add(p1, BorderLayout.NORTH);
 
         ImageIcon logo = new ImageIcon("src/lib/files/bray_bowl.png");
-        bowl = new JLabel(logo);
+        JLabel bowl = new JLabel(logo);
         p1.add(bowl, BorderLayout.WEST);
 
-        header = new JLabel("3-Ball-Strike Bowling System", SwingConstants.CENTER);
+        JLabel header = new JLabel("3-Ball-Strike Bowling System", SwingConstants.CENTER);
         header.setFont(header.getFont().deriveFont(40.0f));
         p1.add(header, BorderLayout.CENTER);
 
@@ -69,23 +67,23 @@ public class LoginGUI extends JFrame implements ActionListener {
         help.addActionListener(this);
 
         //P2
-        p2 = new JPanel(new BorderLayout());
+        JPanel p2 = new JPanel(new BorderLayout());
         p2.setPreferredSize(new Dimension(300, 430));
         p2.setBackground(Color.WHITE);
         p2.setBorder(BorderFactory.createLineBorder(Color.black));
 
         //p2 sub1
-        sub1 = new JPanel();
+        JPanel sub1 = new JPanel();
         sub1.setPreferredSize(new Dimension(200, 100));
         sub1.setBackground(Color.WHITE);
 
         //p2 - sub2
-        sub2 = new JPanel();
+        JPanel sub2 = new JPanel();
         sub2.setPreferredSize(new Dimension(300, 330));
         sub2.setBackground(Color.WHITE);
 
-        userLbl = new JLabel("Username:");
-        passLbl = new JLabel("Password:");
+        JLabel userLbl = new JLabel("Username:");
+        JLabel passLbl = new JLabel("Password:");
         userTxt = new JTextField("user1");
         passTxt = new JPasswordField("password");
 
@@ -98,29 +96,29 @@ public class LoginGUI extends JFrame implements ActionListener {
         exit = new JButton("Exit");
         exit.addActionListener(this);
 
-        sub2.add(Box.createRigidArea(new Dimension(30,0)));
+        sub2.add(Box.createRigidArea(new Dimension(30, 0)));
         sub2.add(userLbl);
         sub2.add(userTxt);
-        sub2.add(Box.createRigidArea(new Dimension(70,0)));
-        sub2.add(Box.createRigidArea(new Dimension(30,0)));
+        sub2.add(Box.createRigidArea(new Dimension(70, 0)));
+        sub2.add(Box.createRigidArea(new Dimension(30, 0)));
         sub2.add(passLbl);
         sub2.add(passTxt);
-        sub2.add(Box.createRigidArea(new Dimension(70,0)));
-        sub2.add(Box.createRigidArea(new Dimension(250,20)));
-        sub2.add(Box.createRigidArea(new Dimension(100,0)));
+        sub2.add(Box.createRigidArea(new Dimension(70, 0)));
+        sub2.add(Box.createRigidArea(new Dimension(250, 20)));
+        sub2.add(Box.createRigidArea(new Dimension(100, 0)));
         sub2.add(login);
-        sub2.add(Box.createRigidArea(new Dimension(70,0)));
-        sub2.add(Box.createRigidArea(new Dimension(30,0)));
+        sub2.add(Box.createRigidArea(new Dimension(70, 0)));
+        sub2.add(Box.createRigidArea(new Dimension(30, 0)));
         sub2.add(forgot);
-        sub2.add(Box.createRigidArea(new Dimension(250,20)));
+        sub2.add(Box.createRigidArea(new Dimension(250, 20)));
         sub2.add(exit);
 
 
         //p2 sub3
-        sub3 = new JPanel();
+        JPanel sub3 = new JPanel();
         sub3.setPreferredSize(new Dimension(300, 100));
-        sub3.add(Box.createRigidArea(new Dimension(0,98)));
-        sub3.add(Box.createRigidArea(new Dimension(50,0)));
+        sub3.add(Box.createRigidArea(new Dimension(0, 98)));
+        sub3.add(Box.createRigidArea(new Dimension(50, 0)));
         sub3.setBackground(Color.WHITE);
 
         // p2 adding sub panels
@@ -129,7 +127,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         p2.add(sub3, BorderLayout.SOUTH);
 
         //P2
-        p3 = new JPanel();
+        JPanel p3 = new JPanel();
         p3.setPreferredSize(new Dimension(420, 310));
         p3.setBorder(BorderFactory.createLineBorder(Color.black));
         p3.setBackground(Color.WHITE);
@@ -139,7 +137,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         p3.add(bowling, BorderLayout.CENTER);
 
         //Adding Panels
-        p4 = new JPanel();
+        JPanel p4 = new JPanel();
         p4.setLayout(new FlowLayout());
         p4.add(p2, BorderLayout.WEST);
         p4.add(p3, BorderLayout.EAST);
@@ -150,50 +148,38 @@ public class LoginGUI extends JFrame implements ActionListener {
     }
 
     public boolean login() {
-        boolean login = false;
-        if(progOps.checkPass(userTxt.getText(),passTxt.getText())) {
-            System.out.println("THE PASSWORDS MATCH AND login is set as true");
-            return login = true;
-        }
-        System.out.println("THE PASSWORDS DO NOT MATCH AND login is set as false");
-
-        return login;
+        return progOps.checkPass(userTxt.getText(), passTxt.getPassword());
     }
 
     public void actionPerformed(ActionEvent ae) {
         System.out.println("Inside : actionPerformed() in LoginGUI");
         if(ae.getSource()==login) {
-            if(login()==true) {
+            if(login()) {
+                p1.setVisible(false);
                 int width = this.getWidth();
                 int height = this.getHeight();
-                System.out.println("          width = "+width+"   ********     Height = "+height);
                 //JPanel animation;
                 Color tranparent = new Color(0,0,0,0);
-                WelcomeAnimation animation = new WelcomeAnimation(width,height);
-                //animation.setBackground(tranparent);
-                animation.setPreferredSize(new Dimension(width,height));
-                this.add(animation, BorderLayout.CENTER);
+                WelcomeAnimation animation = new WelcomeAnimation();
+                animation.setPreferredSize(new Dimension(width, height));
+                this.add(animation);
 
                 setVisible(true);
-                System.out.println("=========================        login finished"+animation.isFinished());
-                JOptionPane.showMessageDialog(null, "Press to Enter","Welcome to Java Bowling",
-                        JOptionPane.CLOSED_OPTION);
+
+                JOptionPane pane = new JOptionPane(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, new ImageIcon("src/lib/files/bowlingpins.png"));
+                pane.setMessage("Proceed");
+                pane.setPreferredSize(new Dimension(75, 90)); // Configure
+                JDialog dialog = pane.createDialog("Welcome");
+                dialog.setLocation(545, 255);  // added!
+                dialog.setVisible(true);
 
                 Staff user = progOps.createUser(userTxt.getText());
-                System.out.println("      WHAT IS THE VALUE OF isadmin:   "+user.isAdmin());
-                System.out.println("    +++++++++++++++++          LOG IN PRESSED  ==============   +++++++++++++++++++");
                 Alley a = new Alley(progOps);
 
                 MainScreen ms = new MainScreen(user, a.getMemberList(), a.getStaffList(), a.getStockList(),
-                        a.getBookingList(), a.getLaneList(), a.getTimeSlotList(), a.getBookingDetailsList(),
-                        a.getPaymentsList(), progOps);
+                        a.getBookingList(),
+                        progOps);
                 this.setVisible(false);
-                System.out.println("USER SIGNED IS STAFF NUMBER: "+user.getId()+"\tusername: " +
-                        " "+user.getLogin() +"\tfname: "+user.getfName()+"lname: "+user.getlName()+"\tbookings : "+user.getBookings());
-                if(user.isAdmin())
-                    System.out.println("ADMIN ACCESS ALLOWED");
-                else
-                    System.out.println("ADMIN ACCESS DENIED");
             }
             else {
                 JOptionPane.showMessageDialog(null, "ACCESS DENIED\nIncorrect username or password!", "ERROR",

@@ -28,7 +28,7 @@ public class Booking {
         this.hours_games = hg;
         this.numMembers = nm;
         this.numPlayers = np;
-        if (ph.equals('Y')) {
+        if (ph.equals("Y")) {
             this.pricingPerHour = PRICE_HOUR;
         }
         else {
@@ -45,7 +45,7 @@ public class Booking {
         this.hours_games = hg;
         this.numMembers = nm;
         this.numPlayers = np;
-        if (ph.equals('Y')) {
+        if (ph.equals("Y")) {
             this.pricingPerHour = PRICE_HOUR;
         }
         else {

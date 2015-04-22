@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -24,7 +25,6 @@ public class MainProgramOperations {
     private DateTime dt;
     private Date dateSelected;
     public static Staff user;
-    //public DateAndCalendar;
 
     public MainProgramOperations() {
         conn = openDB();
@@ -130,12 +130,12 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public int lastMemberid(){
+    public int lastMemberid() {
+        System.out.println("Inside : getLastMemberId() in MainProgramOperations");
         rSet = getMemLastRow();
         int id = -1;
         try {
             id = rSet.getInt(1);
-            System.out.println("member id returned was " + (id));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -157,10 +157,8 @@ public class MainProgramOperations {
             pStmt.setString(7, m.getTown());
             pStmt.setString(8, m.getCounty());
             pStmt.executeUpdate();
-
-            System.out.println("Member added to DB");
         } catch (Exception se) {
-            System.out.println(se);
+            System.out.println("Error : " + se);
         }
     }
 
@@ -189,21 +187,20 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public Member findMemberByID(String id){
+    public Member findMemberByID(String id) {
         System.out.println("Inside : findMemberByID() in MainProgramOperations");
-        String sqlStatement = "SELECT memberid, lName, fName, phone, email, address, town, county FROM Members WHERE memberid = " + id ;
+        String sqlStatement = "SELECT memberid, lName, fName, phone, email, address, town, county FROM Members WHERE memberid = " + id;
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
             if (rSet != null && rSet.next()) {
-                Member customer = new Member(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getString(4), rSet.getString(5), rSet.getString(6), rSet.getString(7),  rSet.getString(8));
-                System.out.printf("Member returned = %d, %s,%s,%d,%s,%s\n", rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6), rSet.getString(7),  rSet.getString(8));
+                Member customer = new Member(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getString(4),
+                        rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8));
                 return customer;
             }
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
-        System.out.println("\n\n\n   -----------------       no member etruned");
         return null;
     }
 
@@ -285,21 +282,6 @@ public class MainProgramOperations {
         }
         return rSet;
     }
-
-    public ResultSet getLaneInfo() {
-        System.out.println("Inside : getLaneInfo() in MainProgramOperations");
-        String sqlStatement = "select * from lanes order by LANEID";
-        try {
-            pStmt = conn.prepareStatement(sqlStatement);
-            rSet = pStmt.executeQuery();
-
-        } catch (Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
-        }
-        return rSet;
-    }
-
-
     ///// End of Member Queries ///////////////////////////////////
 
 
@@ -315,14 +297,9 @@ public class MainProgramOperations {
             juDate = new java.util.Date();
             dt = new DateTime(juDate);
             date = dt.toString("dd-MMM-yy").toUpperCase();
-            System.out.println("dateSelected == null so the date is set as ******");
-            System.out.println("Today's Date: " + date);
-        }
-        else {
+        } else {
             format = new SimpleDateFormat("dd-MMM-yy");
             date = format.format(dateSelected).toUpperCase();
-            System.out.println("dateSelected NOT == null so the date IS ******");
-            System.out.println(date);
         }
         try {
             String queryString = "SELECT s.staffId, lName, fName, s.bookings,  " +
@@ -398,20 +375,16 @@ public class MainProgramOperations {
                 final int ONE_WEEK = 7;
                 juDate = new java.util.Date();
                 dt = new DateTime(juDate);
-                //System.out.println("ID IS HERE ============================================" + id);
                 String idIn = Integer.toString(id);
-                //System.out.println("int id = "+id+"======================= Srtring idIN = "+idIn);
 
                 for (int i = 0; i < ONE_WEEK; i++) {
                     String insertString = "INSERT INTO roster(staffId, startTime, finishTime) values(? ,?, ?)";
                     pStmt = conn.prepareStatement(insertString);
-                    //System.out.println("INSIDE WEEK LOOP *********************************************  id = "+id);
                     pStmt.setInt(1, id);
                     String now = "";
                     String b = dt.toString("yyyy-MM-dd ");
                     now = "11:00:00";
                     b = b + now;
-                    System.out.print((i + 1) + ". " + b);
                     time = Timestamp.valueOf(b);
                     pStmt.setTimestamp(2, time);
                     //This is setting the finish time
@@ -419,7 +392,6 @@ public class MainProgramOperations {
                     now = "16:00:00";
                     b = b + now;
                     time = Timestamp.valueOf(b);
-                    System.out.println("\t        " + b);
                     pStmt.setTimestamp(3, time);
                     pStmt.executeQuery();
                     dt = dt.plusDays(1);
@@ -436,7 +408,6 @@ public class MainProgramOperations {
 
     public void updateStaffinDB(String i, String l, String n, String e, String p, String log, String pass, String q, String a) {
         System.out.println("Inside : updateStaffinDB() in MainProgramOperations");
-        System.out.println("Attempting update ---------------------------------------------------------------------------");
         try {
             String update = "UPDATE staff SET fName = '" + n + "', lName = '" + l + "', email = '" + e + "', phone = '" + p
                     + "', username = '" + log + "', password = '" + pass + "', securityQuestion = '" + q + "', securityAnswer = '" + a + "' WHERE staffId = " + i;
@@ -468,7 +439,6 @@ public class MainProgramOperations {
             rSet = pStmt.executeQuery();
             if (rSet != null && rSet.next()) {
                 Staff user = new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6));
-                System.out.printf("USER returned = %d, %s,%s,%d,%s,%s\n", rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6));
                 return user;
             }
         } catch (Exception ex) {
@@ -477,11 +447,10 @@ public class MainProgramOperations {
         return null;
     }
 
-    public boolean isUniqueUsername(String verify){
-        System.out.println("Inside : checkPass() in MainProgramOperations");
-        ArrayList <String> usernames = new ArrayList<>(10);
+    public boolean isUniqueUsername(String verify) {
+        System.out.println("Inside : isUniqueUsername() in MainProgramOperations");
+        ArrayList<String> usernames = new ArrayList<>(10);
         String getPassword = "SELECT username FROM staff";
-        boolean x;
         try {
             pStmt = conn.prepareStatement(getPassword);
             rSet = pStmt.executeQuery();
@@ -489,39 +458,24 @@ public class MainProgramOperations {
             int i = 0;
             while (rSet.next()) {
                 usernames.add(rSet.getString(1));
-                System.out.println(" =============================\n=============================              username "+(i+1)+"     :         "+usernames.get(i));
                 i++;
             }
         } catch (Exception e) {
             System.out.println(e);
         }
-        if (usernames.contains(verify)) {
-            x = true;
-            System.out.println("boolean = "+x);
-            return x;
-        }
-        else {
-            x = false;
-            System.out.println("boolean = "+x);
-            return x;
-        }
+        return usernames.contains(verify);
     }
 
 
-    public boolean checkPass(String username, String password) {
-        boolean passwordsMatch = false;
+    public boolean checkPass(String username, char[] password) {
         System.out.println("Inside : checkPass() in MainProgramOperations");
-
         String getPassword = "SELECT password FROM staff where username = '" + username + "'";
+        boolean passwordsMatch = false;
         try {
             pStmt = conn.prepareStatement(getPassword);
             rSet = pStmt.executeQuery();
             rSet.next();
-            if (password.equals(rSet.getString(1))) {
-                passwordsMatch = true;
-                System.out.println("       inside SELECT password FROM staff in checkPass method. Result set = " + rSet.getString(1));
-                return passwordsMatch;
-            }
+            passwordsMatch = Arrays.toString(password).equals(rSet.getString(1));
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -530,7 +484,7 @@ public class MainProgramOperations {
 
     public ArrayList<String> queryLogin() {
         System.out.println("Inside : queryLogin() in MainProgramOperations");
-        ArrayList<String> login = new ArrayList<String>();
+        ArrayList<String> login = new ArrayList<>();
         try {
             String queryString = "SELECT username FROM staff";
             pStmt = conn.prepareStatement(queryString);
@@ -561,11 +515,11 @@ public class MainProgramOperations {
         return question;
     }
 
-    public String changePassword(String pw, String username) {
+    public String changePassword(char[] pw, String username) {
         System.out.println("Inside : changePassword() in MainProgramOperations");
         String ans = "";
         try {
-            String queryString = "UPDATE staff SET password = '" + pw + "' WHERE username = '" + username + "'";
+            String queryString = "UPDATE staff SET password = '" + Arrays.toString(pw) + "' WHERE username = '" + username + "'";
             pStmt = conn.prepareStatement(queryString);
             pStmt.executeUpdate();
             String query2 = "SELECT securityAnswer FROM staff"
@@ -595,6 +549,7 @@ public class MainProgramOperations {
     }
     ///// End of Staff Queries ///////////////////////////////////
 
+
     ///// Beginning of Lane Queries ///////////////////////////////////
     public ResultSet getLanes() {
         System.out.println("Inside : getLanes() in MainProgramOperations");
@@ -608,10 +563,9 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public int [] getLanesAvailable(String dateIn, String startTime, String endTime) {
+    public int[] getLanesAvailable(String dateIn, String startTime, String endTime) {
         System.out.println("Inside : getLanesAvailable() in MainProgramOperations");
-        int [] lanes = new int[16];
-        System.out.println(dateIn + " " + startTime + " " + endTime);
+        int[] lanes = new int[16];
         int startId = 0, endId = 0;
 
         String getStartId = "SELECT timeSlotId " +
@@ -666,6 +620,7 @@ public class MainProgramOperations {
     }
     ///// End of Lane Queries ///////////////////////////////////
 
+
     ///// Beginning of Stock Queries ///////////////////////////////////
     public ResultSet getStock() {
         System.out.println("Inside : getStock() in MainProgramOperations");
@@ -710,7 +665,7 @@ public class MainProgramOperations {
     }
 
     public void addStock(Stock s) {
-        System.out.println("Inside :addStock() in MainProgramOperations");
+        System.out.println("Inside : addStock() in MainProgramOperations");
         try {
             String addsql = "INSERT INTO Stock(stockId, shoeSize, quantity, details) values(stockId_seq.nextVal, ?, ?, ?)";
             pStmt = conn.prepareStatement(addsql);
@@ -718,8 +673,6 @@ public class MainProgramOperations {
             pStmt.setInt(2, s.getQuantity());
             pStmt.setString(3, s.getDetails());
             pStmt.executeUpdate();
-
-            System.out.println("Stock added to DB");
         } catch (Exception se) {
             System.out.println(se);
         }
@@ -799,19 +752,19 @@ public class MainProgramOperations {
     public void addBooking(Booking b) {
         Booking add = b;
         System.out.println("Inside : addBooking() in MainProgramOperations\n" +
-                "Booking = id is "+add.getId()+", "+add.getMemId()+", " +add.getStaffId());
+                "Booking = id is " + add.getId() + ", " + add.getMemId() + ", " + add.getStaffId());
         try {
             String addBooking = "INSERT INTO bookings(" +
-                "bookingId, " +
-                "memberId, " +
-                "staffId, " +
-                "numLanes, " +
-                "games_hours, " +
-                "numMembers, " +
-                "numPlayers, " +
-                "pricingPerHour, " +
-                "bookingType) " +
-                "VALUES(bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "bookingId, " +
+                    "memberId, " +
+                    "staffId, " +
+                    "numLanes, " +
+                    "games_hours, " +
+                    "numMembers, " +
+                    "numPlayers, " +
+                    "pricingPerHour, " +
+                    "bookingType) " +
+                    "VALUES(bookingId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(addBooking);
             pStmt.setInt(1, b.getMemId());
             pStmt.setInt(2, b.getStaffId());
@@ -823,9 +776,7 @@ public class MainProgramOperations {
             pStmt.setString(8, b.getBookingType());
 
             pStmt.executeUpdate();
-            System.out.println("Booking added to DB");
-        }
-        catch (Exception se) {
+        } catch (Exception se) {
             System.out.println(se);
         }
     }
@@ -857,9 +808,7 @@ public class MainProgramOperations {
 
     public ResultSet checkAvailability(String dateIn, String startTime, String endTime) {
         System.out.println("Inside : checkBookingAvailability() in MainProgramOperations");
-        System.out.println(dateIn + " " + startTime + " " + endTime);
         int startId = 0, endId = 0;
-
         String getStartId = "SELECT timeSlotId " +
                 "FROM timeSlots " +
                 "WHERE timeDescription = '" + startTime + "'";
@@ -905,7 +854,8 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public int getNumHours(String startTime, String finishTime ){
+    public int getNumHours(String startTime, String finishTime) {
+        System.out.println("Inside : getNumHours() in MainProgramOperations");
         int hrs;
         int startId = 0, endId = 0;
 
@@ -936,11 +886,11 @@ public class MainProgramOperations {
             System.out.println("ERROR: " + ex.getMessage());
         }
         hrs = endId - startId;
-        System.out.println("                       NUM  hours of game = "+hrs);
         return hrs;
     }
 
-    public boolean isAvailable(String dateSelected, int numLanes, String startTime, String finishTime){
+    public boolean isAvailable(String dateSelected, int numLanes, String startTime, String finishTime) {
+        System.out.println("Inside : isAvailable() in MainProgramOperations");
         int startId = 0, endId = 0;
 
         String getStartId = "SELECT timeSlotId " +
@@ -971,8 +921,8 @@ public class MainProgramOperations {
         }
 
         String countLanes = "select count (distinct LANENUMBER) from BOOKINGDETAILS WHERE LANENUMBER NOT IN\n" +
-                "(select LANENUMBER from BOOKINGDETAILS where bookingdate = '"+dateSelected+"' and timeslotid " +
-                "between "+startId+" and "+endId+" group by lanenumber)";
+                "(select LANENUMBER from BOOKINGDETAILS where bookingdate = '" + dateSelected + "' and timeslotid " +
+                "between " + startId + " and " + endId + " group by lanenumber)";
         try {
             pStmt = conn.prepareStatement(countLanes);
             ResultSet count;
@@ -982,15 +932,12 @@ public class MainProgramOperations {
                 available = count.getInt(1);
             }
             rSet.close();
-            System.out.println("Number lanes requested = " + numLanes + "\nNum lanes available = " + available);
-            if(numLanes>available) {
-                System.out.println("    TIME IS NOT AVAILABLE   ======================");
+            if (numLanes > available) {
                 return false;
             }
         } catch (Exception ex) {
             System.out.println("ERROR in checkAvailability(): " + ex.getMessage());
         }
-        System.out.println("    TIME IS AVAILABLE   ======================");
         return true;
     }
 ///// End of Booking Queries ///////////////////////////////////
@@ -1026,9 +973,7 @@ public class MainProgramOperations {
             pStmt.setDate(4, bd.getBookingDate());
 
             pStmt.executeUpdate();
-            System.out.println("BookingDetail added to Booking number "+bd.getBookingId());
-        }
-        catch (Exception se) {
+        } catch (Exception se) {
             System.out.println(se);
         }
     }
@@ -1049,8 +994,6 @@ public class MainProgramOperations {
     }
 
     public void addPayment(Payment pay) {
-        System.out.println("Payment details :pay id = "+pay.getPaymentId() +", booking id = "+pay.getBookingId()+", deposit =  "+pay.getDeposit()+",total =  "
-                +pay.getTotalPrice()+",full paid = "+pay.getFullyPaid()+", pay method = "+pay.getPaymentMethod());
         System.out.println("Inside : addPayment() in MainProgramOperations");
         String sqlStatement = "INSERT INTO Payments (paymentid, bookingid, deposit, totalprice, fullyPaid, paymentmethod) values (?,?,?,?,?,?)";
         try {
@@ -1064,16 +1007,10 @@ public class MainProgramOperations {
             pStmt.setString(6, pay.getPaymentMethod());
 
             pStmt.executeQuery();
-            System.out.println("Payment added to booking number "+pay.getBookingId());
-
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
     }
-
-
-
-
 ///// End of Payment Queries ///////////////////////////////////
 
 
@@ -1090,9 +1027,25 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public int [] getTimes(String start, String end) {
+    public String getTimeDesc(int t) {
+        System.out.println("Inside : getTimeDesc() in MainProgramOperations");
+        String time = "";
+        try {
+            String queryString = "SELECT timeDescription FROM timeSlots WHERE timeSlotId = " + t;
+            pStmt = conn.prepareStatement(queryString);
+            rSet = pStmt.executeQuery();
+            while (rSet.next()) {
+                time = rSet.getString(1);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return time;
+    }
+
+    public int[] getTimes(String start, String end) {
         System.out.println("Inside : getTimes() in MainProgramOperations");
-        int [] count = new int[0];
+        int[] count = new int[0];
         int size = 0;
         try {
             String queryString = "SELECT COUNT(timeSlotId) " +
@@ -1125,42 +1078,6 @@ public class MainProgramOperations {
         }
         return count;
     }
-
-    /*public int [] getTimes(String start, String end) {
-        System.out.println("Inside : getTimes() in MainProgramOperations");
-        int [] count = new int[0];
-        int size = 0;
-        try {
-            String queryString = "SELECT COUNT(timeSlotId) " +
-                    "FROM timeSlots " +
-                    "WHERE timeDescription " +
-                    "BETWEEN '" + start + "'" +
-                    "AND '" + end + "'";
-            pStmt = conn.prepareStatement(queryString);
-            rSet = pStmt.executeQuery();
-            while (rSet.next()) {
-                size = rSet.getInt(1);
-            }
-            rSet.close();
-
-            String queryString2 = "SELECT timeSlotId " +
-                    "FROM timeSlots " +
-                    "WHERE timeDescription " +
-                    "BETWEEN '" + start + "'" +
-                    "AND '" + end + "'";
-            pStmt = conn.prepareStatement(queryString2);
-            rSet = pStmt.executeQuery();
-            count = new int[size];
-            int index = 0;
-            while (rSet.next()) {
-                count[index] = rSet.getInt(1);
-                index++;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return count;
-    }*/
 ///// End of TimeSlots Queries ///////////////////////////////////
 
 
@@ -1207,5 +1124,5 @@ public class MainProgramOperations {
         }
         return rSet;
     }
-///// End of TimeSlots Queries ///////////////////////////////////
 }
+///// End of TimeSlots Queries ///////////////////////////////////

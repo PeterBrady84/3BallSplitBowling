@@ -10,21 +10,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Peter on 18/03/2015.
  */
-public class ForgotLoginGUI implements ActionListener, ItemListener {
-    private JDialog forgotD;
-    private JPanel forgotPanel, bottomPanel, p1, p2, p3;
-    private JLabel msgLbl, ansLbl, userLbl, passLbl, confPassLbl, questLbl, questionTxt;
-    private JTextField ansTxt;
-    private JPasswordField passTxt, confPassTxt;
-    private JButton login, cancel;
-    private JComboBox <String> usersCombo;
-    private ArrayList<String> logins;
-    private String usrName;
-    private MainProgramOperations progOps;
+class ForgotLoginGUI implements ActionListener, ItemListener {
+    private final JDialog forgotD;
+    private final JLabel questionTxt;
+    private final JTextField ansTxt;
+    private final JPasswordField passTxt, confPassTxt;
+    private final JButton login, cancel;
+    private final JComboBox <String> usersCombo;
+    private String username;
+    private final MainProgramOperations progOps;
 
     public ForgotLoginGUI(MainProgramOperations po) {
         System.out.println("Inside : ForgotLoginGUI");
@@ -38,52 +37,52 @@ public class ForgotLoginGUI implements ActionListener, ItemListener {
         forgotD.setResizable(false);
 
         //P1
-        p1 = new JPanel(new BorderLayout());
+        JPanel p1 = new JPanel(new BorderLayout());
         p1.setBackground(Color.WHITE);
-        msgLbl = new JLabel("<html><br>Forgot your password?<br>Please enter the following details.</html>", SwingConstants.CENTER);
+        JLabel msgLbl = new JLabel("<html><br>Forgot your password?<br>Please enter the following details.</html>", SwingConstants.CENTER);
         p1.add(Box.createRigidArea(new Dimension(0, 50)));
         p1.add(msgLbl, BorderLayout.NORTH);
 
         //P2
-        p2 = new JPanel(new GridLayout(8, 2));
+        JPanel p2 = new JPanel(new GridLayout(8, 2));
         p2.setPreferredSize(new Dimension(200, 100));
         p2.setBackground(Color.WHITE);
 
-        userLbl = new JLabel("Username: ");
+        JLabel userLbl = new JLabel("Username: ");
         p2.add(userLbl);
-        logins = progOps.queryLogin();
-        usersCombo = new JComboBox<String>();
-        for (int i = 0; i < logins.size(); i++) {
-            usersCombo.addItem(logins.get(i));
+        ArrayList<String> logins = progOps.queryLogin();
+        usersCombo = new JComboBox<>();
+        for (String login1 : logins) {
+            usersCombo.addItem(login1);
         }
         usersCombo.setSelectedItem(0);
         usersCombo.setBackground(Color.WHITE);
         usersCombo.addItemListener(this);
         p2.add(usersCombo);
 
-        questLbl = new JLabel("Question:");
+        JLabel questLbl = new JLabel("Question:");
         p2.add(questLbl);
         String quest = progOps.getSecQuestion(usersCombo.getSelectedItem().toString());
         questionTxt = new JLabel(quest + "?");
         p2.add(questionTxt);
 
-        ansLbl = new JLabel("Answer: ");
+        JLabel ansLbl = new JLabel("Answer: ");
         p2.add(ansLbl);
         ansTxt = new JTextField(15);
         p2.add(ansTxt);
 
-        passLbl = new JLabel("New Password: ");
+        JLabel passLbl = new JLabel("New Password: ");
         p2.add(passLbl);
         passTxt = new JPasswordField(15);
         p2.add(passTxt);
 
-        confPassLbl = new JLabel("Re-Type Password: ");
+        JLabel confPassLbl = new JLabel("Re-Type Password: ");
         p2.add(confPassLbl);
         confPassTxt = new JPasswordField(15);
         p2.add(confPassTxt);
 
         //P3
-        p3 = new JPanel(new FlowLayout());
+        JPanel p3 = new JPanel(new FlowLayout());
         p3.setPreferredSize(new Dimension(150, 50));
         p3.setBorder(BorderFactory.createEtchedBorder());
         //p3.add(Box.createRigidArea(new Dimension(40, 0)));
@@ -98,7 +97,7 @@ public class ForgotLoginGUI implements ActionListener, ItemListener {
         p3.add(cancel);
 
         //Adding Panels
-        forgotPanel = new JPanel();
+        JPanel forgotPanel = new JPanel();
         forgotPanel.setLayout(new BorderLayout());
         Border etched = BorderFactory.createEtchedBorder();
         Border titled = BorderFactory.createTitledBorder(etched, "Forgot Login Details");
@@ -113,13 +112,14 @@ public class ForgotLoginGUI implements ActionListener, ItemListener {
         forgotD.setVisible(true);
     }
 
-    public void updatePass() {
+    private void updatePass() {
         System.out.println("Inside : updatePass() in ForgotLoginGUI");
-        String password = passTxt.getText();
-        String confPassword = confPassTxt.getText();
+        username = usersCombo.getSelectedItem().toString();
+        char[] password = passTxt.getPassword();
+        char[] confPassword = confPassTxt.getPassword();
         String answer = ansTxt.getText();
-        String ans = progOps.changePassword(password, usrName);
-        if (!password.equals(confPassword)) {
+        String ans = progOps.changePassword(password, username);
+        if (!Arrays.equals(password, confPassword)) {
             JOptionPane.showMessageDialog(null,
                     "Passwords do not match", "ERROR", JOptionPane.WARNING_MESSAGE);
         }
@@ -128,7 +128,7 @@ public class ForgotLoginGUI implements ActionListener, ItemListener {
                     "Incorrect Answer!", "ERROR", JOptionPane.WARNING_MESSAGE);
         }
         else {
-            progOps.changePassword(password, usrName);
+            progOps.changePassword(password, username);
             JOptionPane.showMessageDialog(null,"Password has been updated");
             forgotD.setVisible(true);
         }
