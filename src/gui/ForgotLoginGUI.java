@@ -19,12 +19,10 @@ class ForgotLoginGUI implements ActionListener, ItemListener {
     private final JDialog forgotD;
     private final JLabel questionTxt;
     private final JTextField ansTxt;
-    private final JPasswordField passTxt;
-    private final JPasswordField confPassTxt;
-    private final JButton login;
-    private final JButton cancel;
+    private final JPasswordField passTxt, confPassTxt;
+    private final JButton login, cancel;
     private final JComboBox <String> usersCombo;
-    private String usrName;
+    private String username;
     private final MainProgramOperations progOps;
 
     public ForgotLoginGUI(MainProgramOperations po) {
@@ -116,10 +114,11 @@ class ForgotLoginGUI implements ActionListener, ItemListener {
 
     private void updatePass() {
         System.out.println("Inside : updatePass() in ForgotLoginGUI");
+        username = usersCombo.getSelectedItem().toString();
         char[] password = passTxt.getPassword();
         char[] confPassword = confPassTxt.getPassword();
         String answer = ansTxt.getText();
-        String ans = progOps.changePassword(password, usrName);
+        String ans = progOps.changePassword(password, username);
         if (!Arrays.equals(password, confPassword)) {
             JOptionPane.showMessageDialog(null,
                     "Passwords do not match", "ERROR", JOptionPane.WARNING_MESSAGE);
@@ -129,7 +128,7 @@ class ForgotLoginGUI implements ActionListener, ItemListener {
                     "Incorrect Answer!", "ERROR", JOptionPane.WARNING_MESSAGE);
         }
         else {
-            progOps.changePassword(password, usrName);
+            progOps.changePassword(password, username);
             JOptionPane.showMessageDialog(null,"Password has been updated");
             forgotD.setVisible(true);
         }

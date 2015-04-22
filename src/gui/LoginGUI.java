@@ -149,7 +149,7 @@ public class LoginGUI extends JFrame implements ActionListener {
 
     public boolean login() {
         boolean login = false;
-        return progOps.checkPass(userTxt.getText(), passTxt.getText());
+        return progOps.checkPass(userTxt.getText(), passTxt.getPassword());
     }
 
     public void actionPerformed(ActionEvent ae) {

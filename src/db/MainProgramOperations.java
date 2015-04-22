@@ -431,7 +431,7 @@ public class MainProgramOperations {
         return usernames.contains(verify);
     }
 
-    public boolean checkPass(String username, String password) {
+    public boolean checkPass(String username, char[] password) {
         System.out.println("Inside : checkPass() in MainProgramOperations");
         boolean passwordsMatch = false;
         String getPassword = "SELECT password FROM staff where username = '" + username + "'";
@@ -439,14 +439,13 @@ public class MainProgramOperations {
             pStmt = conn.prepareStatement(getPassword);
             rSet = pStmt.executeQuery();
             rSet.next();
-            if (password.equals(rSet.getString(1))) {
+            if (Arrays.toString(password) .equals(rSet.getString(1))) {
                 passwordsMatch = true;
-                return passwordsMatch;
             }
         } catch (Exception e) {
             System.out.println(e);
         }
-        return false;
+        return passwordsMatch;
     }
 
     public ArrayList<String> queryLogin() {
