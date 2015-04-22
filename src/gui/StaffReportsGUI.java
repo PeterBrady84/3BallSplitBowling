@@ -27,7 +27,6 @@ import java.util.ArrayList;
 class StaffReportsGUI extends JPanel implements ActionListener {
 
     private final JButton barCharts;
-    private final JButton staffDetails;
     private final JButton back;
     private ArrayList<Stock> stockList = new ArrayList<>();
     private AdminTab aTab;

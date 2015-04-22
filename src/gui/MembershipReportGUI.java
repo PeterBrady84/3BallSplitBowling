@@ -28,7 +28,6 @@ import java.util.ArrayList;
 class MembershipReportGUI extends JPanel implements ActionListener {
 
     private JPanel p3;
-    private final JButton members;
     private final JButton barCharts;
     private final JButton back;
     private final JButton pieCharts;
