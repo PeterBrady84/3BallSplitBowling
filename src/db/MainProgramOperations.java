@@ -375,11 +375,11 @@ public class MainProgramOperations {
     }
 
 
-    public void updateStaffinDB(String i, String l, String n, String e, String p, String log, String pass, String q, String a) {
+    public void updateStaffinDB(String i, String lname, String fname, String phone, String login, String email, String pass, String q, String a) {
         System.out.println("Inside : updateStaffinDB() in MainProgramOperations");
         try {
-            String update = "UPDATE staff SET fName = '" + n + "', lName = '" + l + "', email = '" + e + "', phone = '" + p
-                    + "', username = '" + log + "', password = '" + pass + "', securityQuestion = '" + q + "', securityAnswer = '" + a + "' WHERE staffId = " + i;
+            String update = "UPDATE staff SET fName = '" + fname + "', lName = '" + lname + "', email = '" + email + "', phone = '" + phone
+                    + "', username = '" + login + "', password = '" + pass + "', securityQuestion = '" + q + "', securityAnswer = '" + a + "' WHERE staffId = " + i;
             pStmt = conn.prepareStatement(update);
             pStmt.executeUpdate();
         } catch (Exception ex) {
@@ -501,11 +501,11 @@ public class MainProgramOperations {
         return ans;
     }
 
-    public void deleteStaff(String user, int id) {
+    public void deleteStaff(String query) {
         System.out.println("Inside : deleteStaff() in MainProgramOperations");
         String ans = "";
         try {
-            String queryString = "DELETE FROM staff WHERE username = '" + user + "' OR staffid = " + id;
+            String queryString = "DELETE FROM staff WHERE " + query;
             pStmt = conn.prepareStatement(queryString);
             pStmt.executeUpdate();
 
@@ -836,7 +836,7 @@ public class MainProgramOperations {
             System.out.println("ERROR: " + ex.getMessage());
         }
         hrs = endId - startId;
-        return hrs;
+        return hrs/4;
     }
 ///// End of Booking Queries ///////////////////////////////////
 

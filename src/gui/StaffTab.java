@@ -185,10 +185,14 @@ class StaffTab extends JPanel implements ActionListener, ItemListener {
         else if (ae.getSource() == edit) {
             String str = searchStaff();
             updateStaff(str);
+            refreshTable();
+            fillTableContact(staffList);
         }
         else if (ae.getSource() == delete) {
             String str = searchStaff();
-            //progOps.deleteStaff(user, id);
+            progOps.deleteStaff(str);
+            refreshTable();
+            fillTableContact(staffList);
         }
     }
 

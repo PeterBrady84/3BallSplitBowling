@@ -167,6 +167,7 @@ public class LoginGUI extends JFrame implements ActionListener {
 
                 setVisible(true);
 
+
                 JOptionPane pane = new JOptionPane(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, new ImageIcon("src/lib/files/bowlingpins.png"));
                 pane.setMessage("Proceed");
                 pane.setPreferredSize(new Dimension(75, 90)); // Configure

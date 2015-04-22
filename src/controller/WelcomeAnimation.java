@@ -8,10 +8,8 @@ import java.awt.*;
  */
 public class WelcomeAnimation extends JPanel {
 
-        private JPanel hope;
-    private final int x ;
+        private final int x ;
         private int y ;
-        private boolean movingDown = true;
         private boolean finished;
 
     public WelcomeAnimation() {
