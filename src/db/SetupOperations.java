@@ -4,8 +4,10 @@ import model.Booking;
 import oracle.jdbc.pool.OracleDataSource;
 import org.joda.time.DateTime;
 
+import javax.swing.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -20,6 +22,7 @@ class SetupOperations {
     private ResultSet rSet;
     private java.util.Date juDate ;
     private DateTime dt;
+    private JPasswordField p = new JPasswordField("password");
 
     private SetupOperations()
     {
@@ -445,7 +448,7 @@ class SetupOperations {
                 pStmt.setString(4, phoneList[i]);
                 pStmt.setString(5, "user" + (i + 1));
                 pStmt.setString(6, emailList[i]);
-                pStmt.setString(7, "password");
+                pStmt.setString(7, Arrays.toString(p.getPassword()));
                 pStmt.setString(8, "who am i");
                 pStmt.setString(9, "Peter");
                 pStmt.setString(10, "N");

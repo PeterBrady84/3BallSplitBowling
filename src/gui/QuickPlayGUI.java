@@ -26,6 +26,8 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
 
     private final JDialog quickD;
     private final MainProgramOperations progOps;
+    private MainScreen ms;
+    private BookingTab bt;
     private final ArrayList<Booking> bookingList;
     private final ArrayList<BookingDetails> bookingDetailsList;
     private final ArrayList<Member> memList;
@@ -51,10 +53,12 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
     private final int [] LANES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     private int games_hours;
 
-    public QuickPlayGUI(MainProgramOperations po, ArrayList<Booking> b, ArrayList<BookingDetails> bd, ArrayList<Member> m, Staff user) {
+    public QuickPlayGUI(MainScreen ms, MainProgramOperations po, ArrayList<Booking> b, ArrayList<BookingDetails> bd, ArrayList<Member> m, Staff user) {
         System.out.println("Inside : QuickPlayGUI");
+        this.ms = ms;
         this.progOps = po;
         this.bookingList = b;
+        this.bt = bt;
         this.bookingDetailsList = bd;
         this.memList = m;
         this.user = user;
@@ -214,6 +218,7 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
         for (String MINUTE1 : MINUTES) {
             startMin.addItem(MINUTE1);
             endMin.addItem(MINUTE1);
+            Integer.parseInt(MINUTE1.replaceAll("[\\D]", ""));
         }
     }
 
@@ -301,7 +306,7 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
                     BookingDetails bd = new BookingDetails(bookingId, freeLanes[i], slot, date);
                     timeslots.add(bd);
                 }
-                PaymentsGUI p = new PaymentsGUI(b, timeslots, memList.get(0), progOps);
+                PaymentsGUI p = new PaymentsGUI(ms, b, timeslots, memList.get(0), bt, progOps);
             }
             quickD.dispose();
         }

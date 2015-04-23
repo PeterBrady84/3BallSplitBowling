@@ -20,6 +20,7 @@ import java.awt.event.ItemListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,8 +34,11 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
     private final MainProgramOperations progOps;
     private final ArrayList<Booking> bookingList;
     private final ArrayList<BookingDetails> timeslots;
+    private MainScreen ms;
+    private BookingTab bt;
     private final Staff user;
     private UtilDateModel model;
+    private JDatePickerImpl datePicker;
     private final JFormattedTextField dateInTxt;
     private final JComboBox<String> startHr;
     private final JComboBox<String> startMin;
@@ -53,10 +57,12 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
     private final int [] LANES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
     private int games_hours;
 
-    public CheckAvailabilityGUI(MainProgramOperations po, ArrayList<Booking> b, Staff user) {
+    public CheckAvailabilityGUI(MainScreen ms, MainProgramOperations po, ArrayList<Booking> b, BookingTab bt, Staff user) {
         System.out.println("Inside : CheckAvailabilityGUI");
         this.progOps = po;
+        this.ms = ms;
         this.bookingList = b;
+        this.bt = bt;
         this.user = user;
 
         timeslots = new ArrayList<>();
@@ -80,7 +86,7 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
         JLabel dateLbl = new JLabel("Date:");
         topPanel.add(dateLbl);
         JDatePanelImpl datePanel = new JDatePanelImpl(new UtilDateModel());
-        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
+        datePicker = new JDatePickerImpl(datePanel);
         dateInTxt = datePicker.getJFormattedTextField();
         dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
         dateInTxt.setBackground(Color.WHITE);
@@ -216,6 +222,15 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in CheckAvailabilityGUI");
         NumberValidator numValidator = new NumberValidator();
+        Date selected = null;
+        Date now = null;
+        try {
+            selected = new SimpleDateFormat("dd-MMM-yyyy").parse(dateInTxt.getText());
+            now = new java.util.Date();
+        }
+        catch (ParseException pe) {
+            System.out.println(pe);
+        }
         if (e.getSource().equals(checkB)) {
             try {
                 if (dateInTxt.getText().equals("") || startTimeTxt.getText().equals("")
@@ -223,6 +238,12 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
                     JOptionPane.showMessageDialog(null,
                             "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                }
+                else if (selected.before(now)){
+                    JOptionPane.showMessageDialog(null,
+                            "Selected date cannot be in the past!\n" +
+                                    "Please fix the date.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                    dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
                 }
                 else if (endHr.getSelectedIndex() <= startHr.getSelectedIndex()) {
                     JOptionPane.showMessageDialog(null,
@@ -292,7 +313,7 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
                     timeslots.add(bd);
                 }
             }
-            AddBookingGUI reserve = new AddBookingGUI(user, progOps, bookingList, games_hours, lanes, players, timeslots);
+            AddBookingGUI reserve = new AddBookingGUI(ms, user, bt, progOps, bookingList, games_hours, lanes, players, timeslots);
             addD.dispose();
         }
         else if (e.getSource().equals(clearB)) {

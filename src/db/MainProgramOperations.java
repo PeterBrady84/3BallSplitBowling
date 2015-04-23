@@ -1116,7 +1116,7 @@ public class MainProgramOperations {
                     "INNER JOIN timeslots ts ON bd.timeslotid = ts.timeslotid\n" +
                     "INNER JOIN members m ON b.memberId = m.memberid\n" +
                     "group by bd.bookingId, l.laneNumber, m.lname, m.fname, bd.bookingDate, b.numplayers\n" +
-                    "ORDER BY bd.bookingdate, l.laneNumber";
+                    "ORDER BY bd.bookingdate, STARTTIME, l.laneNumber";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
         } catch (Exception e) {

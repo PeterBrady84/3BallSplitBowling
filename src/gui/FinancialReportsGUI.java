@@ -34,7 +34,8 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
         this.progOps = po;
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
-        this.setBackground(Color.WHITE);
+        ((FlowLayout)this.getLayout()).setVgap(0);
+        this.setBackground(Color.BLUE);
 
         JPanel p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 290));
@@ -70,7 +71,8 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
 
 
         JPanel p2 = new JPanel();
-
+        p2.setPreferredSize(new Dimension(520, 295));
+        p2.setBackground(Color.WHITE);
         String[] header = new String[]{"Stock Id", "Shoe Size", "Description", "Quantity"};
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
@@ -138,7 +140,8 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
             //this.setVisible(false);
             this.removeAll();
             this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
-            repaint();
+            this.revalidate();
+            this.repaint();
             printAll(getGraphics());//Extort print all content
         }
 

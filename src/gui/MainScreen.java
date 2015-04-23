@@ -13,6 +13,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -28,6 +30,7 @@ public class MainScreen extends JFrame implements ActionListener {
     private final JButton logout;
     private final JButton quickPlay;
     private JTabbedPane jtp;
+    private BookingTab bt;
     private final MainProgramOperations progOps;
     private final ArrayList<Member> memList;
     private final ArrayList<Staff> staffList;
@@ -189,7 +192,7 @@ public class MainScreen extends JFrame implements ActionListener {
 
         // Panel for Book Tab
         JPanel jp2 = new JPanel();
-        BookingTab bt = new BookingTab(this, bookingList, progOps, user);
+        bt = new BookingTab(this, bookingList, progOps, user);
         jp2.add(bt);
         jp2.setPreferredSize(new Dimension(800, 310));
         jp2.setBackground(Color.WHITE);
@@ -229,7 +232,7 @@ public class MainScreen extends JFrame implements ActionListener {
         return jtp;
     }
 
-    private void refreshTabbedPane(Date d) {
+    public void refreshTabbedPane(Date d) {
         System.out.println("Inside : refreshTabbedPane() in MainScreenGUI");
         dateSelected = d;
         Alley a = new Alley(progOps);
@@ -259,7 +262,7 @@ public class MainScreen extends JFrame implements ActionListener {
                     if (id == bookingList.get(i).getId()) {
                         Member mem = memList.get(bookingList.get(i).getMemId() - 1);
                         b = bookingList.get(i);
-                        PaymentsGUI p = new PaymentsGUI(b, bookingDetailsList, mem, progOps);
+                        PaymentsGUI p = new PaymentsGUI(this, b, bookingDetailsList, mem, bt, progOps);
                     }
                 }
             }
@@ -269,23 +272,37 @@ public class MainScreen extends JFrame implements ActionListener {
             }
         }
         else if (option == JOptionPane.NO_OPTION) {
-            QuickPlayGUI qp = new QuickPlayGUI(progOps, bookingList, bookingDetailsList, memList, user);
+            QuickPlayGUI qp = new QuickPlayGUI(this, progOps, bookingList, bookingDetailsList, memList, user);
         }
     }
 
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in MainScreenGUI");
         if (e.getSource() == checkAvailability) {
-            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(progOps, bookingList, user);
+            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(this, progOps, bookingList, bt, user);
         }
         else if (e.getSource() == mainDatePanel) {
-            juDate = (Date) mainDatePicker.getModel().getValue();
-            dt = new DateTime(juDate);
-
-            dateSelected = dt.toDate();
-            //if (dateSelected.before(new java.util.Date())) {
-                //dateSelected = new java.util.Date();
-            //}
+            Date selected = null;
+            Date now = null;
+            try {
+                selected = new SimpleDateFormat("dd-MMM-yyyy").parse(dateInTxt.getText());
+                now = new java.util.Date();
+            }
+            catch (ParseException pe) {
+                System.out.println(pe);
+            }
+            if (selected.before(now)){
+                JOptionPane.showMessageDialog(null,
+                        "Selected date cannot be in the past!\n" +
+                                "Please fix the date.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
+                dateSelected = new java.util.Date();
+            }
+            else {
+                juDate = (Date) mainDatePicker.getModel().getValue();
+                dt = new DateTime(juDate);
+                dateSelected = dt.toDate();
+            }
             refreshTabbedPane(dateSelected);
         }
         else if (e.getSource() == bowl) {

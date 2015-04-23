@@ -144,6 +144,8 @@ public class LoginGUI extends JFrame implements ActionListener {
         p4.setBackground(Color.WHITE);
         this.add(p4);
 
+        this.getRootPane().setDefaultButton(login);
+
         setVisible(true);
     }
 
