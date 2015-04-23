@@ -61,7 +61,7 @@ class BookingTab extends JPanel implements ActionListener {
         JPanel p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));
         p2.setBackground(Color.WHITE);
-        String[] header = new String[]{"Lane", "Surname", "First Name", "Date", "Start Time", "End Time"};
+        String[] header = new String[]{"Booking ID", "Lane", "Surname", "First Name", "Date", "Start Time", "End Time"};
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -101,15 +101,16 @@ class BookingTab extends JPanel implements ActionListener {
         ResultSet rSet = progOps.getBookingDataForBookingTab();
         try {
             while(rSet.next()) {
-                String laneName = "Lane " + rSet.getInt(1);
-                String lName = rSet.getString(2);
-                String fName = rSet.getString(3);
-                String date = new java.text.SimpleDateFormat("dd-MMM-yyyy").format(rSet.getDate(4));
-                String start = rSet.getString(5);
-                String end = rSet.getString(6);
-                int players = rSet.getInt(7);
+                String bookingId = Integer.toString(rSet.getInt(1));
+                String laneName = "Lane " + rSet.getInt(2);
+                String lName = rSet.getString(3);
+                String fName = rSet.getString(4);
+                String date = new java.text.SimpleDateFormat("dd-MMM-yyyy").format(rSet.getDate(5));
+                String start = rSet.getString(6);
+                String end = rSet.getString(7);
+                int players = rSet.getInt(8);
 
-                model.addRow(new Object[]{laneName, lName, fName, date, start, end, players});
+                model.addRow(new Object[]{bookingId, laneName, lName, fName, date, start, end, players});
             }
         } catch (Exception e) {
                 System.out.println(e);

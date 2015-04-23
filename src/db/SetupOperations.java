@@ -259,6 +259,18 @@ class SetupOperations {
                     "address, town, county, numVisits) values(memId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(insertString);
 
+            // Default Guest Member
+            pStmt.setString(1, "Member");
+            pStmt.setString(2, "Guest");
+            pStmt.setString(3, null);
+            pStmt.setString(4, null);
+            pStmt.setString(5, null);
+            pStmt.setString(6, null);
+            pStmt.setString(7, null);
+            pStmt.setString(8, null);
+            pStmt.setInt(9, 5);
+            pStmt.executeQuery();
+
             // Member 1
             pStmt.setString(1, "McGuinness");
             pStmt.setString(2, "Jo");
@@ -908,7 +920,7 @@ class SetupOperations {
                     pStmt = conn.prepareStatement(bookingsInsert);
 
                     // Randomly assign a memberId
-                    memberID = ran.nextInt(10)+1;
+                    memberID = ran.nextInt(10)+2;
                     // Randomly assign a staffId
                     staffID = ran.nextInt(7) + 1;
                     // Randomly assign a Number of Players

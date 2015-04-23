@@ -26,11 +26,13 @@ public class MainScreen extends JFrame implements ActionListener {
     private final JButton help;
     private final JButton checkAvailability;
     private final JButton logout;
+    private final JButton quickPlay;
     private JTabbedPane jtp;
     private final MainProgramOperations progOps;
     private final ArrayList<Member> memList;
     private final ArrayList<Staff> staffList;
     private final ArrayList<Stock> stockList;
+    private final ArrayList<BookingDetails> bookingDetailsList;
     private ArrayList<Booking> bookingList = new ArrayList<>();
     private final JDatePanelImpl mainDatePanel;
     private final JDatePickerImpl mainDatePicker;
@@ -41,7 +43,7 @@ public class MainScreen extends JFrame implements ActionListener {
     private final Staff user;
 
     public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b,
-                      MainProgramOperations po) {
+                      ArrayList<BookingDetails> bd, MainProgramOperations po) {
         System.out.println("Inside : MainScreenGUI");
 
         this.progOps = po;
@@ -49,6 +51,7 @@ public class MainScreen extends JFrame implements ActionListener {
         this.staffList = s;
         this.stockList = st;
         this.bookingList = b;
+        this.bookingDetailsList = bd;
         this.user = user;
 
         //This the calendar panel for the mainscreen which sets a date in dd-MMM-yy format
@@ -151,8 +154,14 @@ public class MainScreen extends JFrame implements ActionListener {
         p3.add(logout);
 
         ImageIcon icon = new ImageIcon("src/lib/files/quck_play.png");
-        JLabel button = new JLabel(icon);
-        p3.add(button);
+        quickPlay = new JButton(icon);
+        quickPlay.setMargin(new Insets(0, 0, 0, 0));
+        quickPlay.setBackground(Color.WHITE);
+        quickPlay.setBorder(null);
+        quickPlay.setContentAreaFilled(false);
+        quickPlay.setOpaque(true);
+        p3.add(quickPlay);
+        quickPlay.addActionListener(this);
 
         add(p3, BorderLayout.SOUTH);
         this.setVisible(true);
@@ -230,6 +239,40 @@ public class MainScreen extends JFrame implements ActionListener {
         p2.repaint();
     }
 
+    public void setQuickPlay() {
+        NumberValidator numValidator = new NumberValidator();
+        Booking b;
+        BookingDetails bd;
+        JTextField bookingId = new JTextField();
+        Object[] options = {
+                "Please Enter -\nBooking Id:", bookingId,
+                "Otherwise Press 'No Booking ID:"
+        };
+        int option = JOptionPane.showOptionDialog(null, options, "Booking ID", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE, null,
+                new String[]{"Enter", "No Booking ID", "Cancel"}, // this is the array
+                "default");
+        if (option == JOptionPane.YES_OPTION) {
+            if (numValidator.isNumeric(bookingId.getText())) {
+                int id = Integer.parseInt(bookingId.getText());
+                for (int i = 0; i < bookingList.size(); i++) {
+                    if (id == bookingList.get(i).getId()) {
+                        Member mem = memList.get(bookingList.get(i).getMemId() - 1);
+                        b = bookingList.get(i);
+                        PaymentsGUI p = new PaymentsGUI(b, bookingDetailsList, mem, progOps);
+                    }
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(null,
+                        "Booking ID must be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        else if (option == JOptionPane.NO_OPTION) {
+            QuickPlayGUI qp = new QuickPlayGUI(progOps, bookingList, bookingDetailsList, memList, user);
+        }
+    }
+
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in MainScreenGUI");
         if (e.getSource() == checkAvailability) {
@@ -291,6 +334,9 @@ public class MainScreen extends JFrame implements ActionListener {
                 LoginGUI ls = new LoginGUI(progOps);
                 this.setVisible(false);
             }
+        }
+        else if (e.getSource() == quickPlay) {
+            setQuickPlay();
         }
     }
 }
