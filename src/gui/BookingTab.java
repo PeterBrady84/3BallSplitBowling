@@ -5,6 +5,8 @@ import controller.TableColumnAdjuster;
 import model.*;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -21,6 +23,7 @@ class BookingTab extends JPanel implements ActionListener {
     private static String[] cols = {"Booking Id", "Name", "Date", "Time", "Players"};
     private final JButton create;
     private final JButton edit;
+    private final JButton delete;
     private DefaultTableModel model;
     private final JTable table;
     private final MainProgramOperations progOps;
@@ -46,7 +49,7 @@ class BookingTab extends JPanel implements ActionListener {
         p1a.setBackground(Color.WHITE);
         create = new JButton("Create Booking");
         edit = new JButton("Edit Booking");
-        JButton delete = new JButton("Delete Booking");
+        delete = new JButton("Delete Booking");
 
         p1a.add(create);
         create.addActionListener(this);
@@ -55,13 +58,14 @@ class BookingTab extends JPanel implements ActionListener {
         edit.addActionListener(this);
         p1a.add(add(Box.createVerticalStrut(20)));
         p1a.add(delete);
+        delete.addActionListener(this);
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
 
         JPanel p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));
         p2.setBackground(Color.WHITE);
-        String[] header = new String[]{"Lane", "Surname", "First Name", "Date", "Start Time", "End Time"};
+        String[] header = new String[]{"ID", "Lane", "Surname", "First Name", "Date", "Start Time", "End Time"};
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -77,6 +81,17 @@ class BookingTab extends JPanel implements ActionListener {
         };
 
         table.getTableHeader().setReorderingAllowed(false);
+
+        int row = table.getSelectedRow();
+        int col = 0; // ID is the first Column
+
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+            public void valueChanged(ListSelectionEvent event) {
+                JOptionPane.showMessageDialog(null, "A basic JOptionPane message dialog");
+                // print first column value from selected row
+                System.out.println("values for table selection "+table.getValueAt(table.getSelectedRow(), 0).toString());
+            }
+        });
 
         fillTable();
 
@@ -170,6 +185,29 @@ class BookingTab extends JPanel implements ActionListener {
             String s = searchBooking();
             if (!s.equals("cancel")) {
                 UpdateBookingGUI ub = new UpdateBookingGUI(this, progOps, s);
+            }
+        }
+        else if (ae.getSource() == delete) {
+            JTextField bookingId = new JTextField();
+            JTextField lname = new JTextField();
+            Object[] options = {
+                    "Please Enter -\nBooking Id:", bookingId,
+                    "Or\nSurname:", lname
+            };
+
+            int option = JOptionPane.showConfirmDialog(null, options, "Search Bookings", JOptionPane.OK_CANCEL_OPTION);
+
+            int x =0;
+            if(bookingId.getText()!= null){
+                x = Integer.parseInt(bookingId.getText().toString());
+            }
+
+            String y = "XXXX";
+            if(lname.getText()!= null){
+                y = lname.getText().toString();
+            }
+            if (option == JOptionPane.OK_OPTION) {
+                progOps.getBookingforDeletion(x, y);
             }
         }
     }
