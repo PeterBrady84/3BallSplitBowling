@@ -940,6 +940,20 @@ public class MainProgramOperations {
         }
         return true;
     }
+
+    public void deleteBooking(int id){
+        System.out.println("Inside : deleteBooking() in MainProgramOperations");
+        String ans = "";
+        try {
+            String queryString = "DELETE FROM bookings WHERE bookingid = "+id;
+            pStmt = conn.prepareStatement(queryString);
+            pStmt.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
 ///// End of Booking Queries ///////////////////////////////////
 
 
@@ -1128,10 +1142,9 @@ public class MainProgramOperations {
     public ResultSet getBookingforDeletion(int bookId, String cust) {
         System.out.println("Inside : getBookingDataForDeletion() in MainProgramOperations");
         try {
-            String queryString = "SELECT bd.bookingid, l.laneNumber, m.lname, m.fname, bd.bookingDate, MIN(ts.timeDescription), MAX(ts.timeDescription) FROM bookingdetails bd INNER JOIN lane l ON bd.laneNumber = l.laneNumber INNER JOIN bookings b ON bd.bookingid = b.bookingid INNER JOIN timeslots ts ON bd.timeslotid = ts.timeslotid INNER JOIN members m ON b.memberId = m.memberid where bd.bookingid = "+bookId+" or m.lname = '"+cust+"' group by bd.bookingid, l.laneNumber, m.lname, m.fname, bd.bookingDate, b.numplayers  ORDER BY bd.bookingdate, l.laneNumber;";
+            String queryString = "SELECT bd.bookingid, l.laneNumber, m.lname, m.fname, bd.bookingDate, MIN(ts.timeDescription), MAX(ts.timeDescription) FROM bookingdetails bd INNER JOIN lane l ON bd.laneNumber = l.laneNumber INNER JOIN bookings b ON bd.bookingid = b.bookingid INNER JOIN timeslots ts ON bd.timeslotid = ts.timeslotid INNER JOIN members m ON b.memberId = m.memberid where bd.bookingid = "+bookId+" or m.lname = '"+cust+"' group by bd.bookingid, l.laneNumber, m.lname, m.fname, bd.bookingDate, b.numplayers  ORDER BY bd.bookingdate, l.laneNumber";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
-            System.out.println("----------------              getBookingDataForDeletion "+rSet.getInt(1));
         } catch (Exception e) {
             System.out.println(e);
         }

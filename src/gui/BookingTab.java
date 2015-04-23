@@ -29,6 +29,7 @@ class BookingTab extends JPanel implements ActionListener {
     private final MainProgramOperations progOps;
     private ArrayList<Booking> bookingList = new ArrayList<>();
     private final Staff user;
+    private int idToDelete;
 
     public BookingTab(MainScreen ms, ArrayList<Booking> b, MainProgramOperations po, Staff user) {
         System.out.println("Inside : BookingTabGUI");
@@ -87,9 +88,17 @@ class BookingTab extends JPanel implements ActionListener {
 
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
-                JOptionPane.showMessageDialog(null, "A basic JOptionPane message dialog");
-                // print first column value from selected row
-                System.out.println("values for table selection "+table.getValueAt(table.getSelectedRow(), 0).toString());
+                idToDelete = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+                System.out.println("id to delete is "+idToDelete);
+                int reply = JOptionPane.showConfirmDialog(null, "Delete Booking number "+idToDelete
+                        , "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                if (reply == JOptionPane.YES_OPTION) {
+                    progOps.deleteBooking(idToDelete);
+                    JOptionPane.showMessageDialog(null, "Booking deleted");
+                }
+                else {
+                    System.exit(0);
+                }
             }
         });
 
@@ -129,6 +138,30 @@ class BookingTab extends JPanel implements ActionListener {
         } catch (Exception e) {
                 System.out.println(e);
         }
+    }
+
+    private void fillTableForDeletion(int x, String y) {
+        System.out.println("Inside : fillTable() in BookingTabGUI");
+        model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+        ResultSet rSet = progOps.getBookingforDeletion(x, y);
+        try {
+            while(rSet.next()) {
+                int bookingid = rSet.getInt(1);
+                String laneName = "Lane " + rSet.getInt(2);
+                String lName = rSet.getString(3);
+                String fName = rSet.getString(4);
+                String date = new java.text.SimpleDateFormat("dd-MMM-yyyy").format(rSet.getDate(5));
+                String start = rSet.getString(6);
+                String end = rSet.getString(7);
+                //int players = rSet.getInt(8);
+
+                model.addRow(new Object[]{bookingid, laneName, lName, fName, date, start, end});
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
     }
 
     public void refreshTable () {
@@ -196,19 +229,22 @@ class BookingTab extends JPanel implements ActionListener {
             };
 
             int option = JOptionPane.showConfirmDialog(null, options, "Search Bookings", JOptionPane.OK_CANCEL_OPTION);
+            int bookid;
+            if(bookingId.getText().isEmpty()){
+                bookid = 0;
+            } else {
+                bookid = Integer.parseInt(bookingId.getText().toString());
+            };
 
-            int x =0;
-            if(bookingId.getText()!= null){
-                x = Integer.parseInt(bookingId.getText().toString());
-            }
-
-            String y = "XXXX";
+            String customer = "XXXX";
             if(lname.getText()!= null){
-                y = lname.getText().toString();
+                customer = lname.getText().toString();
             }
+            System.out.println("value of int = " + bookid + " value of y = " + customer);
             if (option == JOptionPane.OK_OPTION) {
-                progOps.getBookingforDeletion(x, y);
+                fillTableForDeletion(bookid, customer);
             }
+
         }
     }
 }
