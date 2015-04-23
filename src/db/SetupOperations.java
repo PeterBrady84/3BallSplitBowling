@@ -22,11 +22,7 @@ class SetupOperations {
     private ResultSet rSet;
     private java.util.Date juDate ;
     private DateTime dt;
-<<<<<<< Temporary merge branch 1
     private JPasswordField p = new JPasswordField("password");
-=======
-    //private JPasswordField = new JPasswordField ("password");
->>>>>>> Temporary merge branch 2
 
     private SetupOperations()
     {

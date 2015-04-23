@@ -28,7 +28,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
 
     private JPanel p1, p2, p1a;
     private JButton charts, gameStats, back;
-    private String header[] = new String[]{"Lane ID","Lane No", "Max Players"};
+    private String header[] = new String[]{"Lane ID","Lane No"};
     private MainProgramOperations progOps;
     private AdminTab at;
     private ResultSet rSet;
@@ -117,12 +117,12 @@ public class GamesReportGUI extends JPanel implements ActionListener{
             while (rSet.next()){
                 int laneID = rSet.getInt(1);
                 String laneName = rSet.getString(2);
-                int maxPlayers = rSet.getInt(3);
+                //int maxPlayers = rSet.getInt(3);
                 //String gender = rSet.getString(4);
-                model.addRow(new Object[]{rSet.getInt(1), rSet.getString(2), rSet.getInt(3)});
+                model.addRow(new Object[]{rSet.getInt(1), rSet.getString(2)});
                 pw.println("Lane ID: " + laneID);
                 pw.println("Lane Name: " + laneName);
-                pw.println("Max Players: " + maxPlayers );
+                //pw.println("Max Players: " + maxPlayers );
                 //pw.println("Number of Visits: " + visit +"\n");
 
             }

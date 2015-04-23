@@ -133,6 +133,14 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
                 pw.println("Fully Paid: " + fullyPaid );
                 pw.println("Payment Method: " + paymentMethod +"\n");
 
+                model.addRow(new Object[]{rSet.getInt(1), rSet.getInt(2), rSet.getDouble(3), rSet.getDouble(4), rSet.getString(5), rSet.getString(6)});
+                pw.println("Payment ID: " + paymentId);
+                pw.println("Booking ID: " + bookingId);
+                pw.println("Deposit: " + deposit );
+                pw.println("Total Price: " + totalPrice);
+                pw.println("Fully Paid: " + fullyPaid );
+                pw.println("Payment Method: " + paymentMethod +"\n");
+
             }
             pw.close();
         } catch (Exception e) {
@@ -165,6 +173,46 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
             ChartFrame frame = new ChartFrame("Pie Chart for Payment Method",PieChartObject);
             frame.setVisible(true);
             frame.setSize(400, 500);
+
+                /* Specify dimensions and quality factor for Pie Chart */
+            int width=640;
+            int height=480;
+            float quality=1; /* Quality factor */
+                /* Write Pie Chart as a JPEG file */
+            File PieChart=new File("SQL2PieChartPaymentMethod.png");
+            ChartUtilities.saveChartAsJPEG(PieChart, quality, PieChartObject, width, height);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+    }
+
+
+    private void fillPieChartPaymentType() {
+        System.out.println("Inside : FillPieChartPaymentType() in MembershipReportGUI");
+
+        try {
+            rSet = progOps.getPaymentType();
+            PrintWriter pw = new PrintWriter(new FileWriter("paymentType.txt"));
+            while (rSet.next()){
+
+                String paymentType = rSet.getString(1);
+                int total = rSet.getInt(2);
+
+                pw.println("Payment Method: " + paymentType);
+                pw.println("Total: " + total);
+                pieDataset.setValue(paymentType, total); //Convert data source from table to Pie Chart Data Source
+            }
+                /* Create Logical Chart */
+            JFreeChart PieChartObject= ChartFactory.createPieChart("Methods of Payment - Pie Chart", pieDataset, true, true, false);
+                /* Close JDBC specific objects */
+            rSet.close();
+
+            ////////////////Create a frame to display pie chart///////////
+            ChartFrame frame = new ChartFrame("Pie Chart for Payment Method",PieChartObject);
+            frame.setVisible(true);
+            frame.setSize(400, 500);
+            frame.setLocationRelativeTo(null);
 
                 /* Specify dimensions and quality factor for Pie Chart */
             int width=640;
