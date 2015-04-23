@@ -43,6 +43,7 @@ class MembershipReportGUI extends JPanel implements ActionListener {
         this.progOps = po;
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
+        ((FlowLayout)this.getLayout()).setVgap(0);
         this.setBackground(Color.WHITE);
 
         JPanel p1 = new JPanel();
@@ -75,7 +76,8 @@ class MembershipReportGUI extends JPanel implements ActionListener {
         add(p1, BorderLayout.WEST);
 
         JPanel p2 = new JPanel();
-
+        p2.setPreferredSize(new Dimension(520, 295));
+        p2.setBackground(Color.WHITE);
         String[] header = new String[]{"First Name", "Last Name", "Number of Visits", "Gender"};
         model = new DefaultTableModel(null, header) {
            public boolean isCellEditable(int row, int column) {
@@ -155,7 +157,8 @@ class MembershipReportGUI extends JPanel implements ActionListener {
             p.setRangeGridlinePaint(Color.black);
             ChartFrame frame = new ChartFrame("Bar Chart for Members Visits",chart);
             frame.setVisible(true);
-            frame.setSize(400,500);
+            frame.setSize(400, 500);
+            frame.setLocationRelativeTo(null);
 
                 /* Specify dimensions and quality factor for Pie Chart */
             int width=640;
@@ -222,7 +225,8 @@ class MembershipReportGUI extends JPanel implements ActionListener {
             //this.setVisible(false);
             this.removeAll();
             this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
-            repaint();
+            this.revalidate();
+            this.repaint();
             printAll(getGraphics());//Extort print all content
         }
         else if (e.getSource() == barCharts) {

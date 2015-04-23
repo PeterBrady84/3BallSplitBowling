@@ -98,7 +98,7 @@ class AddMemberGUI implements ActionListener {
                         a.addMember();
                         mTab.refreshTable();
                         JOptionPane.showMessageDialog(null, "New Member Data Saved");
-                        addD.setVisible(false);
+                        addD.dispose();
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "Only Phone Field may be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);

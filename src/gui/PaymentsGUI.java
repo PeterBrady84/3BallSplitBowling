@@ -2,6 +2,7 @@ package gui;
 
 import db.MainProgramOperations;
 import model.*;
+import org.joda.time.DateTime;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -9,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Peter on 21/04/2015.
@@ -17,8 +19,10 @@ class PaymentsGUI implements ActionListener {
 
     private final JDialog payD;
     private final MainProgramOperations progOps;
+    private MainScreen ms;
     private final Booking book;
     private final Payment pay;
+    private BookingTab bt;
     private final ArrayList<BookingDetails> timeSlots;
     private final JRadioButton cash;
     private final JRadioButton card;
@@ -27,13 +31,15 @@ class PaymentsGUI implements ActionListener {
     private final JButton cancel;
     private String payMethod;
 
-    public PaymentsGUI(Booking b, ArrayList<BookingDetails> bd, Member mem,  MainProgramOperations po) {
+    public PaymentsGUI(MainScreen ms, Booking b, ArrayList<BookingDetails> bd, Member mem, BookingTab bt, MainProgramOperations po) {
         System.out.println("Inside : PaymentsGUI");
-        book = b;
+        this.book = b;
+        this.ms = ms;
         BookingDetails detail = bd.get(0);
-        pay = new Payment(b);
-        progOps = po;
-        timeSlots = bd;
+        this.pay = new Payment(b);
+        this.bt = bt;
+        this.progOps = po;
+        this.timeSlots = bd;
 
         payD = new JDialog();
         payD.setTitle("Booking Receipt");
@@ -202,6 +208,12 @@ class PaymentsGUI implements ActionListener {
             }
             pay.setPaymentMethod(payMethod);
             progOps.addPayment(pay);
+            Alley a = new Alley(progOps);
+            Date juDate = new Date();
+            DateTime dt = new DateTime(juDate);
+            Date dateSelected = dt.toDate();
+            ms.refreshTabbedPane(dateSelected);
+            JOptionPane.showMessageDialog(null, "New Booking Added");
             payD.dispose();
         }
         else if (e.getSource() .equals(cancel)) {

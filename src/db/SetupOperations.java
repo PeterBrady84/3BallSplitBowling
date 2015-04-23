@@ -4,8 +4,10 @@ import model.Booking;
 import oracle.jdbc.pool.OracleDataSource;
 import org.joda.time.DateTime;
 
+import javax.swing.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -20,6 +22,7 @@ class SetupOperations {
     private ResultSet rSet;
     private java.util.Date juDate ;
     private DateTime dt;
+    private JPasswordField p = new JPasswordField("password");
 
     private SetupOperations()
     {
@@ -259,6 +262,18 @@ class SetupOperations {
                     "address, town, county, numVisits) values(memId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(insertString);
 
+            // Default Guest Member
+            pStmt.setString(1, "Member");
+            pStmt.setString(2, "Guest");
+            pStmt.setString(3, null);
+            pStmt.setString(4, null);
+            pStmt.setString(5, null);
+            pStmt.setString(6, null);
+            pStmt.setString(7, null);
+            pStmt.setString(8, null);
+            pStmt.setInt(9, 5);
+            pStmt.executeQuery();
+
             // Member 1
             pStmt.setString(1, "McGuinness");
             pStmt.setString(2, "Jo");
@@ -433,7 +448,7 @@ class SetupOperations {
                 pStmt.setString(4, phoneList[i]);
                 pStmt.setString(5, "user" + (i + 1));
                 pStmt.setString(6, emailList[i]);
-                pStmt.setString(7, "password");
+                pStmt.setString(7, Arrays.toString(p.getPassword()));
                 pStmt.setString(8, "who am i");
                 pStmt.setString(9, "Peter");
                 pStmt.setString(10, "N");
@@ -908,7 +923,7 @@ class SetupOperations {
                     pStmt = conn.prepareStatement(bookingsInsert);
 
                     // Randomly assign a memberId
-                    memberID = ran.nextInt(10)+1;
+                    memberID = ran.nextInt(10)+2;
                     // Randomly assign a staffId
                     staffID = ran.nextInt(7) + 1;
                     // Randomly assign a Number of Players

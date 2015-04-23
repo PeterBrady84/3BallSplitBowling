@@ -144,6 +144,8 @@ public class LoginGUI extends JFrame implements ActionListener {
         p4.setBackground(Color.WHITE);
         this.add(p4);
 
+        this.getRootPane().setDefaultButton(login);
+
         setVisible(true);
     }
 
@@ -178,7 +180,7 @@ public class LoginGUI extends JFrame implements ActionListener {
                 Alley a = new Alley(progOps);
 
                 MainScreen ms = new MainScreen(user, a.getMemberList(), a.getStaffList(), a.getStockList(),
-                        a.getBookingList(),
+                        a.getBookingList(), a.getBookingDetailsList(),
                         progOps);
                 this.setVisible(false);
             }

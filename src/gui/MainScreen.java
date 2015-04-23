@@ -13,6 +13,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -26,11 +28,14 @@ public class MainScreen extends JFrame implements ActionListener {
     private final JButton help;
     private final JButton checkAvailability;
     private final JButton logout;
+    private final JButton quickPlay;
     private JTabbedPane jtp;
+    private BookingTab bt;
     private final MainProgramOperations progOps;
     private final ArrayList<Member> memList;
     private final ArrayList<Staff> staffList;
     private final ArrayList<Stock> stockList;
+    private final ArrayList<BookingDetails> bookingDetailsList;
     private ArrayList<Booking> bookingList = new ArrayList<>();
     private final JDatePanelImpl mainDatePanel;
     private final JDatePickerImpl mainDatePicker;
@@ -41,7 +46,7 @@ public class MainScreen extends JFrame implements ActionListener {
     private final Staff user;
 
     public MainScreen(Staff user, ArrayList<Member> m, ArrayList<Staff> s, ArrayList<Stock> st, ArrayList<Booking> b,
-                      MainProgramOperations po) {
+                      ArrayList<BookingDetails> bd, MainProgramOperations po) {
         System.out.println("Inside : MainScreenGUI");
 
         this.progOps = po;
@@ -49,6 +54,7 @@ public class MainScreen extends JFrame implements ActionListener {
         this.staffList = s;
         this.stockList = st;
         this.bookingList = b;
+        this.bookingDetailsList = bd;
         this.user = user;
 
         //This the calendar panel for the mainscreen which sets a date in dd-MMM-yy format
@@ -151,8 +157,14 @@ public class MainScreen extends JFrame implements ActionListener {
         p3.add(logout);
 
         ImageIcon icon = new ImageIcon("src/lib/files/quck_play.png");
-        JLabel button = new JLabel(icon);
-        p3.add(button);
+        quickPlay = new JButton(icon);
+        quickPlay.setMargin(new Insets(0, 0, 0, 0));
+        quickPlay.setBackground(Color.WHITE);
+        quickPlay.setBorder(null);
+        quickPlay.setContentAreaFilled(false);
+        quickPlay.setOpaque(true);
+        p3.add(quickPlay);
+        quickPlay.addActionListener(this);
 
         add(p3, BorderLayout.SOUTH);
         this.setVisible(true);
@@ -180,7 +192,7 @@ public class MainScreen extends JFrame implements ActionListener {
 
         // Panel for Book Tab
         JPanel jp2 = new JPanel();
-        BookingTab bt = new BookingTab(this, bookingList, progOps, user);
+        bt = new BookingTab(this, bookingList, progOps, user);
         jp2.add(bt);
         jp2.setPreferredSize(new Dimension(800, 310));
         jp2.setBackground(Color.WHITE);
@@ -220,7 +232,7 @@ public class MainScreen extends JFrame implements ActionListener {
         return jtp;
     }
 
-    private void refreshTabbedPane(Date d) {
+    public void refreshTabbedPane(Date d) {
         System.out.println("Inside : refreshTabbedPane() in MainScreenGUI");
         dateSelected = d;
         Alley a = new Alley(progOps);
@@ -230,19 +242,67 @@ public class MainScreen extends JFrame implements ActionListener {
         p2.repaint();
     }
 
+    public void setQuickPlay() {
+        NumberValidator numValidator = new NumberValidator();
+        Booking b;
+        BookingDetails bd;
+        JTextField bookingId = new JTextField();
+        Object[] options = {
+                "Please Enter -\nBooking Id:", bookingId,
+                "Otherwise Press 'No Booking ID:"
+        };
+        int option = JOptionPane.showOptionDialog(null, options, "Booking ID", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.INFORMATION_MESSAGE, null,
+                new String[]{"Enter", "No Booking ID", "Cancel"}, // this is the array
+                "default");
+        if (option == JOptionPane.YES_OPTION) {
+            if (numValidator.isNumeric(bookingId.getText())) {
+                int id = Integer.parseInt(bookingId.getText());
+                for (int i = 0; i < bookingList.size(); i++) {
+                    if (id == bookingList.get(i).getId()) {
+                        Member mem = memList.get(bookingList.get(i).getMemId() - 1);
+                        b = bookingList.get(i);
+                        PaymentsGUI p = new PaymentsGUI(this, b, bookingDetailsList, mem, bt, progOps);
+                    }
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(null,
+                        "Booking ID must be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        else if (option == JOptionPane.NO_OPTION) {
+            QuickPlayGUI qp = new QuickPlayGUI(this, progOps, bookingList, bookingDetailsList, memList, user);
+        }
+    }
+
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in MainScreenGUI");
         if (e.getSource() == checkAvailability) {
-            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(progOps, bookingList, user);
+            CheckAvailabilityGUI ca = new CheckAvailabilityGUI(this, progOps, bookingList, bt, user);
         }
         else if (e.getSource() == mainDatePanel) {
-            juDate = (Date) mainDatePicker.getModel().getValue();
-            dt = new DateTime(juDate);
-
-            dateSelected = dt.toDate();
-            //if (dateSelected.before(new java.util.Date())) {
-                //dateSelected = new java.util.Date();
-            //}
+            Date selected = null;
+            Date now = null;
+            try {
+                selected = new SimpleDateFormat("dd-MMM-yyyy").parse(dateInTxt.getText());
+                now = new java.util.Date();
+            }
+            catch (ParseException pe) {
+                System.out.println(pe);
+            }
+            if (selected.before(now)){
+                JOptionPane.showMessageDialog(null,
+                        "Selected date cannot be in the past!\n" +
+                                "Please fix the date.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
+                dateSelected = new java.util.Date();
+            }
+            else {
+                juDate = (Date) mainDatePicker.getModel().getValue();
+                dt = new DateTime(juDate);
+                dateSelected = dt.toDate();
+            }
             refreshTabbedPane(dateSelected);
         }
         else if (e.getSource() == bowl) {
@@ -291,6 +351,9 @@ public class MainScreen extends JFrame implements ActionListener {
                 LoginGUI ls = new LoginGUI(progOps);
                 this.setVisible(false);
             }
+        }
+        else if (e.getSource() == quickPlay) {
+            setQuickPlay();
         }
     }
 }
