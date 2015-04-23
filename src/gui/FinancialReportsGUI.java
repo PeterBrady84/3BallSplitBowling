@@ -158,6 +158,7 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
             ChartFrame frame = new ChartFrame("Pie Chart for Payment Method",PieChartObject);
             frame.setVisible(true);
             frame.setSize(400, 500);
+            frame.setLocationRelativeTo(null);
 
                 /* Specify dimensions and quality factor for Pie Chart */
             int width=640;
@@ -179,7 +180,8 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
             //this.setVisible(false);
             this.removeAll();
             this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
-            repaint();
+            this.revalidate();
+            this.repaint();
             printAll(getGraphics());//Extort print all content
         }
         else if(e.getSource() == piechart){
