@@ -118,7 +118,7 @@ class UpdateMemberGUI implements ActionListener{
                         progOps.updateMember(ge.idTxt.getText(), fName, lName, gender, phone, email, add, town, co);
                         Alley a = new Alley(progOps);
                         a.updateMember(new Member(fName, lName, gender, phone, email, add, town, co));
-                        JOptionPane.showMessageDialog(null, "Updated Member Data Saved", "ERROR", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Updated Member Data Saved", "Member Updated", JOptionPane.WARNING_MESSAGE);
                         mTab.refreshTable();
                         updateD.setVisible(false);
                     } else {

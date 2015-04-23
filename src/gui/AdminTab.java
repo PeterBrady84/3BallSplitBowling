@@ -20,7 +20,12 @@ public class AdminTab extends JPanel implements ActionListener {
         this.progOps = po;
         this.setPreferredSize(new Dimension(780, 300));
         this.setBackground(Color.WHITE);
+        ((FlowLayout)this.getLayout()).setVgap(0);
 
+        refresh();
+    }
+
+    public void refresh() {
         JPanel p1 = new JPanel();
         p1.setPreferredSize(new Dimension(400, 200));
         p1.setLayout(new BorderLayout());
@@ -49,41 +54,52 @@ public class AdminTab extends JPanel implements ActionListener {
         this.add(p1);
     }
 
+    /*public void fillCards() {
+        cards.add(card1, "Card 1");
+        cards.add(card2, "Card 2");
+        cards.add(card3, "Card 3");
+        then to flip to a different component:
+
+        CardLayout cardLayout = (CardLayout) cards.getLayout();
+        cardLayout.show(cards, "Card 2");
+        To navigate to the next component, you can use:
+
+        cardLayout.next(cards);
+    }*/
+
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : actionPerformed() in AdminTabGUI");
-        if (e.getSource() == staff){
-        //this.setVisible(false);
-        StaffReportsGUI sr = new StaffReportsGUI(progOps);
-        JPanel staff = sr;
-        this.removeAll();
-        this.add(staff);//Adding to content pane, not to Frame
-        repaint();
-        printAll(getGraphics());//Extort print all content
-         }
-        else if(e.getSource() == games){
-            this.setVisible(true);
-            GamesReportGUI gr = new GamesReportGUI(progOps);
-            JPanel staff = gr;
+        if (e.getSource() == staff) {
+            //this.setVisible(false);;
             this.removeAll();
-            this.add(staff);//Adding to content pane, not to Frame
-            repaint();
+            this.add(new StaffReportsGUI(progOps));//Adding to content pane, not to Frame
+            this.revalidate();
+            this.repaint();
+            printAll(getGraphics()); //Extort print all content
+        }
+        else if (e.getSource() == games) {
+            //this.setVisible(true);;
+            this.removeAll();
+            this.add(new GamesReportGUI(this, progOps));//Adding to content pane, not to Frame
+            this.revalidate();
+            this.repaint();
             printAll(getGraphics());//Extort print all content
         }
         else if(e.getSource() == members){
             MembershipReportGUI mr = new MembershipReportGUI(progOps);
-            JPanel staff = mr;
             this.removeAll();
-            this.add(staff);//Adding to content pane, not to Frame
-            repaint();
+            this.add(mr);//Adding to content pane, not to Frame
+            this.revalidate();
+            this.repaint();
             printAll(getGraphics());//Extort print all content
         }
         else {
             FinancialReportsGUI fr = new FinancialReportsGUI(progOps);
-            JPanel staff = fr;
             this.removeAll();
-            this.add(staff);//Adding to content pane, not to Frame
-            repaint();
+            this.add(fr);//Adding to content pane, not to Frame
+            this.revalidate();
+            this.repaint();
             printAll(getGraphics());//Extort print all content
         }
     }

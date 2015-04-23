@@ -15,6 +15,8 @@ import java.util.ArrayList;
  */
 class AddBookingGUI implements ActionListener {
     private final JDialog addD;
+    private MainScreen ms;
+    private BookingTab bt;
     private CheckAvailabilityGUI check;
     private final MainProgramOperations progOps;
     private final ArrayList<Booking> bookingList;
@@ -39,10 +41,12 @@ class AddBookingGUI implements ActionListener {
     private final int userId;
     private Member customer;
 
-    public AddBookingGUI(Staff user, MainProgramOperations po,
+    public AddBookingGUI(MainScreen ms, Staff user, BookingTab bt, MainProgramOperations po,
                          ArrayList<Booking> b, int games_hrs, int nl, int np, ArrayList<BookingDetails> times) {
         System.out.println("Inside : AddBookingGUI");
         this.progOps = po;
+        this.ms = ms;
+        this.bt = bt;
         this.bookingList = b;
         this.noLanes = nl;
         this.noPlayers = np;
@@ -305,7 +309,7 @@ class AddBookingGUI implements ActionListener {
                 int id = bookingList.size() + 1;
                 Booking b = new Booking(id, memberId, userId, noLanes, games_hours, 1,
                         noPlayers, isPerHour, bookingType);
-                PaymentsGUI receipt = new PaymentsGUI(b, timeSlots, customer, progOps);
+                PaymentsGUI receipt = new PaymentsGUI(ms, b, timeSlots, customer, bt, progOps);
                 addD.dispose();
             } else {
                 JOptionPane.showMessageDialog(null,

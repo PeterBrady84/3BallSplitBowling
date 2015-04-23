@@ -30,21 +30,24 @@ public class GamesReportGUI extends JPanel implements ActionListener{
     private JButton charts, gameStats, back;
     private String header[] = new String[]{"Lane ID","Lane No", "Max Players"};
     private MainProgramOperations progOps;
+    private AdminTab at;
     private ResultSet rSet;
     private JTable table;
     private DefaultTableModel model;
     private DefaultPieDataset pieDataset = new DefaultPieDataset();
     private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
 
-    public GamesReportGUI(MainProgramOperations po) {
+    public GamesReportGUI(AdminTab at, MainProgramOperations po) {
         System.out.println("Inside : GamesReportGUI");
         this.progOps = po;
+        this.at = at;
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
+        ((FlowLayout)this.getLayout()).setVgap(0);
         this.setBackground(Color.WHITE);
 
         p1 = new JPanel();
-        p1.setPreferredSize(new Dimension(200, 290));
+        p1.setPreferredSize(new Dimension(200, 250));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);
         p1a = new JPanel();
@@ -68,7 +71,8 @@ public class GamesReportGUI extends JPanel implements ActionListener{
 
 
         p2 = new JPanel();
-
+        p2.setPreferredSize(new Dimension(520, 295));
+        p2.setBackground(Color.WHITE);
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -154,6 +158,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
             ChartFrame frame = new ChartFrame("Pie Chart for Displaying Types of Games Played",PieChartObject);
             frame.setVisible(true);
             frame.setSize(400, 500);
+            frame.setLocationRelativeTo(null);
 
                 /* Specify dimensions and quality factor for Pie Chart */
             int width=640;
@@ -173,12 +178,10 @@ public class GamesReportGUI extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in GamesReportGUI");
         if (e.getSource() == back){
-            //this.setVisible(false);
-            AdminTab at = new AdminTab(progOps);
-            JPanel admin = at;
             this.removeAll();
-            this.add(admin);//Adding to content pane, not to Frame
-            repaint();
+            this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
+            this.revalidate();
+            //this.repaint();
             printAll(getGraphics());//Extort print all content
         }
         else if (e.getSource() == charts){
