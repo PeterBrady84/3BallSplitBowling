@@ -4,6 +4,7 @@ import model.Booking;
 import oracle.jdbc.pool.OracleDataSource;
 import org.joda.time.DateTime;
 
+import javax.swing.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Random;
@@ -20,6 +21,7 @@ class SetupOperations {
     private ResultSet rSet;
     private java.util.Date juDate ;
     private DateTime dt;
+    //private JPasswordField = new JPasswordField ("password");
 
     private SetupOperations()
     {

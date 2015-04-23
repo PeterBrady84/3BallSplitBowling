@@ -282,6 +282,32 @@ public class MainProgramOperations {
         }
         return rSet;
     }
+
+    public ResultSet getPaymentType() {
+        System.out.println("Inside : getPaymentType() in MainProgramOperations");
+        String sqlStatement = "select paymentmethod ,count(paymentmethod)from payments group by PAYMENTMETHOD";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
+
+    public ResultSet getPaymentDetails() {
+        System.out.println("Inside : getPaymentDetails() in MainProgramOperations");
+        String sqlStatement = "select * from payments";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return rSet;
+    }
     ///// End of Member Queries ///////////////////////////////////
 
 

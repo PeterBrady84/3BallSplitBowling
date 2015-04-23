@@ -3,6 +3,10 @@ package gui;
 import controller.TableColumnAdjuster;
 import db.MainProgramOperations;
 import model.Stock;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -12,6 +16,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
@@ -22,12 +27,12 @@ import java.util.ArrayList;
  */
 class FinancialReportsGUI extends JPanel implements ActionListener{
 
-    private final JButton back;
-    private ArrayList<Stock> stockList = new ArrayList<>();
+    private final JButton back,piechart;
     private final MainProgramOperations progOps;
     private final DefaultTableModel model;
     private DefaultPieDataset pieDataset = new DefaultPieDataset();
     private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
+    private ResultSet rSet;
 
     public FinancialReportsGUI(MainProgramOperations po) {
         System.out.println("Inside : FinancialReportsGUI");
@@ -44,22 +49,14 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
-        JButton member = new JButton("Member Totals");
-        //staffBookings.addActionListener(this);
-        JButton walkIn = new JButton("Walk-In Totals");
-        //staffHours.addActionListener(this);
-        JButton quarterly = new JButton("Quarterly Totals");
-        //staffSomething.addActionListener(this);
+
+        piechart = new JButton("Pie Chart");
+        piechart.addActionListener(this);
         back = new JButton("Back");
         back.addActionListener(this);
 
-        p1a.add(member);
-        p1a.add(add(Box.createVerticalStrut(20)));
-        p1a.add(walkIn);
-        p1.add(p1a, BorderLayout.SOUTH);
-        add(p1, BorderLayout.WEST);
-        p1a.add(add(Box.createVerticalStrut(20)));
-        p1a.add(quarterly);
+
+        p1a.add(piechart);
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
         p1a.add(add(Box.createVerticalStrut(20)));
@@ -71,7 +68,7 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
 
         JPanel p2 = new JPanel();
 
-        String[] header = new String[]{"Stock Id", "Shoe Size", "Description", "Quantity"};
+        String[] header = new String[]{"Payment ID", "Booking ID", "Deposit", "Total Price", "Fully Paid", "Payment Method"};
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -88,7 +85,7 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
 
         table.getTableHeader().setReorderingAllowed(false);
 
-        //fillTable();
+        fillTableFinancialReport();
 
         //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
@@ -106,29 +103,73 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
         add(p2, BorderLayout.EAST);
     }
 
-    public void fillTableMember() {
-        System.out.println("Inside : fillTable() in MembershipReportGUI");
+    public void fillTableFinancialReport() {
+        System.out.println("Inside : fillTableFinancialRport() in FinancialReportGUI");
 
 
         try {
-            ResultSet rSet = progOps.getMember();
-            PrintWriter pw = new PrintWriter(new FileWriter("members.txt"));
+            ResultSet rSet = progOps.getPaymentDetails();
+            PrintWriter pw = new PrintWriter(new FileWriter("financialReport.txt"));
             while (rSet.next()){
-                String fname = rSet.getString(1);
-                String lname = rSet.getString(2);
-                int visit = rSet.getInt(3);
-                String gender = rSet.getString(4);
-                model.addRow(new Object[]{rSet.getString(1), rSet.getString(2), rSet.getInt(3), rSet.getString(4)});
-                pw.println("First Name: " + fname);
-                pw.println("Last Name: " + lname);
-                pw.println("Gender: " + gender );
-                pw.println("Number of Visits: " + visit +"\n");
+                int paymentId = rSet.getInt(1);
+                int bookingId = rSet.getInt(2);
+                double deposit = rSet.getDouble(3);
+                double totalPrice = rSet.getDouble(4);
+                String fullyPaid = rSet.getString(5);
+                String paymentMethod = rSet.getString(6);
+
+                model.addRow(new Object[]{rSet.getInt(1), rSet.getInt(2), rSet.getDouble(3), rSet.getDouble(4), rSet.getString(5), rSet.getString(6)});
+                pw.println("Payment ID: " + paymentId);
+                pw.println("Booking ID: " + bookingId);
+                pw.println("Deposit: " + deposit );
+                pw.println("Total Price: " + totalPrice);
+                pw.println("Fully Paid: " + fullyPaid );
+                pw.println("Payment Method: " + paymentMethod +"\n");
 
             }
             pw.close();
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+
+    private void fillPieChartPaymentType() {
+        System.out.println("Inside : FillPieChartPaymentType() in MembershipReportGUI");
+
+        try {
+            rSet = progOps.getPaymentType();
+            PrintWriter pw = new PrintWriter(new FileWriter("paymentType.txt"));
+            while (rSet.next()){
+
+                String paymentType = rSet.getString(1);
+                int total = rSet.getInt(2);
+
+                pw.println("Payment Method: " + paymentType);
+                pw.println("Total: " + total);
+                pieDataset.setValue(paymentType, total); //Convert data source from table to Pie Chart Data Source
+            }
+                /* Create Logical Chart */
+            JFreeChart PieChartObject= ChartFactory.createPieChart("Methods of Payment - Pie Chart", pieDataset, true, true, false);
+                /* Close JDBC specific objects */
+            rSet.close();
+
+            ////////////////Create a frame to display pie chart///////////
+            ChartFrame frame = new ChartFrame("Pie Chart for Payment Method",PieChartObject);
+            frame.setVisible(true);
+            frame.setSize(400, 500);
+
+                /* Specify dimensions and quality factor for Pie Chart */
+            int width=640;
+            int height=480;
+            float quality=1; /* Quality factor */
+                /* Write Pie Chart as a JPEG file */
+            File PieChart=new File("SQL2PieChartPaymentMethod.png");
+            ChartUtilities.saveChartAsJPEG(PieChart, quality, PieChartObject, width, height);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
     }
 
     @Override
@@ -140,6 +181,9 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
             this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
             repaint();
             printAll(getGraphics());//Extort print all content
+        }
+        else if(e.getSource() == piechart){
+            fillPieChartPaymentType();
         }
 
     }
