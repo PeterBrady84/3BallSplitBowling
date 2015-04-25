@@ -30,6 +30,7 @@ public class MainScreen extends JFrame implements ActionListener {
     private final JButton checkAvailability;
     private final JButton logout;
     private final JButton quickPlay;
+    private final Font font1;
     private JTabbedPane jtp;
     private BookingTab bt;
     private final MainProgramOperations progOps;
@@ -57,6 +58,7 @@ public class MainScreen extends JFrame implements ActionListener {
         this.bookingList = b;
         this.bookingDetailsList = bd;
         this.user = user;
+        this.font1 = new Font("Arial", Font.BOLD, 14);
 
         //This the calendar panel for the mainscreen which sets a date in dd-MMM-yy format
         //String dateSelected can be used by all the tabs for all DB queries.
@@ -131,8 +133,9 @@ public class MainScreen extends JFrame implements ActionListener {
         p3.setPreferredSize(new Dimension(800, 100));
         p3.setBackground(Color.WHITE);
 
-        String userID = "USERNAME: "+user.getUsername();
+        String userID = "Logged In: " + user.getfName() + ", " + user.getlName() + ". ";
         JLabel loggedIn = new JLabel(userID);
+        loggedIn.setFont(font1);
         p3.add(loggedIn);
 
         /*
@@ -150,10 +153,12 @@ public class MainScreen extends JFrame implements ActionListener {
         p3.add(mainDatePicker);
 
         checkAvailability = new JButton("Check For Availability");
+        checkAvailability.setFont(font1);
         checkAvailability.addActionListener(this);
         p3.add(checkAvailability);
 
         logout = new JButton("Logout");
+        logout.setFont(font1);
         logout.addActionListener(this);
         p3.add(logout);
 
@@ -223,6 +228,7 @@ public class MainScreen extends JFrame implements ActionListener {
         jp6.setBackground(Color.WHITE);
 
         jtp = new JTabbedPane();
+        jtp.setFont(font1);
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Home</body></html>", jp1);
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Book</body></html>", jp2);
         jtp.addTab("<html><body leftmargin=15 topmargin=8 marginwidth=15 marginheight=5>Members</body></html>", jp3);

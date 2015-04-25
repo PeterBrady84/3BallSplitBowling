@@ -7,6 +7,8 @@ import model.NumberValidator;
 import model.Staff;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
  */
 class StaffTab extends JPanel implements ActionListener, ItemListener {
 
+    private final JToggleButton toggle;
     private final JButton create;
     private final JButton edit;
     private final JButton delete;
@@ -41,33 +44,68 @@ class StaffTab extends JPanel implements ActionListener, ItemListener {
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
 
-        JPanel p1 = new JPanel();
-        p1.setPreferredSize(new Dimension(200, 290));
-        p1.setLayout(new BorderLayout());
-        p1.setBackground(Color.WHITE);
-        JPanel p1a = new JPanel();
-        p1a.setPreferredSize(new Dimension(180, 200));
-        p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
-        p1a.setBackground(Color.WHITE);
-        JToggleButton toggle = new JToggleButton("View Contact details", false);
-        create = new JButton("Add Staff");
-        edit = new JButton("Update Staff");
-        delete = new JButton("Delete Staff");
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BorderLayout());
+        buttonPanel.setPreferredSize(new Dimension(220, 290));
+        buttonPanel.setBackground(Color.WHITE);
 
-        p1a.add(toggle);
+        Border etched = BorderFactory.createEtchedBorder();
+        buttonPanel.setBorder(etched);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout());
+        topPanel.setBorder(BorderFactory.createEtchedBorder());
+        topPanel.setBackground(Color.WHITE);
+
+        JTextField details = new JTextField("Staff ");
+        Font font = new Font(Font.SERIF, Font.ITALIC | Font.BOLD, 40);
+        details.setFont(font);
+        details.setBackground(Color.WHITE);
+        details.setEditable(false);
+        details.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        topPanel.add(details, BorderLayout.NORTH);
+
+        JPanel detailsPanel = new JPanel();
+        detailsPanel.setLayout(new GridLayout(8, 1));
+        detailsPanel.setBackground(Color.white);
+
+        etched = BorderFactory.createEtchedBorder();
+        Border titled = BorderFactory.createTitledBorder(etched, "Staff Options");
+        detailsPanel.setBorder(titled);
+        Font font1 = new Font("Arial", Font.BOLD, 14);
+
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        toggle = new JToggleButton("View Contact Details", false);
+        toggle.setFont(font1);
+        detailsPanel.add(toggle);
         toggle.addItemListener(this);
-        p1a.add(add(Box.createVerticalStrut(20)));
-        p1a.add(create);
-        create.addActionListener(this);
-        p1a.add(add(Box.createVerticalStrut(20)));
-        p1a.add(edit);
-        edit.addActionListener(this);
-        p1a.add(add(Box.createVerticalStrut(20)));
-        p1a.add(delete);
-        delete.addActionListener(this);
-        p1.add(p1a, BorderLayout.SOUTH);
-        add(p1, BorderLayout.WEST);
 
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        create = new JButton("Add New Staff");
+        create.setFont(font1);
+        detailsPanel.add(create);
+        create.addActionListener(this);
+
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        edit = new JButton("Edit Staff Details");
+        edit.setFont(font1);
+        detailsPanel.add(edit);
+        edit.addActionListener(this);
+
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        delete = new JButton("Delete Staff Details");
+        delete.setFont(font1);
+        detailsPanel.add(delete);
+        delete.addActionListener(this);
+
+        buttonPanel.add(topPanel, BorderLayout.NORTH);
+        buttonPanel.add(detailsPanel, BorderLayout.CENTER);
+
+        add(buttonPanel, BorderLayout.WEST);
 
         JPanel p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));

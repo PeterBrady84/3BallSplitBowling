@@ -7,6 +7,8 @@ import model.NumberValidator;
 import model.Stock;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -34,24 +36,58 @@ class StockTab extends JPanel implements ActionListener{
         this.setLayout(new FlowLayout());
         this.setBackground(Color.WHITE);
 
-        JPanel p1 = new JPanel();
-        p1.setPreferredSize(new Dimension(200, 290));
-        p1.setLayout(new BorderLayout());
-        p1.setBackground(Color.WHITE);
-        JPanel p1a = new JPanel();
-        p1a.setPreferredSize(new Dimension(180, 200));
-        p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
-        p1a.setBackground(Color.WHITE);
-        create = new JButton("Add Stock");
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BorderLayout());
+        buttonPanel.setPreferredSize(new Dimension(220, 290));
+        buttonPanel.setBackground(Color.WHITE);
+
+        Border etched = BorderFactory.createEtchedBorder();
+        buttonPanel.setBorder(etched);
+
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout());
+        topPanel.setBorder(BorderFactory.createEtchedBorder());
+        topPanel.setBackground(Color.WHITE);
+
+        JTextField details = new JTextField("Stock");
+        Font font = new Font(Font.SERIF, Font.ITALIC | Font.BOLD, 40);
+        details.setFont(font);
+        details.setBackground(Color.WHITE);
+        details.setEditable(false);
+        details.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        topPanel.add(details, BorderLayout.NORTH);
+
+        JPanel detailsPanel = new JPanel();
+        detailsPanel.setLayout(new GridLayout(7, 1));
+        detailsPanel.setBackground(Color.white);
+
+        etched = BorderFactory.createEtchedBorder();
+        Border titled = BorderFactory.createTitledBorder(etched, "Stock Options");
+        detailsPanel.setBorder(titled);
+        Font font1 = new Font("Arial", Font.BOLD, 14);
+
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        create = new JButton("Add New Stock");
+        create.setFont(font1);
+        detailsPanel.add(create);
         create.addActionListener(this);
+
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
         edit = new JButton("Edit Stock");
+        edit.setFont(font1);
+        detailsPanel.add(edit);
         edit.addActionListener(this);
 
-        p1a.add(create);
-        p1a.add(add(Box.createVerticalStrut(20)));
-        p1a.add(edit);
-        p1.add(p1a, BorderLayout.SOUTH);
-        add(p1, BorderLayout.WEST);
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        buttonPanel.add(topPanel, BorderLayout.NORTH);
+        buttonPanel.add(detailsPanel, BorderLayout.CENTER);
+
+        add(buttonPanel, BorderLayout.WEST);
 
         JPanel p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));

@@ -83,8 +83,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         welcomePanel.setBackground(Color.WHITE);
 
         Border etched = BorderFactory.createEtchedBorder();
-        Border titled = BorderFactory.createTitledBorder(etched, "Login Screen");
-        welcomePanel.setBorder(titled);
+        welcomePanel.setBorder(etched);
 
         JTextField welcome = new JTextField("Welcome");
         Font font = new Font(Font.SERIF, Font.BOLD | Font.ITALIC, 55);
@@ -100,7 +99,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         Font font1 = new Font("Arial", Font.BOLD, 14);
 
         etched = BorderFactory.createEtchedBorder();
-        titled = BorderFactory.createTitledBorder(etched, "Login Details");
+        Border titled = BorderFactory.createTitledBorder(etched, "Login Details");
         detailsPanel.setBorder(titled);
 
         detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
