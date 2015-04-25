@@ -3,8 +3,11 @@ package gui;
 import db.MainProgramOperations;
 import controller.TableColumnAdjuster;
 import model.*;
+import org.joda.time.DateTime;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -12,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by Peter on 06/03/2015.
@@ -22,11 +26,14 @@ class BookingTab extends JPanel implements ActionListener {
     private MainScreen ms;
     private final JButton create;
     private final JButton edit;
+    private final JButton delete;
+    private JTextField bookingId;
     private DefaultTableModel model;
     private final JTable table;
     private final MainProgramOperations progOps;
     private ArrayList<Booking> bookingList = new ArrayList<>();
     private final Staff user;
+    private int idToDelete, i = 0;
 
     public BookingTab(MainScreen ms, ArrayList<Booking> b, MainProgramOperations po, Staff user) {
         System.out.println("Inside : BookingTabGUI");
@@ -48,7 +55,7 @@ class BookingTab extends JPanel implements ActionListener {
         p1a.setBackground(Color.WHITE);
         create = new JButton("Create Booking");
         edit = new JButton("Edit Booking");
-        JButton delete = new JButton("Delete Booking");
+        delete = new JButton("Delete Booking");
 
         p1a.add(create);
         create.addActionListener(this);
@@ -57,6 +64,7 @@ class BookingTab extends JPanel implements ActionListener {
         edit.addActionListener(this);
         p1a.add(add(Box.createVerticalStrut(20)));
         p1a.add(delete);
+        delete.addActionListener(this);
         p1.add(p1a, BorderLayout.SOUTH);
         add(p1, BorderLayout.WEST);
 
@@ -80,9 +88,33 @@ class BookingTab extends JPanel implements ActionListener {
 
         table.getTableHeader().setReorderingAllowed(false);
 
-        fillTable();
+        int row = table.getSelectedRow();
+        int col = 0; // ID is the first Column
 
-        //table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (i == 0) {
+                    if (event.getValueIsAdjusting() == false) {
+                        idToDelete = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
+                        System.out.println("id to delete is " + idToDelete);
+                        int reply = JOptionPane.showConfirmDialog(null, "Delete Booking number " + idToDelete
+                                , "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                        if (reply == JOptionPane.YES_OPTION) {
+                            progOps.deleteBooking(idToDelete);
+                            JOptionPane.showMessageDialog(null, "Booking deleted");
+                        }
+                        i++;
+                        refreshTable();
+                    }
+                }
+            }
+        });
+
+        //fillTable();
+        refreshTable();
+
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         TableColumnAdjuster tca = new TableColumnAdjuster(table);
         tca.adjustColumns();
 
@@ -102,7 +134,7 @@ class BookingTab extends JPanel implements ActionListener {
         System.out.println("Inside : fillTable() in BookingTabGUI");
         ResultSet rSet = progOps.getBookingDataForBookingTab();
         try {
-            while(rSet.next()) {
+            while (rSet.next()) {
                 String bookingId = Integer.toString(rSet.getInt(1));
                 String laneName = "Lane " + rSet.getInt(2);
                 String lName = rSet.getString(3);
@@ -115,16 +147,37 @@ class BookingTab extends JPanel implements ActionListener {
                 model.addRow(new Object[]{bookingId, laneName, lName, fName, date, start, end, players});
             }
         } catch (Exception e) {
-                System.out.println(e);
+            System.out.println(e);
         }
     }
 
-    public void refreshTable () {
+    private void fillTableForDeletion(int x, String y) {
+        System.out.println("Inside : fillTable() in BookingTabGUI");
+        model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+        ResultSet rSet = progOps.getBookingForDeletion(x, y);
+        try {
+            while (rSet.next()) {
+                int bookingid = rSet.getInt(1);
+                String laneName = "Lane " + rSet.getInt(2);
+                String lName = rSet.getString(3);
+                String fName = rSet.getString(4);
+                String date = new java.text.SimpleDateFormat("dd-MMM-yyyy").format(rSet.getDate(5));
+                String start = rSet.getString(6);
+                String end = rSet.getString(7);
+
+                model.addRow(new Object[]{bookingid, laneName, lName, fName, date, start, end});
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public void refreshTable() {
         System.out.println("Inside : refreshTable() in BookingTabGUI");
 
         bookingList.clear();
-        Alley a = new Alley(progOps);
-        bookingList = a.getBookingList();
+        bookingList = new Alley(progOps).getBookingList();
 
         model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
@@ -132,33 +185,23 @@ class BookingTab extends JPanel implements ActionListener {
         fillTable();
     }
 
-    private String searchBooking() {
+    public String searchBooking() {
         System.out.println("Inside : searchBooking() in BookingTabGUI");
-        String query;
+        String query = "";
         NumberValidator numValidator = new NumberValidator();
-        JTextField bookingId = new JTextField();
-        JTextField bookingName = new JTextField();
+        bookingId = new JTextField();
         Object[] options = {
-                "Please Enter -\nBooking Id:", bookingId,
-                "Or\nBooking Name:", bookingName
+                "Please Enter -\nBooking Id:", bookingId
         };
-
         int option = JOptionPane.showConfirmDialog(null, options, "Search Bookings", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
-            if (numValidator.isNumeric(bookingId.getText())) {
-                query = "bookingId = " + bookingId.getText();
-            } else if (!numValidator.isNumeric(bookingName.getText()) && bookingName.getText().contains(" ")) {
-                String[] name = bookingName.getText().split(" ");
-                if (name.length < 2) {
-                    throw new IllegalArgumentException("String not in correct format");
-                } else {
-                    query = "fName = '" + name[0] + "' AND lName = '" + name[1] + "'";
-                }
+            if (!numValidator.isNumeric(bookingId.getText())) {
+                JOptionPane.showMessageDialog(null,
+                        "Booking ID must be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
             } else {
-                throw new IllegalArgumentException("String " + bookingName.getText() + " does not contain a ' ' (space)!");
+                query = "bookingId = " + bookingId.getText();
             }
-        }
-        else  {
+        } else {
             query = "cancel";
         }
         return query;
@@ -168,11 +211,33 @@ class BookingTab extends JPanel implements ActionListener {
         System.out.println("Inside : actionPerformed() in BookingTabGUI");
         if (ae.getSource() == create) {
             CheckAvailabilityGUI ca = new CheckAvailabilityGUI(ms, progOps, bookingList, this, user);
-        }
-        else if (ae.getSource() == edit) {
+        } else if (ae.getSource() == edit) {
             String s = searchBooking();
             if (!s.equals("cancel")) {
-                UpdateBookingGUI ub = new UpdateBookingGUI(this, progOps, s);
+                UpdateBookingGUI ub = new UpdateBookingGUI(this, progOps, bookingList, s);
+            }
+        } else if (ae.getSource() == delete) {
+            i = 0;
+            JTextField bookingId = new JTextField();
+            JTextField lname = new JTextField();
+            Object[] options = {
+                    "Please Enter -\nBooking Id:", bookingId,
+                    "Or\nSurname:", lname
+            };
+
+            int option = JOptionPane.showConfirmDialog(null, options, "Search Bookings", JOptionPane.OK_CANCEL_OPTION);
+            int bookId;
+            if (bookingId.getText().isEmpty()) {
+                bookId = 0;
+            } else {
+                bookId = Integer.parseInt(bookingId.getText());
+            }
+            String customer = "XXXX";
+            if (lname.getText() != null) {
+                customer = lname.getText();
+            }
+            if (option == JOptionPane.OK_OPTION) {
+                fillTableForDeletion(bookId, customer);
             }
         }
     }

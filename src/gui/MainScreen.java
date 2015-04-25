@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -36,7 +37,7 @@ public class MainScreen extends JFrame implements ActionListener {
     private final ArrayList<Staff> staffList;
     private final ArrayList<Stock> stockList;
     private final ArrayList<BookingDetails> bookingDetailsList;
-    private ArrayList<Booking> bookingList = new ArrayList<>();
+    private ArrayList<Booking> bookingList;
     private final JDatePanelImpl mainDatePanel;
     private final JDatePickerImpl mainDatePicker;
     private final JFormattedTextField dateInTxt;
@@ -243,6 +244,7 @@ public class MainScreen extends JFrame implements ActionListener {
     }
 
     public void setQuickPlay() {
+        bookingList = (new Alley(progOps).getBookingList());
         NumberValidator numValidator = new NumberValidator();
         Booking b;
         BookingDetails bd;
@@ -256,19 +258,28 @@ public class MainScreen extends JFrame implements ActionListener {
                 new String[]{"Enter", "No Booking ID", "Cancel"}, // this is the array
                 "default");
         if (option == JOptionPane.YES_OPTION) {
-            if (numValidator.isNumeric(bookingId.getText())) {
-                int id = Integer.parseInt(bookingId.getText());
-                for (int i = 0; i < bookingList.size(); i++) {
-                    if (id == bookingList.get(i).getId()) {
-                        Member mem = memList.get(bookingList.get(i).getMemId() - 1);
-                        b = bookingList.get(i);
-                        PaymentsGUI p = new PaymentsGUI(this, b, bookingDetailsList, mem, bt, progOps);
-                    }
-                }
-            }
-            else {
+            if (bookingId.getText().equals("")) {
+                JOptionPane.showMessageDialog(null,
+                        "Booking ID cannot be blank", "ERROR", JOptionPane.WARNING_MESSAGE);
+            } else if (!numValidator.isNumeric(bookingId.getText())) {
                 JOptionPane.showMessageDialog(null,
                         "Booking ID must be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
+            } else {
+                int id = Integer.parseInt(bookingId.getText());
+                boolean found = false;
+                for (int i = 0; i < bookingList.size(); i++) {
+                    if (id == bookingList.get(i).getId()) {
+                        System.out.println("HERE" + bookingList.get(i).getId());
+                        Member mem = memList.get(bookingList.get(i).getMemId() - 1);
+                        b = bookingList.get(i);
+                        PaymentsGUI p = new PaymentsGUI(this, b, bookingDetailsList, mem, bt, progOps, 1);
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    JOptionPane.showMessageDialog(null,
+                            "Booking ID " + id + " does not exist!", "ERROR", JOptionPane.WARNING_MESSAGE);
+                }
             }
         }
         else if (option == JOptionPane.NO_OPTION) {
@@ -282,15 +293,20 @@ public class MainScreen extends JFrame implements ActionListener {
             CheckAvailabilityGUI ca = new CheckAvailabilityGUI(this, progOps, bookingList, bt, user);
         }
         else if (e.getSource() == mainDatePanel) {
-            Date selected = null;
-            Date now = null;
+            Date date = null;
             try {
-                selected = new SimpleDateFormat("dd-MMM-yyyy").parse(dateInTxt.getText());
-                now = new java.util.Date();
+                date = new SimpleDateFormat("dd-MMM-yyy").parse(dateInTxt.getText());
+            } catch (ParseException pe) {
+                pe.printStackTrace();
             }
-            catch (ParseException pe) {
-                System.out.println(pe);
-            }
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.set(Calendar.HOUR_OF_DAY,23);
+            cal.set(Calendar.MINUTE,59);
+            cal.set(Calendar.SECOND,59);
+            cal.set(Calendar.MILLISECOND,0);
+            Date selected = cal.getTime();
+            Date now = new java.util.Date();
             if (selected.before(now)){
                 JOptionPane.showMessageDialog(null,
                         "Selected date cannot be in the past!\n" +

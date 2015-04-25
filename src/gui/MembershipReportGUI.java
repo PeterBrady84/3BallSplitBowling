@@ -140,7 +140,7 @@ class MembershipReportGUI extends JPanel implements ActionListener {
         }
     }
 
-    private void fillBarChartMember() {
+    private void fillBarChartMember(){
         System.out.println("Inside : fillBarChartMember() in MembershipReportGUI");
 
         try {
@@ -187,10 +187,11 @@ class MembershipReportGUI extends JPanel implements ActionListener {
                 ////For DataSet////////////////////////
                 String gender = rSet.getString(1);
                 int genderTotal = rSet.getInt(2);
-                pw.println("First Name: " + genderType);
-                pw.println("Last Name: " + total);
+                pw.println("Gender Type: " + genderType);
+                pw.println("Number of " + genderType + " members: " + total);
                 pieDataset.setValue(gender, genderTotal); //Convert data source from table to Pie Chart Data Source
             }
+            pw.close();
                 /* Create Logical Chart */
         JFreeChart PieChartObject=ChartFactory.createPieChart("Male V's Female Members - Pie Chart", pieDataset, true, true, false);
                 /* Close JDBC specific objects */
@@ -200,6 +201,7 @@ class MembershipReportGUI extends JPanel implements ActionListener {
             ChartFrame frame = new ChartFrame("Pie Chart for Gender Balance",PieChartObject);
             frame.setVisible(true);
             frame.setSize(400, 500);
+            frame.setLocationRelativeTo(null);
 
                 /* Specify dimensions and quality factor for Pie Chart */
         int width=640;
@@ -209,7 +211,7 @@ class MembershipReportGUI extends JPanel implements ActionListener {
         File PieChart=new File("SQL2PieChart.png");
         ChartUtilities.saveChartAsJPEG(PieChart, quality, PieChartObject,width,height);
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("HERE " + e);
         }
 
     }

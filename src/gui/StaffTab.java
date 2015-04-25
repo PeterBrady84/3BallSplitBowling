@@ -106,7 +106,7 @@ class StaffTab extends JPanel implements ActionListener, ItemListener {
         add(p2, BorderLayout.EAST);
     }
 
-    private void fillTable(ArrayList<Staff> s) {
+    public void fillTable(ArrayList<Staff> s) {
         System.out.println("Inside : fillTable() in StaffTab");
         this.staffList = s;
         for (Staff aStaffList : staffList) {
@@ -133,8 +133,7 @@ class StaffTab extends JPanel implements ActionListener, ItemListener {
         System.out.println("Inside : refreshTable() in StaffTabGUI");
 
         staffList.clear();
-        Alley a = new Alley(progOps);
-        staffList = a.getStaffList();
+        staffList = new Alley(progOps).getStaffList();
 
         model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
@@ -160,14 +159,14 @@ class StaffTab extends JPanel implements ActionListener, ItemListener {
                 if (name.length < 2) {
                     throw new IllegalArgumentException("String not in correct format");
                 } else {
-                    query = "fName = '" + name[0] + "' AND lName = '" + name[1] + "'";
+                    query = "lName = '" + name[0] + "' AND fName = '" + name[1] + "'";
                 }
             } else {
                 throw new IllegalArgumentException("String " + staffName.getText() + " does not contain a ' ' (space)!");
             }
         }
-        else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
-            System.exit(0);
+        else {
+            query = "cancel";
         }
         return query;
     }
@@ -181,14 +180,19 @@ class StaffTab extends JPanel implements ActionListener, ItemListener {
         System.out.println("Inside : actionPerformed() in StaffTabGUI");
         if (ae.getSource() == create) {
             AddStaffGUI as = new AddStaffGUI(this, progOps, staffList);
-        }
-        else if (ae.getSource() == edit) {
+        } else if (ae.getSource() == edit) {
             String str = searchStaff();
-            updateStaff(str);
-        }
-        else if (ae.getSource() == delete) {
+            if (!str.equals("cancel")) {
+                updateStaff(str);
+            }
+        } else if (ae.getSource() == delete) {
             String str = searchStaff();
-            //progOps.deleteStaff(user, id);
+            if (!str.equals("cancel")) {
+                progOps.deleteStaff(str);
+                refreshTable();
+                fillTable(staffList);
+                JOptionPane.showMessageDialog(null, "Staff Record Removed!");
+            }
         }
     }
 

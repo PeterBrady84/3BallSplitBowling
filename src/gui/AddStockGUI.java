@@ -21,6 +21,8 @@ class AddStockGUI implements ActionListener {
     private final GuiElements ge;
     private final StockTab sTab;
     private final JButton addB;
+    private final JButton clearB;
+    private final JButton cancelB;
 
     public AddStockGUI(StockTab st, MainProgramOperations po, ArrayList<Stock> s) {
         this.sTab = st;
@@ -45,9 +47,13 @@ class AddStockGUI implements ActionListener {
         addB.addActionListener(this);
         bottomPanel.add(addB);
 
-        JButton clearB = new JButton("Clear");
+        clearB = new JButton("Clear");
         clearB.addActionListener(this);
         bottomPanel.add(clearB);
+
+        cancelB = new JButton("Cancel");
+        cancelB.addActionListener(this);
+        bottomPanel.add(cancelB);
 
         addPanel.add(bottomPanel, BorderLayout.SOUTH);
 
@@ -86,6 +92,14 @@ class AddStockGUI implements ActionListener {
             } catch (NumberFormatException nf) {
                 JOptionPane.showMessageDialog(null, "Wrong data format");
             }
+        }
+        else if (e.getSource() .equals(clearB)) {
+            ge.sizeTxt.setText("");
+            ge.qtyTxt.setText("");
+            ge.detailsTxt.setText("");
+        }
+        else if (e.getSource() .equals(cancelB)) {
+            addD.dispose();
         }
     }
 }

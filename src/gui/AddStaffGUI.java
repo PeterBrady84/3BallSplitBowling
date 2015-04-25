@@ -23,6 +23,7 @@ class AddStaffGUI extends Thread implements ActionListener  {
     private final GuiElements ge;
     private final JButton addB;
     private final JButton clearB;
+    private final JButton cancelB;
 
     public AddStaffGUI(StaffTab st, MainProgramOperations po, ArrayList<Staff> s) {
         this.sTab = st;
@@ -51,6 +52,10 @@ class AddStaffGUI extends Thread implements ActionListener  {
         clearB = new JButton("Clear");
         clearB.addActionListener(this);
         bottomPanel.add(clearB);
+
+        cancelB = new JButton("Cancel");
+        cancelB.addActionListener(this);
+        bottomPanel.add(cancelB);
 
         addPanel.add(bottomPanel, BorderLayout.SOUTH);
 
@@ -92,7 +97,7 @@ class AddStaffGUI extends Thread implements ActionListener  {
                     String phone = ge.phoneTxt.getText();
                     String login = ge.loginTxt.getText();
                     String email = ge.emailTxt.getText();
-                    String password = String.valueOf(ge.passwordTxt.getPassword());
+                    char[] password = ge.passwordTxt.getPassword();
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
                     String access = "N";
@@ -124,6 +129,9 @@ class AddStaffGUI extends Thread implements ActionListener  {
             ge.loginTxt.setText("");
             ge.passwordTxt.setText("");
             ge.confPassTxt.setText("");
+        }
+        else if (e.getSource().equals(cancelB)) {
+            addD.dispose();
         }
     }
 }

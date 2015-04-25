@@ -233,7 +233,10 @@ public class MainProgramOperations {
 
     public ResultSet getMemberGender() {
         System.out.println("Inside : getMemberGender() in MainProgramOperations");
-        String sqlStatement = "select gender,count(*), sum(case when gender = 'M' then 1 else 0 end) MaleCount, sum(case when gender = 'F' then 1 else 0 end) FemaleCount from members group by gender";
+        String sqlStatement = "SELECT gender, COUNT(*), " +
+                "SUM(CASE WHEN gender = 'M' THEN 1 ELSE 0 END) MaleCount, " +
+                "SUM(CASE WHEN gender = 'F' THEN 1 ELSE 0 END) FemaleCount " +
+                "FROM members WHERE gender IS NOT NULL GROUP BY gender";
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
@@ -285,7 +288,8 @@ public class MainProgramOperations {
 
     public ResultSet getPaymentType() {
         System.out.println("Inside : getPaymentType() in MainProgramOperations");
-        String sqlStatement = "select paymentmethod ,count(paymentmethod)from payments group by PAYMENTMETHOD";
+        String sqlStatement = "SELECT paymentMethod, COUNT (paymentMethod) " +
+                "FROM payments WHERE paymentMethod IS NOT NULL GROUP BY paymentMethod";
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
@@ -387,7 +391,7 @@ public class MainProgramOperations {
             pStmt.setString(4, s.getPhone());
             pStmt.setString(5, s.getEmail());
             pStmt.setString(6, s.getLogin());
-            pStmt.setString(7, s.getPassword());
+            pStmt.setString(7, Arrays.toString(s.getPassword()));
             pStmt.setString(8, s.getSecQuestion());
             pStmt.setString(9, s.getSecAnswer());
             pStmt.executeUpdate();
@@ -431,12 +435,11 @@ public class MainProgramOperations {
         }
     }
 
-
-    public void updateStaffinDB(String i, String l, String n, String e, String p, String log, String pass, String q, String a) {
+    public void updateStaffinDB(String i, String l, String n, String p, String log, String e, char [] pass, String q, String a) {
         System.out.println("Inside : updateStaffinDB() in MainProgramOperations");
         try {
             String update = "UPDATE staff SET fName = '" + n + "', lName = '" + l + "', email = '" + e + "', phone = '" + p
-                    + "', username = '" + log + "', password = '" + pass + "', securityQuestion = '" + q + "', securityAnswer = '" + a + "' WHERE staffId = " + i;
+                    + "', username = '" + log + "', password = '" + Arrays.toString(pass) + "', securityQuestion = '" + q + "', securityAnswer = '" + a + "' WHERE staffId = " + i;
             pStmt = conn.prepareStatement(update);
             pStmt.executeUpdate();
         } catch (Exception ex) {
@@ -491,7 +494,6 @@ public class MainProgramOperations {
         }
         return usernames.contains(verify);
     }
-
 
     public boolean checkPass(String username, char[] password) {
         System.out.println("Inside : checkPass() in MainProgramOperations");
@@ -561,14 +563,13 @@ public class MainProgramOperations {
         return ans;
     }
 
-    public void deleteStaff(String user, int id) {
+    public void deleteStaff(String s) {
         System.out.println("Inside : deleteStaff() in MainProgramOperations");
         String ans = "";
         try {
-            String queryString = "DELETE FROM staff WHERE username = '" + user + "' OR staffid = " + id;
+            String queryString = "DELETE FROM staff WHERE " + s;
             pStmt = conn.prepareStatement(queryString);
             pStmt.executeUpdate();
-
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -733,7 +734,7 @@ public class MainProgramOperations {
     public ResultSet getBookings() {
         System.out.println("Inside : getBookings() in MainProgramOperations");
         try {
-            String queryString = "SELECT * FROM bookings ORDER BY bookingId";
+            String queryString = "SELECT * FROM bookings WHERE bookingId IS NOT NULL ORDER BY bookingId";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
         } catch (Exception e) {
@@ -774,6 +775,20 @@ public class MainProgramOperations {
         return rSet;
     }
 
+    public int getBookingLastId() {
+        System.out.println("Inside : getBookingLastRow() in MainProgramOperations");
+        int last = 0;
+        String sqlStatement = "SELECT MAX(bookingId) FROM Bookings";
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
+            rSet = pStmt.executeQuery();
+            rSet.next();
+            last = rSet.getInt(1);
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+        return last;
+    }
 
     public void addBooking(Booking b) {
         Booking add = b;
@@ -800,19 +815,40 @@ public class MainProgramOperations {
             pStmt.setInt(6, b.getNumPlayers());
             pStmt.setString(7, b.getPricingPerHour());
             pStmt.setString(8, b.getBookingType());
-
             pStmt.executeUpdate();
         } catch (Exception se) {
             System.out.println(se);
         }
     }
 
-    public void updateBooking(int b, int m, int l, String s, String e) {
+    public void updateBooking(int id, int l, int p) {
         System.out.println("Inside : updateBooking() in MainProgramOperations");
         try {
-            String update = "UPDATE bookings SET memId = " + m + ", laneId = " + l
-                    + ", fromDateTime = '" + s + "', toDateTime = '" + e + "' WHERE memId = " + b;
+            String update = "UPDATE bookings SET numlanes = " + l + ", numplayers = " + p +
+                    "WHERE bookingId = " + id;
             pStmt = conn.prepareStatement(update);
+            pStmt.executeUpdate();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+    }
+
+    public void updateBookingDetails(BookingDetails bd, int i) {
+        System.out.println("Inside : updateBookingDetails() in MainProgramOperations");
+        try {
+            if (i == 0) {
+                String delete = "Delete From BookingDetails Where Bookingid =" + bd.getBookingId();
+                pStmt = conn.prepareStatement(delete);
+                pStmt.executeUpdate();
+            }
+            String update = "Insert into bookingDetails (bookingid, lanenumber, timeslotid,bookingdate) " +
+                    "values (?,?,?,?)";
+            System.out.println(bd.getBookingId() + " " + bd.getLaneNumber() + " " + bd.getLaneNumber() + " " + bd.getBookingDate());
+            pStmt = conn.prepareStatement(update);
+            pStmt.setInt(1, bd.getBookingId());
+            pStmt.setInt(2, bd.getLaneNumber());
+            pStmt.setInt(3, bd.getTimeSlotId());
+            pStmt.setDate(4, bd.getBookingDate());
             pStmt.executeUpdate();
         } catch (Exception ex) {
             System.out.println(ex);
@@ -821,11 +857,15 @@ public class MainProgramOperations {
 
     public ResultSet searchBookings(String s) {
         System.out.println("Inside : searchBookings() in MainProgramOperations");
-        String sqlStatement = "SELECT * FROM Bookings WHERE " + s;
+        String sqlStatement = "SELECT bd.bookingdate, b.numplayers, MIN(ts.TIMEDESCRIPTION), MAX(ts.timeDescription) " +
+                "FROM bookingdetails bd, timeslots ts, bookings b " +
+                "WHERE b." + s + " " +
+                "AND b.bookingid = bd.bookingid " +
+                "AND bd.timeslotid = ts.timeslotid " +
+                "GROUP BY bd.bookingdate, b.numplayers";
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
-            ;
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
@@ -915,57 +955,47 @@ public class MainProgramOperations {
         return hrs;
     }
 
-    public boolean isAvailable(String dateSelected, int numLanes, String startTime, String finishTime) {
-        System.out.println("Inside : isAvailable() in MainProgramOperations");
-        int startId = 0, endId = 0;
-
-        String getStartId = "SELECT timeSlotId " +
-                "FROM timeSlots " +
-                "WHERE timeDescription = '" + startTime + "'";
+    public void deleteBooking(int id){
+        System.out.println("Inside : deleteBooking() in MainProgramOperations");
         try {
-            pStmt = conn.prepareStatement(getStartId);
-            rSet = pStmt.executeQuery();
-            while (rSet.next()) {
-                startId = rSet.getInt(1);
-            }
-            rSet.close();
-        } catch (Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
+            String queryString1 = "DELETE FROM payments WHERE bookingId = " + id;
+            String queryString2 = "DELETE FROM bookingDetails WHERE bookingId = " + id;
+            String queryString3 = "DELETE FROM bookings WHERE bookingId = " + id;
+            pStmt = conn.prepareStatement(queryString1);
+            pStmt.executeUpdate();
+            pStmt.close();
+            pStmt = conn.prepareStatement(queryString2);
+            pStmt.executeUpdate();
+            pStmt.close();
+            pStmt = conn.prepareStatement(queryString3);
+            pStmt.executeUpdate();
+            pStmt.close();
+        } catch (Exception e) {
+            System.out.println(e);
         }
-        String getEndId = "SELECT timeSlotId " +
-                "FROM timeSlots " +
-                "WHERE timeDescription = '" + finishTime + "'";
-        try {
-            pStmt = conn.prepareStatement(getEndId);
-            rSet = pStmt.executeQuery();
-            while (rSet.next()) {
-                endId = rSet.getInt(1);
-            }
-            rSet.close();
-        } catch (Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
-        }
-
-        String countLanes = "select count (distinct LANENUMBER) from BOOKINGDETAILS WHERE LANENUMBER NOT IN\n" +
-                "(select LANENUMBER from BOOKINGDETAILS where bookingdate = '" + dateSelected + "' and timeslotid " +
-                "between " + startId + " and " + endId + " group by lanenumber)";
-        try {
-            pStmt = conn.prepareStatement(countLanes);
-            ResultSet count;
-            count = pStmt.executeQuery();
-            int available = 0;
-            while (rSet.next()) {
-                available = count.getInt(1);
-            }
-            rSet.close();
-            if (numLanes > available) {
-                return false;
-            }
-        } catch (Exception ex) {
-            System.out.println("ERROR in checkAvailability(): " + ex.getMessage());
-        }
-        return true;
     }
+
+    public ResultSet getBookingForDeletion(int bookId, String cust) {
+        System.out.println("Inside : getBookingDataForDeletion() in MainProgramOperations");
+        try {
+            String queryString = "SELECT bd.bookingId, l.laneNumber, m.lName, m.fName, bd.bookingDate, " +
+                    "MIN(ts.timeDescription), MAX(ts.timeDescription) " +
+                    "FROM bookingDetails bd INNER JOIN lane l ON bd.laneNumber = l.laneNumber " +
+                    "INNER JOIN bookings b ON bd.bookingId = b.bookingId " +
+                    "INNER JOIN timeSlots ts ON bd.timeSlotId = ts.timeSlotId " +
+                    "INNER JOIN members m ON b.memberId = m.memberId " +
+                    "WHERE bd.bookingId = " + bookId + " OR m.lName = '" + cust + "' " +
+                    "GROUP BY bd.bookingId, l.laneNumber, m.lName, m.fName, bd.bookingDate, b.numPlayers " +
+                    "ORDER BY bd.bookingDate, l.laneNumber";
+            pStmt = conn.prepareStatement(queryString);
+            rSet = pStmt.executeQuery();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return rSet;
+    }
+
+
 ///// End of Booking Queries ///////////////////////////////////
 
 
@@ -974,6 +1004,7 @@ public class MainProgramOperations {
         System.out.println("Inside : getBookingDetails() in MainProgramOperations");
         try {
             String queryString = "SELECT * FROM bookingDetails " +
+                    "WHERE bookingId IS NOT NULL " +
                     "ORDER BY bookingId, laneNumber, timeSlotId, bookingDate";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
@@ -983,7 +1014,7 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public void addBookingDetails(BookingDetails bd) {
+    public void addBookingDetails(int i, BookingDetails bd) {
         System.out.println("Inside : addBookingDetails() in MainProgramOperations");
         try {
             String bookingDetails = "INSERT INTO bookingDetails(" +
@@ -993,7 +1024,7 @@ public class MainProgramOperations {
                     "bookingDate) " +
                     "VALUES (?, ?, ?, ?)";
             pStmt = conn.prepareStatement(bookingDetails);
-            pStmt.setInt(1, bd.getBookingId());
+            pStmt.setInt(1, i);
             pStmt.setInt(2, bd.getLaneNumber());
             pStmt.setInt(3, bd.getTimeSlotId());
             pStmt.setDate(4, bd.getBookingDate());
@@ -1010,7 +1041,7 @@ public class MainProgramOperations {
     public ResultSet getPayments() {
         System.out.println("Inside : getPayments() in MainProgramOperations");
         try {
-            String queryString = "SELECT * FROM payments ORDER BY paymentId";
+            String queryString = "SELECT * FROM payments WHERE bookingId IS NOT NULL ORDER BY paymentId";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
         } catch (Exception e) {
@@ -1021,17 +1052,30 @@ public class MainProgramOperations {
 
     public void addPayment(Payment pay) {
         System.out.println("Inside : addPayment() in MainProgramOperations");
-        String sqlStatement = "INSERT INTO Payments (paymentid, bookingid, deposit, totalprice, fullyPaid, paymentmethod) values (?,?,?,?,?,?)";
+        String sqlStatement = "INSERT INTO Payments " +
+                "(paymentId, bookingId, deposit, totalPrice, fullyPaid, paymentMethod) " +
+                "VALUES (paymentId_seq.nextVal, ?, ?, ?, ?, ?)";
         try {
             pStmt = conn.prepareStatement(sqlStatement);
 
-            pStmt.setInt(1, pay.getPaymentId());
-            pStmt.setInt(2, pay.getBookingId());
-            pStmt.setDouble(3, pay.getDeposit());
-            pStmt.setDouble(4, pay.getTotalPrice());
-            pStmt.setString(5, pay.getFullyPaid());
-            pStmt.setString(6, pay.getPaymentMethod());
+            pStmt.setInt(1, pay.getBookingId());
+            pStmt.setDouble(2, pay.getDeposit());
+            pStmt.setDouble(3, pay.getTotalPrice());
+            pStmt.setString(4, pay.getFullyPaid());
+            pStmt.setString(5, pay.getPaymentMethod());
 
+            pStmt.executeQuery();
+        } catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+    }
+
+    public void updatePayment(String s, int id) {
+        System.out.println("Inside : addPayment() in MainProgramOperations");
+        String sqlStatement = "UPDATE payments SET fullyPaid = '" + s + "'" +
+                "WHERE bookingId = " + id;
+        try {
+            pStmt = conn.prepareStatement(sqlStatement);
             pStmt.executeQuery();
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());

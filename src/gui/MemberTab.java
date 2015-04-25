@@ -112,8 +112,7 @@ class MemberTab extends JPanel implements ActionListener {
         System.out.println("Inside : refreshTable() in MemberTabGUI");
 
         memList.clear();
-        Alley a = new Alley(progOps);
-        memList = a.getMemberList();
+        memList = new Alley(progOps).getMemberList();
 
         model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);

@@ -185,12 +185,12 @@ class GuiElements implements ItemListener {
         phoneTxt = new JTextField(15);
         topPanel.add(phoneTxt);
 
-        emailLbl = new JLabel("Login:");
+        emailLbl = new JLabel("Email:");
         topPanel.add(emailLbl);
         emailTxt = new JTextField(15);
         topPanel.add(emailTxt);
 
-        loginLbl = new JLabel("Email:");
+        loginLbl = new JLabel("Login:");
         topPanel.add(loginLbl);
         loginTxt = new JTextField(15);
         topPanel.add(loginTxt);

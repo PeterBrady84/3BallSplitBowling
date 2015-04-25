@@ -11,7 +11,7 @@ public class Staff {
     private int bookings;
     private String phone;
     private String username;
-    private String password;
+    private char [] password;
     private String email;
     private String secQuestion;
     private String secAnswer;
@@ -21,7 +21,7 @@ public class Staff {
 
 
     public Staff(int id, String lName, String fName, int bookings, String start, String finish, String phone, String username, String email,
-                 String password, String secQuestion, String secAnswer, String access) {
+                 char [] password, String secQuestion, String secAnswer, String access) {
         //System.out.println("Inside : StaffModel");
         this.id = id;
         this.lName = lName;
@@ -41,7 +41,7 @@ public class Staff {
     }
 
     //constructor for updating Staff
-    public Staff(int id, String lName, String fName, String phone, String login, String email, String password, String secQuestion, String secAnswer) {
+    public Staff(int id, String lName, String fName, String phone, String login, String email, char [] password, String secQuestion, String secAnswer) {
         this.id = id;
         this.lName = lName;
         this.fName = fName;
@@ -55,7 +55,7 @@ public class Staff {
 
     // constructor that creates a staff object
     //used when adding new Staff to the system
-    public Staff(String f, String l,  String p, String email, String log, String pass, String q, String a, String access) {
+    public Staff(String f, String l,  String p, String email, String log, char [] pass, String q, String a, String access) {
         //System.out.println("Inside : StaffModel");
         this.lName = l;
         this.fName = f;
@@ -166,11 +166,11 @@ public class Staff {
         this.username = username;
     }
 
-    public String getPassword() {
+    public char [] getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(char [] password) {
         this.password = password;
     }
 

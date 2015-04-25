@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -173,13 +174,16 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
         DefaultCaret caret = (DefaultCaret)display.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         display.setBackground(Color.WHITE);
-        display.setText("Please input number of players,\nThen select 'Check' to\ncalculate no of lanes required");
-
+        Font font = new Font(Font.SERIF, Font.BOLD, 14);
+        display.setFont(font);
+        display.setText("\u2022 Please input number of players.\n\n" +
+                "\u2022 Then select 'Check'.\n\n" +
+                "\u2022 Calculates no of lanes required.");
         JPanel midPanel = new JPanel();
         midPanel.setBackground(Color.WHITE);
         JScrollPane sp = new JScrollPane();
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        sp.setPreferredSize(new Dimension(250, 100));
+        sp.setPreferredSize(new Dimension(250, 110));
         sp.getViewport().setBackground(Color.WHITE);
         sp.setViewportView(display);
         midPanel.add(sp);
@@ -222,15 +226,20 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in CheckAvailabilityGUI");
         NumberValidator numValidator = new NumberValidator();
-        Date selected = null;
-        Date now = null;
+        Date date = null;
         try {
-            selected = new SimpleDateFormat("dd-MMM-yyyy").parse(dateInTxt.getText());
-            now = new java.util.Date();
+            date = new SimpleDateFormat("dd-MMM-yyy").parse(dateInTxt.getText());
+        } catch (ParseException pe) {
+            pe.printStackTrace();
         }
-        catch (ParseException pe) {
-            System.out.println(pe);
-        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY,23);
+        cal.set(Calendar.MINUTE,59);
+        cal.set(Calendar.SECOND,59);
+        cal.set(Calendar.MILLISECOND,0);
+        Date selected = cal.getTime();
+        Date now = new java.util.Date();
         if (e.getSource().equals(checkB)) {
             try {
                 if (dateInTxt.getText().equals("") || startTimeTxt.getText().equals("")
@@ -267,16 +276,17 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
                             while (rSet.next()) {
                                 available = rSet.getInt(1);
                             }
-                            display.setText("Lanes Available: " + available +
-                                    "\nLanes Required: " + noLanes.getSelectedItem() + "\n\n");
-                                    if (available >= (Integer)(noLanes.getSelectedItem())) {
-                                        display.append("SUCCESS, there are lanes available!");
-                                        create.setVisible(true);
-                                    }
-                                    else {
-                                        display.append("Insufficient Lanes available!");
-                                        create.setVisible(false);
-                                    }
+                            if (available >= (Integer)(noLanes.getSelectedItem())) {
+                                display.setText("\u2022 SUCCESS.\n\n" +
+                                        "\u2022 Lanes Available: " + available + ".\n" +
+                                        "\u2022 Lanes Required: " + noLanes.getSelectedItem() + ".\n" +
+                                        "\u2022 Sufficient lanes available!");
+                            }
+                            else {
+                                display.setText("\u2022 UNSUCCESSFUL.\n\n" +
+                                        "Insufficient Lanes available!");
+                                create.setVisible(false);
+                            }
                         } catch (SQLException ex) {
                             System.out.println(e);
                         }
@@ -297,7 +307,7 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
             int players = Integer.parseInt(playerTxt.getText());
             int [] freeLanes = progOps.getLanesAvailable(dateInTxt.getText(), startTimeTxt.getText(), endTimeTxt.getText());
             DateFormat formatter ;
-            Date date = new Date();
+            date = new Date();
             try {
                 formatter = new SimpleDateFormat("dd-MMM-yy");
                 date = formatter.parse(dateInTxt.getText());
@@ -326,7 +336,9 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
             endTimeTxt.setText("");
             noLanes.removeAllItems();
             playerTxt.setText("");
-            display.setText("Please input number of players,\nThen select 'Check' to\ncalculate no of lanes required");
+            display.setText("\u2022 Please input number of players.\n\n" +
+                    "\u2022 Then select 'Check'.\n\n" +
+                    "\u2022 Calculates no of lanes required.");
             create.setVisible(false);
         }
         else if (e.getSource().equals(cancel)) {

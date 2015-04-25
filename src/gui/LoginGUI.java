@@ -6,6 +6,7 @@ import model.Alley;
 import model.Staff;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +21,10 @@ public class LoginGUI extends JFrame implements ActionListener {
 
     private final MainProgramOperations progOps;
     private final JPanel p1;
+    private final JPanel loginPanel;
+    private final JPanel welcomePanel;
+    private final JPanel detailsPanel;
+    private final JPanel bottomPanel;
     private final JButton help;
     private final JButton login;
     private final JButton forgot;
@@ -67,66 +72,85 @@ public class LoginGUI extends JFrame implements ActionListener {
         help.addActionListener(this);
 
         //P2
-        JPanel p2 = new JPanel(new BorderLayout());
-        p2.setPreferredSize(new Dimension(300, 430));
-        p2.setBackground(Color.WHITE);
-        p2.setBorder(BorderFactory.createLineBorder(Color.black));
+        loginPanel = new JPanel();
+        loginPanel.setLayout(new BorderLayout());
+        loginPanel.setPreferredSize(new Dimension(300, 400));
+        loginPanel.setBorder(BorderFactory.createEtchedBorder());
+        loginPanel.setBackground(Color.WHITE);
 
-        //p2 sub1
-        JPanel sub1 = new JPanel();
-        sub1.setPreferredSize(new Dimension(200, 100));
-        sub1.setBackground(Color.WHITE);
+        welcomePanel = new JPanel();
+        welcomePanel.setLayout(new FlowLayout());
+        welcomePanel.setBackground(Color.WHITE);
 
-        //p2 - sub2
-        JPanel sub2 = new JPanel();
-        sub2.setPreferredSize(new Dimension(300, 330));
-        sub2.setBackground(Color.WHITE);
+        Border etched = BorderFactory.createEtchedBorder();
+        Border titled = BorderFactory.createTitledBorder(etched, "Login Screen");
+        welcomePanel.setBorder(titled);
+
+        JTextField welcome = new JTextField("Welcome");
+        Font font = new Font(Font.SERIF, Font.BOLD | Font.ITALIC, 55);
+        welcome.setFont(font);
+        welcome.setBackground(Color.WHITE);
+        welcome.setEditable(false);
+        welcome.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        welcomePanel.add(welcome, BorderLayout.NORTH);
+
+        detailsPanel = new JPanel();
+        detailsPanel.setLayout(new GridLayout(7, 2));
+        detailsPanel.setBackground(Color.white);
+        Font font1 = new Font("Arial", Font.BOLD, 14);
+
+        etched = BorderFactory.createEtchedBorder();
+        titled = BorderFactory.createTitledBorder(etched, "Login Details");
+        detailsPanel.setBorder(titled);
+
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
 
         JLabel userLbl = new JLabel("Username:");
-        JLabel passLbl = new JLabel("Password:");
-        userTxt = new JTextField("user1");
-        passTxt = new JPasswordField("password");
+        userLbl.setFont(font1);
+        detailsPanel.add(userLbl);
+        userTxt = new JTextField(15);
+        userTxt.setFont(font1);
+        userTxt.setBackground(Color.white);
+        detailsPanel.add(userTxt);
 
-        login = new JButton("LOGIN");
+        JLabel passLbl = new JLabel("Password:");
+        passLbl.setFont(font1);
+        detailsPanel.add(passLbl);
+        passTxt = new JPasswordField(15);
+        passTxt.setFont(font1);
+        passTxt.setBackground(Color.white);
+        detailsPanel.add(passTxt);
+
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+        detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        login = new JButton("Login");
+        login.setFont(font1);
+        detailsPanel.add(login);
         login.addActionListener(this);
 
-        forgot = new JButton("Forgot Login Details");
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout());
+        bottomPanel.setBorder(BorderFactory.createEtchedBorder());
+        bottomPanel.setBackground(Color.WHITE);
+
+        forgot = new JButton("Forget Login");
+        forgot.setFont(font1);
+        bottomPanel.add(forgot);
         forgot.addActionListener(this);
 
         exit = new JButton("Exit");
+        exit.setFont(font1);
+        bottomPanel.add(exit);
         exit.addActionListener(this);
 
-        sub2.add(Box.createRigidArea(new Dimension(30, 0)));
-        sub2.add(userLbl);
-        sub2.add(userTxt);
-        sub2.add(Box.createRigidArea(new Dimension(70, 0)));
-        sub2.add(Box.createRigidArea(new Dimension(30, 0)));
-        sub2.add(passLbl);
-        sub2.add(passTxt);
-        sub2.add(Box.createRigidArea(new Dimension(70, 0)));
-        sub2.add(Box.createRigidArea(new Dimension(250, 20)));
-        sub2.add(Box.createRigidArea(new Dimension(100, 0)));
-        sub2.add(login);
-        sub2.add(Box.createRigidArea(new Dimension(70, 0)));
-        sub2.add(Box.createRigidArea(new Dimension(30, 0)));
-        sub2.add(forgot);
-        sub2.add(Box.createRigidArea(new Dimension(250, 20)));
-        sub2.add(exit);
+        loginPanel.add(welcomePanel, BorderLayout.NORTH);
+        loginPanel.add(detailsPanel, BorderLayout.CENTER);
+        loginPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-
-        //p2 sub3
-        JPanel sub3 = new JPanel();
-        sub3.setPreferredSize(new Dimension(300, 100));
-        sub3.add(Box.createRigidArea(new Dimension(0, 98)));
-        sub3.add(Box.createRigidArea(new Dimension(50, 0)));
-        sub3.setBackground(Color.WHITE);
-
-        // p2 adding sub panels
-        p2.add(sub1, BorderLayout.NORTH);
-        p2.add(sub2, BorderLayout.CENTER);
-        p2.add(sub3, BorderLayout.SOUTH);
-
-        //P2
+        //P3
         JPanel p3 = new JPanel();
         p3.setPreferredSize(new Dimension(420, 310));
         p3.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -139,7 +163,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         //Adding Panels
         JPanel p4 = new JPanel();
         p4.setLayout(new FlowLayout());
-        p4.add(p2, BorderLayout.WEST);
+        p4.add(loginPanel, BorderLayout.WEST);
         p4.add(p3, BorderLayout.EAST);
         p4.setBackground(Color.WHITE);
         this.add(p4);

@@ -307,9 +307,11 @@ class AddBookingGUI implements ActionListener {
                     memberId = progOps.lastMemberid();
                 }
                 int id = bookingList.size() + 1;
+                if (bookingType == null)
+                    bookingType = "Group";
                 Booking b = new Booking(id, memberId, userId, noLanes, games_hours, 1,
                         noPlayers, isPerHour, bookingType);
-                PaymentsGUI receipt = new PaymentsGUI(ms, b, timeSlots, customer, bt, progOps);
+                PaymentsGUI receipt = new PaymentsGUI(ms, b, timeSlots, customer, bt, progOps, 0);
                 addD.dispose();
             } else {
                 JOptionPane.showMessageDialog(null,

@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -65,12 +66,11 @@ class UpdateStaffGUI implements ActionListener {
             ResultSet rSet = progOps.searchStaff(s);
             while (rSet.next()) {
                 ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
-                ge.fNameTxt.setText(rSet.getString(3));
-                ge.lNameTxt.setText(rSet.getString(2));
+                ge.fNameTxt.setText(rSet.getString(2));
+                ge.lNameTxt.setText(rSet.getString(3));
                 ge.phoneTxt.setText(rSet.getString(5));
                 ge.emailTxt.setText(rSet.getString(7));
                 ge.loginTxt.setText(rSet.getString(6));
-                ge.passwordTxt.setText(rSet.getString(8));
             }
         } catch (Exception ignored) {
         }
@@ -104,19 +104,20 @@ class UpdateStaffGUI implements ActionListener {
                     String phone = ge.phoneTxt.getText();
                     String email = ge.emailTxt.getText();
                     String login = ge.loginTxt.getText();
-                    String password = ge.passwordTxt.getText();
+                    char [] password = ge.passwordTxt.getPassword();
                     String secQuestion = ge.quest.getSelectedItem().toString();
                     String secAnswer = ge.secAnsTxt.getText();
                     String access = "N";
                     if (numValidator.isNumeric(phone)) {
-                        progOps.updateStaffinDB(ge.idTxt.getText(), lName, fName,  phone, login, email, password, secQuestion, secAnswer);
+                        progOps.updateStaffinDB(ge.idTxt.getText(), lName, fName, phone, login, email, password, secQuestion, secAnswer);
                         Alley a = new Alley(progOps);
                         a.updateStaff(new Staff(lName, fName, phone, login, email, password, secQuestion, secAnswer, access));
+                        ArrayList<Staff> sList = a.getStaffList();
                         JOptionPane.showMessageDialog(null, "Updated Staff Data Saved");
-                        progOps.getStaff();
-                        String t = "contact";
-                        sTab.refreshTable();
+                        //progOps.getStaff();
                         updateD.setVisible(false);
+                        sTab.refreshTable();
+                        sTab.fillTable(sList);
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "Phone Field must be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
@@ -127,7 +128,7 @@ class UpdateStaffGUI implements ActionListener {
             }
         }
         if (e.getSource().equals(cancel)) {
-            System.exit(0);
+            updateD.dispose();
         }
     }
 }

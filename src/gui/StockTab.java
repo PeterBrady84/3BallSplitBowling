@@ -21,7 +21,6 @@ class StockTab extends JPanel implements ActionListener{
 
     private final JButton create;
     private final JButton edit;
-    private final JButton delete;
     private DefaultTableModel model;
     private final JTable table;
     private final MainProgramOperations progOps;
@@ -47,8 +46,6 @@ class StockTab extends JPanel implements ActionListener{
         create.addActionListener(this);
         edit = new JButton("Edit Stock");
         edit.addActionListener(this);
-        delete = new JButton("Remove Stock");
-        delete.addActionListener(this);
 
         p1a.add(create);
         p1a.add(add(Box.createVerticalStrut(20)));
@@ -108,8 +105,7 @@ class StockTab extends JPanel implements ActionListener{
         System.out.println("Inside : refreshTable() in StockTabGUI");
 
         stockList.clear();
-        Alley a = new Alley(progOps);
-        stockList = a.getStockList();
+        stockList = new Alley(progOps).getStockList();
 
         model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
@@ -138,6 +134,9 @@ class StockTab extends JPanel implements ActionListener{
                 throw new IllegalArgumentException("ID must be numeric!");
             }
         }
+        else {
+            query = "cancel";
+        }
         return query;
     }
 
@@ -153,9 +152,9 @@ class StockTab extends JPanel implements ActionListener{
         }
         else if (ae.getSource() == edit) {
             String str = searchStock();
-            updateStock(str);
-        }
-        else if (ae.getSource() == delete) {
+            if (!str.equals("cancel")) {
+                updateStock(str);
+            }
         }
     }
 }

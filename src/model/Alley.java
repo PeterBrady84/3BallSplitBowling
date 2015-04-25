@@ -4,6 +4,7 @@ import db.MainProgramOperations;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Peter on 11/03/2015.
@@ -179,7 +180,7 @@ public class Alley {
             while (rSet.next()) {
                 staffList.add(new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4),
                         rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8), rSet.getString(9),
-                        rSet.getString(10), rSet.getString(11), rSet.getString(12), rSet.getString(13)));
+                        (rSet.getArray(10).toString()).toCharArray(), rSet.getString(11), rSet.getString(12), rSet.getString(13)));
             }
         } catch (Exception e) {
             System.out.println(e);

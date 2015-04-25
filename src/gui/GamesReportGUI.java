@@ -117,14 +117,12 @@ public class GamesReportGUI extends JPanel implements ActionListener{
             while (rSet.next()){
                 int laneID = rSet.getInt(1);
                 String laneName = rSet.getString(2);
-                int maxPlayers = rSet.getInt(3);
+                int maxPlayers = 6;
                 //String gender = rSet.getString(4);
-                model.addRow(new Object[]{rSet.getInt(1), rSet.getString(2), rSet.getInt(3)});
+                model.addRow(new Object[]{laneID, laneName, 6});
                 pw.println("Lane ID: " + laneID);
                 pw.println("Lane Name: " + laneName);
                 pw.println("Max Players: " + maxPlayers );
-                //pw.println("Number of Visits: " + visit +"\n");
-
             }
             pw.close();
         } catch (Exception e) {
@@ -142,9 +140,6 @@ public class GamesReportGUI extends JPanel implements ActionListener{
                 //////////////for text file//////////////
                 String gameType = rSet.getString(1);
                 int total = rSet.getInt(2);
-                ////For DataSet////////////////////////
-                //String gender = rSet.getString(1);
-                //int genderTotal = rSet.getInt(2);
                 pw.println("Game Type: " + gameType);
                 pw.println("Total: " + total);
                 pieDataset.setValue(gameType, total); //Convert data source from table to Pie Chart Data Source

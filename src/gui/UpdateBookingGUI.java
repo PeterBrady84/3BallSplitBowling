@@ -1,50 +1,200 @@
 package gui;
 
 import db.MainProgramOperations;
-import model.Alley;
-import model.NumberValidator;
+import model.*;
+import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
+import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
+import net.sourceforge.jdatepicker.impl.UtilDateModel;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Peter on 24/03/2015.
  */
-class UpdateBookingGUI implements ActionListener
+public class UpdateBookingGUI implements ActionListener, ItemListener
 
 {
-    private final JDialog addD;
-    private final MainProgramOperations progOps;
-    private final GuiElements ge;
-    private final BookingTab bTab;
-    private final JButton updateB;
-    private final JButton clearB;
-    private final JButton cancel;
+    private JDialog updateD;
+    private MainProgramOperations progOps;
+    private MainScreen ms;
+    private BookingTab bt;
+    private ArrayList<Booking> bookingList;
+    private ArrayList<BookingDetails> timeslots;
+    private Staff user;
+    private ResultSet rSet;
+    private UtilDateModel model;
+    private JDatePanelImpl datePanel;
+    private JDatePickerImpl datePicker;
+    private JFormattedTextField dateInTxt;
+    private JLabel dateLbl, startTime, endTime, playerLbl, laneLbl;
+    private JComboBox startHr, startMin, endHr, endMin, noLanes;
+    private JTextField startTimeTxt, endTimeTxt, playerTxt;
+    private JTextArea display;
+    private JPanel checkPanel, topPanel, bottomPanel;
+    private final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
+    private final String [] HOURS = {"10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm",
+            "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
+    private final String [] MINUTES = {"00", "15", "30", "45"};
+    private final int [] LANES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    private int games_hours;
+    private String s;
+    private JButton updateB, clearB, cancel, checkB;
 
-    public UpdateBookingGUI(BookingTab bt, MainProgramOperations po, String search) {
+    public UpdateBookingGUI (BookingTab bt, MainProgramOperations po, ArrayList<Booking> b, String s) {
         System.out.println("Inside : UpdateBookingGUI");
-        this.bTab = bt;
         this.progOps = po;
+        this.bt = bt;
+        this.bookingList = b;
 
-        addD = new JDialog();
-        addD.setTitle("Update Booking");
-        addD.setSize(new Dimension(300, 400));
-        addD.setLocationRelativeTo(null);
+        timeslots = new ArrayList<BookingDetails>();
 
-        ge = new GuiElements();
-        JPanel updatePanel = ge.bookingGui();
+        updateD = new JDialog();
+        updateD.setTitle("Edit Booking");
+        updateD.setSize(new Dimension(300, 500));
+        updateD.setLocationRelativeTo(null);
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new FlowLayout());
-        bottomPanel.setBorder(BorderFactory.createEtchedBorder());
-        bottomPanel.setBackground(Color.white);
+        checkPanel = new JPanel();
+        checkPanel.setLayout(new BorderLayout());
 
-        updateB = new JButton("Update");
+        Border etched = BorderFactory.createEtchedBorder();
+        Border titled = BorderFactory.createTitledBorder(etched, "Edit Booking Details");
+        checkPanel.setBorder(titled);
+
+        topPanel = new JPanel();
+        topPanel.setLayout(new GridLayout(9, 2));
+        topPanel.setBackground(Color.white);
+
+        dateLbl = new JLabel("Date:");
+        topPanel.add(dateLbl);
+        datePanel = new JDatePanelImpl(new UtilDateModel());
+        datePicker = new JDatePickerImpl(datePanel);
+        dateInTxt = datePicker.getJFormattedTextField();
+        dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
+        dateInTxt.setBackground(Color.WHITE);
+        topPanel.add(datePicker);
+
+        startTime = new JLabel("Start Time:");
+        topPanel.add(startTime);
+
+        startHr = new JComboBox<>();
+        startHr.setBackground(Color.white);
+        topPanel.add(startHr);
+        // Populate the hourComboBox list
+        for (int i = 0; i < HOURS.length; i++) {
+            startHr.addItem(HOURS[i]);
+        }
+        startHr.addItemListener(this);
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        startMin = new JComboBox<>();
+        startMin.setSize(25, startMin.getPreferredSize().height);
+        startMin.setBackground(Color.white);
+        topPanel.add(startMin);
+        // Populate the hourComboBox list
+        for (int i = 0; i < MINUTES.length; i++) {
+            startMin.addItem(MINUTES[i]);
+        }
+        startMin.addItemListener(this);
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        startTimeTxt = new JTextField(15);
+        startTimeTxt.setBackground(Color.WHITE);
+        startTimeTxt.setEditable(false);
+        topPanel.add(startTimeTxt);
+
+        endTime = new JLabel("End Time:");
+        topPanel.add(endTime);
+
+        endHr = new JComboBox<>();
+        endHr.setBackground(Color.white);
+        topPanel.add(endHr);
+        // Populate the hourComboBox list
+        for (int i = 0; i < HOURS.length; i++) {
+            endHr.addItem(HOURS[i]);
+        }
+        endHr.addItemListener(this);
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        endMin = new JComboBox<>();
+        endMin.setBackground(Color.white);
+        topPanel.add(endMin);
+        // Populate the hourComboBox list
+        for (int i = 0; i < MINUTES.length; i++) {
+            endMin.addItem(MINUTES[i]);
+        }
+        endMin.addItemListener(this);
+
+        topPanel.add(Box.createRigidArea(new Dimension(100, 20)));
+
+        endTimeTxt = new JTextField(15);
+        endTimeTxt.setBackground(Color.WHITE);
+        endTimeTxt.setEditable(false);
+        topPanel.add(endTimeTxt);
+
+        playerLbl = new JLabel("No of Players:");
+        topPanel.add(playerLbl);
+        playerTxt = new JTextField(15);
+        playerTxt.setBackground(Color.white);
+        topPanel.add(playerTxt);
+
+        laneLbl = new JLabel("No Of Lanes:");
+        topPanel.add(laneLbl);
+        noLanes = new JComboBox<>();
+        noLanes.setBackground(Color.white);
+        topPanel.add(noLanes);
+        noLanes.addItemListener(this);
+
+        display = new JTextArea();
+        DefaultCaret caret = (DefaultCaret)display.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        display.setBackground(Color.WHITE);
+
+        JPanel midPanel = new JPanel();
+        midPanel.setBackground(Color.WHITE);
+        JScrollPane sp = new JScrollPane();
+        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        sp.setPreferredSize(new Dimension(250, 100));
+        sp.getViewport().setBackground(Color.WHITE);
+        sp.setViewportView(display);
+        midPanel.add(sp);
+
+        updateB = new JButton("Update Booking");
+        midPanel.add(updateB);
+        updateB.setVisible(false);
         updateB.addActionListener(this);
-        bottomPanel.add(updateB);
+
+        checkPanel.add(topPanel, BorderLayout.NORTH);
+        checkPanel.setBackground(Color.WHITE);
+
+        checkPanel.add(midPanel, BorderLayout.CENTER);
+
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout());
+
+        bottomPanel.setBorder(BorderFactory.createEtchedBorder());
+        bottomPanel.setBackground(Color.WHITE);
+
+        checkB = new JButton("Check");
+        checkB.addActionListener(this);
+        bottomPanel.add(checkB);
 
         clearB = new JButton("Clear");
         clearB.addActionListener(this);
@@ -54,72 +204,174 @@ class UpdateBookingGUI implements ActionListener
         cancel.addActionListener(this);
         bottomPanel.add(cancel);
 
-        updatePanel.add(bottomPanel, BorderLayout.SOUTH);
+        checkPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        updatePanel.setBackground(Color.white);
-        addD.add(updatePanel);
-        addD.setVisible(true);
+        checkPanel.setBackground(Color.white);
+        updateD.add(checkPanel);
+        updateD.setVisible(true);
 
-        fillFields(search);
+        fillFields(s);
     }
 
-    private void fillFields(String search) {
+    public void fillFields(String s) {
         System.out.println("Inside : fillFields() in UpdateBookingGUI");
+        this.s = s;
         try {
-            ResultSet rSet = progOps.searchBookings(search);
-            while (rSet.next()) {
-                ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
-                ge.staffIdTxt.setText(Integer.toString(rSet.getInt(2) + 1));
-                ge.laneTxt.setText(rSet.getString(3));
-                ge.dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(rSet.getString(4)));
-                ge.startTimeTxt.setText(new java.text.SimpleDateFormat("HH:mm").format(rSet.getString(4)));
-                ge.endTimeTxt.setText(new java.text.SimpleDateFormat("HH:mm").format(rSet.getString(5)));
-            }
-        } catch (Exception ignored) {
+            rSet = progOps.searchBookings(s);
+            rSet.next();
+            dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(rSet.getDate(1)));
+            playerTxt.setText(rSet.getString(2));
+            startTimeTxt.setText(rSet.getString(3));
+            endTimeTxt.setText(rSet.getString(4));
+        }
+        catch (Exception e) {
+            System.out.println("Error: " + e);
         }
     }
 
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in UpdateBookingGUI");
         NumberValidator numValidator = new NumberValidator();
-        if (e.getSource().equals(updateB)) {
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("dd-MMM-yyy").parse(dateInTxt.getText());
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY,23);
+        cal.set(Calendar.MINUTE,59);
+        cal.set(Calendar.SECOND,59);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date selected = cal.getTime();
+        Date now = new java.util.Date();
+        if (e.getSource().equals(checkB)) {
             try {
-                if (ge.laneTxt.getText().equals("") || ge.dateTxt.getText().equals("")
-                        || ge.startTimeTxt.getText().equals("") || ge.endTimeTxt.getText().equals("")) {
-                    JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
-                            "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                if (dateInTxt.getText().equals("") || startTimeTxt.getText().equals("")
+                        || endTimeTxt.getText().equals("") || playerTxt.getText().equals("")) {
+                    JOptionPane.showMessageDialog(null,
+                            "Fields cannot be blank!\n" +
+                                    "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                }
+                else if (selected.before(now)){
+                    JOptionPane.showMessageDialog(null,
+                            "Selected date cannot be in the past!\n" +
+                                    "Please fix the date.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                    dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
+                }
+                else if (endHr.getSelectedIndex() <= startHr.getSelectedIndex()) {
+                    JOptionPane.showMessageDialog(null,
+                            "END TIME cannot be the same, or before START TIME!\n" +
+                                    "Please fix the times.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
                 else {
-                    String [] srt = ge.startTimeTxt.getText().split(" ");
-                    String [] en = ge.endTimeTxt.getText().split(" ");
-                    String date = ge.dateTxt.getText();
-                    System.out.println(date + srt[0]);
-                    String start = date + " " + srt[0];
-                    String end = date + " " + en[0];
-                    if (!numValidator.isNumeric(date) && !numValidator.isNumeric(start) && !numValidator.isNumeric(end)) {
-                        Alley a = new Alley(progOps);
-                        a.addBooking();
-                        bTab.refreshTable();
-                        JOptionPane.showMessageDialog(null, "New Booking Data Saved");
-                        addD.setVisible(false);
-                    } else {
+                    String d = dateInTxt.getText();
+                    String st = startTimeTxt.getText();
+                    String et = endTimeTxt.getText();
+                    if (numValidator.isNumeric(playerTxt.getText())) {
+                        // Populate the No of Lanes ComboBox list
+                        noLanes.removeAllItems();
+                        int laneIndex = (int) Math.ceil((double) Integer.parseInt(playerTxt.getText()) / 6) - 1;
+                        for (int i = laneIndex; i < LANES.length; i++) {
+                            noLanes.addItem(LANES[i]);
+                        }
+                        int available = 0;
+                        rSet = progOps.checkAvailability(d, st, et);
+                        try {
+                            while (rSet.next()) {
+                                available = rSet.getInt(1);
+                            }
+                            display.setText("Lanes Available: " + available +
+                                    "\nLanes Required: " + noLanes.getSelectedItem() + "\n\n");
+                            if (available >= (Integer)(noLanes.getSelectedItem())) {
+                                display.append("SUCCESS, there are lanes available!");
+                                updateB.setVisible(true);
+                            }
+                            else {
+                                display.append("Insufficient Lanes available!");
+                                updateB.setVisible(false);
+                            }
+                        } catch (SQLException ex) {
+                            System.out.println(e);
+                        }
+                    }
+                    else {
                         JOptionPane.showMessageDialog(null,
-                                "Only Id and Time Fields may be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
+                                "No of Players must be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
                     }
                 }
+            }
+            catch (NumberFormatException nf) {
+                JOptionPane.showMessageDialog(null, "Wrong data format 1", "ERROR", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        else if (e.getSource().equals(updateB)) {
+
+            int id = Integer.parseInt(s.replaceAll("[\\D]", ""));
+            DateFormat formatter ;
+            date = new Date();
+            try {
+                formatter = new SimpleDateFormat("dd-MMM-yy");
+                date = formatter.parse(dateInTxt.getText());
+            }
+            catch (Exception exc) {
+                System.out.println(exc);
+            }
+            try {
+                System.out.println("here");
+                if (startTimeTxt.getText().equals("") || endTimeTxt.getText().equals("") || playerTxt.getText().equals("")) {
+                    JOptionPane.showMessageDialog(null, "Fields cannot be blank!\n" +
+                            "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
+
+                }
+
+                int[] freeLanes = progOps.getLanesAvailable(dateInTxt.getText(), startTimeTxt.getText(), endTimeTxt.getText());
+
+                for (int i = 0; i < (Integer) noLanes.getSelectedItem(); i++) {
+                    int[] slots = progOps.getTimes(startTimeTxt.getText(), endTimeTxt.getText());
+                    games_hours = progOps.getNumHours(startTimeTxt.getText(), endTimeTxt.getText());
+                    for (int slot : slots) {
+                        BookingDetails bd = new BookingDetails(id, freeLanes[i], slot, date);
+                        timeslots.add(bd);
+                    }
+                }
+
+                progOps.updateBooking(id, (Integer) noLanes.getSelectedItem(), Integer.parseInt(playerTxt.getText()));
+                int i = 0;
+                for (BookingDetails timeSlot : timeslots) {
+                    System.out.println("Time slot");
+                    progOps.updateBookingDetails(timeSlot, i);
+                    i ++;
+                }
+                JOptionPane.showMessageDialog(null, "Booking Details Updated", "Booking Updated",
+                        JOptionPane.INFORMATION_MESSAGE);
+                bt.refreshTable();
+                updateD.dispose();
+
             }catch (NumberFormatException nf) {
                 JOptionPane.showMessageDialog(null, "Wrong data format", "ERROR", JOptionPane.WARNING_MESSAGE);
             }
+
         }
+
         else if (e.getSource().equals(clearB)) {
-            ge.nameTxt.setText("");
-            ge.laneTxt.setText("");
-            ge.dateTxt.setText("");
-            ge.startTimeTxt.setText("");
-            ge.endTimeTxt.setText("");
+            startTimeTxt.setText("");
+            endTimeTxt.setText("");
+            noLanes.removeAllItems();
+            playerTxt.setText("");
+            display.setText("");
+            updateB.setVisible(false);
         }
-        else if (e.getSource() .equals(cancel)) {
-            addD.dispose();
+        else if (e.getSource().equals(cancel)) {
+            updateD.dispose();
         }
+    }
+
+
+    public void itemStateChanged(ItemEvent e) {
+        System.out.println("Inside : itemStateChanged() for Bookings in GuiElements");
+        startTimeTxt.setText(HRS24[startHr.getSelectedIndex()] + ":" + startMin.getSelectedItem().toString());
+        endTimeTxt.setText(HRS24[endHr.getSelectedIndex()] + ":" + endMin.getSelectedItem().toString());
     }
 }

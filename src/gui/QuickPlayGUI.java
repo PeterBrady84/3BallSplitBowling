@@ -15,8 +15,10 @@ import java.awt.event.ItemListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -152,7 +154,11 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
         DefaultCaret caret = (DefaultCaret)display.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         display.setBackground(Color.WHITE);
-        display.setText("Please input number of players,\nThen select 'Check' to\ncalculate no of lanes required");
+        Font font = new Font(Font.SERIF, Font.BOLD, 14);
+        display.setFont(font);
+        display.setText("\u2022 Please input number of players.\n\n" +
+                "\u2022 Then select 'Check'.\n\n" +
+                "\u2022 Calculates no of lanes required.");
 
         JPanel midPanel = new JPanel();
         midPanel.setBackground(Color.WHITE);
@@ -224,9 +230,21 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : ActionPerformed() in CheckAvailabilityGUI");
-        String start = startTimeTxt.getText().substring(0, 2) + startTimeTxt.getText().substring(3, 5);
-        String end = endTimeTxt.getText().substring(0, 2) + endTimeTxt.getText().substring(3, 5);
         NumberValidator numValidator = new NumberValidator();
+        Date date = null;
+        try {
+            date = new SimpleDateFormat("dd-MMM-yyy").parse(dateInTxt.getText());
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY,23);
+        cal.set(Calendar.MINUTE,59);
+        cal.set(Calendar.SECOND,59);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date selected = cal.getTime();
+        Date now = new java.util.Date();
         if (e.getSource().equals(checkB)) {
             try {
                 if (dateInTxt.getText().equals("") || startTimeTxt.getText().equals("")
@@ -235,7 +253,7 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
                             "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
-                else if (Integer.parseInt(end) <= Integer.parseInt(start)) {
+                else if (selected.before(now)) {
                     JOptionPane.showMessageDialog(null,
                             "END TIME cannot be the same, or before START TIME!\n" +
                                     "Please fix the times.", "ERROR", JOptionPane.WARNING_MESSAGE);
@@ -257,14 +275,15 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
                             while (rSet.next()) {
                                 available = rSet.getInt(1);
                             }
-                            display.setText("Lanes Available: " + available +
-                                    "\nLanes Required: " + noLanes.getSelectedItem() + "\n\n");
                             if (available >= (Integer)(noLanes.getSelectedItem())) {
-                                display.append("SUCCESS, there are lanes available!");
-                                create.setVisible(true);
+                                display.setText("\u2022 SUCCESS.\n\n" +
+                                        "\u2022 Lanes Available: " + available + ".\n" +
+                                        "\u2022 Lanes Required: " + noLanes.getSelectedItem() + ".\n" +
+                                        "\u2022 Sufficient lanes available!");
                             }
                             else {
-                                display.append("Insufficient Lanes available!");
+                                display.setText("\u2022 UNSUCCESSFUL.\n\n" +
+                                        "Insufficient Lanes available!");
                                 create.setVisible(false);
                             }
                         } catch (SQLException ex) {
@@ -287,7 +306,7 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
             int players = Integer.parseInt(playerTxt.getText());
             int [] freeLanes = progOps.getLanesAvailable(dateInTxt.getText(), startTimeTxt.getText(), endTimeTxt.getText());
             DateFormat formatter ;
-            Date date = new Date();
+            date = new Date();
             try {
                 formatter = new SimpleDateFormat("dd-MMM-yy");
                 date = formatter.parse(dateInTxt.getText());
@@ -306,7 +325,7 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
                     BookingDetails bd = new BookingDetails(bookingId, freeLanes[i], slot, date);
                     timeslots.add(bd);
                 }
-                PaymentsGUI p = new PaymentsGUI(ms, b, timeslots, memList.get(0), bt, progOps);
+                PaymentsGUI p = new PaymentsGUI(ms, b, timeslots, memList.get(0), bt, progOps, 2);
             }
             quickD.dispose();
         }
@@ -320,7 +339,9 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
             endTimeTxt.setText("");
             noLanes.removeAllItems();
             playerTxt.setText("");
-            display.setText("Please input number of players,\nThen select 'Check' to\ncalculate no of lanes required");
+            display.setText("\u2022 Please input number of players.\n\n" +
+                    "\u2022 Then select 'Check'.\n\n" +
+                    "\u2022 Calculates no of lanes required.");
             create.setVisible(false);
         }
         else if (e.getSource().equals(cancel)) {
