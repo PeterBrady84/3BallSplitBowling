@@ -427,7 +427,7 @@ class SetupOperations {
 
             System.out.println("staffid sequence created");
             // Insert data into Staff table
-            String insertString = "INSERT INTO staff(staffId, lname, fname, bookings, phone, username, email, " +
+            String insertString = "INSERT INTO staff(staffId, fname, lname, bookings, phone, username, email, " +
                     "password, securityQuestion, " +
                     "securityAnswer, admin) values(staffId_seq.NextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -790,7 +790,7 @@ class SetupOperations {
                     "pricingPerHour VARCHAR(2), " +
                     "bookingType VARCHAR(7), " +
                     "FOREIGN KEY (memberId) REFERENCES members (memberId)," +
-                    "FOREIGN KEY (staffId) REFERENCES staff (staffId))";
+                    "FOREIGN KEY (staffId) REFERENCES staff (staffId) on delete set null)";
             pStmt = conn.prepareStatement(create);
             pStmt.executeUpdate(create);
             pStmt.close();
