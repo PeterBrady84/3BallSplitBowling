@@ -28,9 +28,9 @@ public class Payment {
         paymentId = b.getId();
         bookingId = b.getId();
         if(b.getPricingPerHour().equals("Y"))
-            totalPrice = ((b.getHours_games() * 10)*b.getNumLanes());
+            totalPrice = Booking.getPRICE_HOUR() * b.getNumPlayers() * b.getHours_games();
         else
-            totalPrice = (b.getNumPlayers() * b.getHours_games()) * 7.5;
+            totalPrice = (b.getNumPlayers() * b.getHours_games()) * Booking.getPRICE_GAME();
     }
 
     public int getPaymentId() {

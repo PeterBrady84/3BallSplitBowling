@@ -16,11 +16,9 @@ import java.util.Arrays;
  */
 public class UpdateStockGUI implements ActionListener {
     private JDialog updateD;
-    private ResultSet rSet;
     private MainProgramOperations progOps;
     private StockTab sTab;
     private GuiElements ge;
-    private JPanel updatePanel, bottomPanel;
     private JButton updateB, cancel;
 
     public UpdateStockGUI(StockTab st, MainProgramOperations po, String s) {
@@ -34,9 +32,9 @@ public class UpdateStockGUI implements ActionListener {
         updateD.setLocationRelativeTo(null);
 
         ge = new GuiElements();
-        updatePanel = ge.stockGui();
+        JPanel updatePanel = ge.stockGui();
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.add(Box.createRigidArea(new Dimension(40, 0)));
@@ -62,7 +60,7 @@ public class UpdateStockGUI implements ActionListener {
     public void fillFields(String s) {
         System.out.println("Inside : fillFields() in UpdateStockGUI");
         try {
-            rSet = progOps.searchStock(s);
+            ResultSet rSet = progOps.searchStock(s);
             while (rSet.next()) {
                 ge.idTxt.setText(Integer.toString(rSet.getInt(1)));
                 ge.sizeTxt.setText(rSet.getString(2));
@@ -88,7 +86,7 @@ public class UpdateStockGUI implements ActionListener {
                     String details = ge.detailsTxt.getText();
                     int quantity = Integer.parseInt(ge.qtyTxt.getText());
 
-                    if (numValidator.isNumeric(shoesize) == false && numValidator.isNumeric(details) == false) {
+                    if (!numValidator.isNumeric(shoesize) && !numValidator.isNumeric(details)) {
                         progOps.updateStock(ge.idTxt.getText(), shoesize, details, quantity);
                         Alley a = new Alley(progOps);
                         a.updateStock(new Stock(shoesize, quantity, details));

@@ -29,7 +29,6 @@ class BookingTab extends JPanel implements ActionListener {
     private final JButton create;
     private final JButton edit;
     private final JButton delete;
-    private JTextField bookingId;
     private DefaultTableModel model;
     private final JTable table;
     private final MainProgramOperations progOps;
@@ -129,7 +128,7 @@ class BookingTab extends JPanel implements ActionListener {
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
                 if (i == 0) {
-                    if (event.getValueIsAdjusting() == false) {
+                    if (!event.getValueIsAdjusting()) {
                         idToDelete = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
                         System.out.println("id to delete is " + idToDelete);
                         int reply = JOptionPane.showConfirmDialog(null, "Delete Booking number " + idToDelete
@@ -145,7 +144,6 @@ class BookingTab extends JPanel implements ActionListener {
             }
         });
 
-        //fillTable();
         refreshTable();
 
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -223,7 +221,7 @@ class BookingTab extends JPanel implements ActionListener {
         System.out.println("Inside : searchBooking() in BookingTabGUI");
         String query = "";
         NumberValidator numValidator = new NumberValidator();
-        bookingId = new JTextField();
+        JTextField bookingId = new JTextField();
         Object[] options = {
                 "Please Enter -\nBooking Id:", bookingId
         };

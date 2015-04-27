@@ -227,31 +227,31 @@ class HomeTab extends JPanel {
                     lane1.addSubtask(new Task("Booking" + (i + 1),
                             new GregorianCalendar(yr, mon, day, startH, startM).getTime(),
                             new GregorianCalendar(yr, mon, day, endH, endM).getTime()));
-                    i++;
+                    ;
                 }
                 else if (rSet.getInt(1) == 2) {
                     lane2.addSubtask(new Task("Booking" + (i + 1),
                             new GregorianCalendar(yr, mon, day, startH, startM).getTime(),
                             new GregorianCalendar(yr, mon, day, endH, endM).getTime()));
-                    i++;
+                    ;
                 }
                 else if (rSet.getInt(1) == 3) {
                     lane3.addSubtask(new Task("Booking" + (i + 1),
                             new GregorianCalendar(yr, mon, day, startH, startM).getTime(),
                             new GregorianCalendar(yr, mon, day, endH, endM).getTime()));
-                    i++;
+                    ;
                 }
                 else if (rSet.getInt(1) == 4) {
                     lane4.addSubtask(new Task("Booking" + (i + 1),
                             new GregorianCalendar(yr, mon, day, startH, startM).getTime(),
                             new GregorianCalendar(yr, mon, day, endH, endM).getTime()));
-                    i++;
+                    ;
                 }
                 else if (rSet.getInt(1) == 5) {
                     lane5.addSubtask(new Task("Booking" + (i + 1),
                             new GregorianCalendar(yr, mon, day, startH, startM).getTime(),
                             new GregorianCalendar(yr, mon, day, endH, endM).getTime()));
-                    i++;
+                    ;
                 }
                 else if (rSet.getInt(1) == 6) {
                     lane6.addSubtask(new Task("Booking" + (i + 1),

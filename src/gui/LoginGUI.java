@@ -21,10 +21,6 @@ public class LoginGUI extends JFrame implements ActionListener {
 
     private final MainProgramOperations progOps;
     private final JPanel p1;
-    private final JPanel loginPanel;
-    private final JPanel welcomePanel;
-    private final JPanel detailsPanel;
-    private final JPanel bottomPanel;
     private final JButton help;
     private final JButton login;
     private final JButton forgot;
@@ -72,13 +68,13 @@ public class LoginGUI extends JFrame implements ActionListener {
         help.addActionListener(this);
 
         //P2
-        loginPanel = new JPanel();
+        JPanel loginPanel = new JPanel();
         loginPanel.setLayout(new BorderLayout());
         loginPanel.setPreferredSize(new Dimension(300, 400));
         loginPanel.setBorder(BorderFactory.createEtchedBorder());
         loginPanel.setBackground(Color.WHITE);
 
-        welcomePanel = new JPanel();
+        JPanel welcomePanel = new JPanel();
         welcomePanel.setLayout(new FlowLayout());
         welcomePanel.setBackground(Color.WHITE);
 
@@ -93,7 +89,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         welcome.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         welcomePanel.add(welcome, BorderLayout.NORTH);
 
-        detailsPanel = new JPanel();
+        JPanel detailsPanel = new JPanel();
         detailsPanel.setLayout(new GridLayout(7, 2));
         detailsPanel.setBackground(Color.white);
         Font font1 = new Font("Arial", Font.BOLD, 14);
@@ -130,7 +126,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         detailsPanel.add(login);
         login.addActionListener(this);
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.setBackground(Color.WHITE);
@@ -222,7 +218,7 @@ public class LoginGUI extends JFrame implements ActionListener {
         else if (ae.getSource() == help) {
             if (Desktop.isDesktopSupported()) {
                 try {
-                    File helpPDF = new File("src/lib/files/helpManuals/login.pdf");
+                    File helpPDF = new File("src/lib/files/helpManuals/UserManual.pdf");
                     Desktop.getDesktop().open(helpPDF);
                 } catch (IOException ex) {
                     System.out.println("Unable to open PDFs");

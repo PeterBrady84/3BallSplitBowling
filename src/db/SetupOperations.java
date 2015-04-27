@@ -419,7 +419,7 @@ class SetupOperations {
             String createStaff = "CREATE TABLE staff " +
                     "(staffId NUMBER , lname VARCHAR(40), fname VARCHAR(40), " + "bookings NUMBER(4)," +
                     "phone VARCHAR(40), username VARCHAR(40),email VARCHAR(40), password VARCHAR(40), " +
-                    "securityQuestion  VARCHAR(40), securityAnswer  VARCHAR(40), admin VARCHAR(2), " +
+                    "securityQuestion  VARCHAR(40), securityAnswer  VARCHAR(40), admin VARCHAR(4), " +
                     "PRIMARY KEY (staffId))";
             pStmt = conn.prepareStatement(createStaff);
             System.out.println("Attempting to create staff ");
@@ -971,9 +971,9 @@ class SetupOperations {
                     payMethod = paymentMethod[ran.nextInt(paymentMethod.length)];
                     // Calculate Total Price
                     if(pricedPerHour.equals("Y"))
-                        totalPrice = Booking.PRICE_HOUR * (numPlayers * numLanes * hours_games);
+                        totalPrice = Booking.PRICE_HOUR * numPlayers;
                     else
-                        totalPrice = Booking.PRICE_GAME*(numPlayers* hours_games);
+                        totalPrice = Booking.PRICE_GAME*(numPlayers * hours_games);
                     // Calculate Deposit based on Total Price
                     deposit = totalPrice/10;
                     // Randomly assign a Starting Time

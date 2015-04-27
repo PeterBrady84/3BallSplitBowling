@@ -339,36 +339,11 @@ public class MainScreen extends JFrame implements ActionListener {
             refreshTabbedPane(dateSelected);
         }
         else if (e.getSource() == help) {
-            File helpPDF = new File("src/lib/files/helpManuals/UserManualTest.pdf");
-            if (Desktop.isDesktopSupported()) {
-                if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Home"))
-                {
-                    helpPDF = new File("src/lib/files/helpManuals/home.pdf");
-                }
-                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Booking"))
-                {
-                    helpPDF = new File("src/lib/files/helpManuals/booking.pdf");
-                }
-                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Members"))
-                {
-                    helpPDF = new File("src/lib/files/helpManuals/members.pdf");
-                }
-                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Stock"))
-                {
-                    helpPDF = new File("src/lib/files/helpManuals/stock.pdf");
-                }
-                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Staff"))
-                {
-                    helpPDF = new File("src/lib/files/helpManuals/staff.pdf");
-                }
-                else if (jtp.getTitleAt(jtp.getSelectedIndex()).contains("Administrator")) {
-                    helpPDF = new File("src/lib/files/helpManuals/administrator.pdf");
-                }
-                try {
-                    Desktop.getDesktop().open(helpPDF);
-                } catch (IOException ex) {
-                    System.out.println("Unable to open PDFs");
-                }
+            File helpPDF = new File("src/lib/files/helpManuals/UserManual.pdf");
+            try {
+                Desktop.getDesktop().open(helpPDF);
+            } catch (IOException ex) {
+                System.out.println("Unable to open PDFs");
             }
         }
         else if (e.getSource() == logout) {

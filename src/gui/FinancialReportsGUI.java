@@ -32,7 +32,6 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
     private final DefaultTableModel model;
     private DefaultPieDataset pieDataset = new DefaultPieDataset();
     private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
-    private ResultSet rSet;
 
     public FinancialReportsGUI(MainProgramOperations po) {
         System.out.println("Inside : FinancialReportsGUI");
@@ -109,7 +108,7 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
 
         try {
             ResultSet rSet = progOps.getPaymentDetails();
-            PrintWriter pw = new PrintWriter(new FileWriter("financialReport.txt"));
+            PrintWriter pw = new PrintWriter(new FileWriter("src/reports/financialReport.txt"));
             while (rSet.next()){
                 int paymentId = rSet.getInt(1);
                 int bookingId = rSet.getInt(2);
@@ -138,8 +137,8 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
         System.out.println("Inside : FillPieChartPaymentType() in MembershipReportGUI");
 
         try {
-            rSet = progOps.getPaymentType();
-            PrintWriter pw = new PrintWriter(new FileWriter("paymentType.txt"));
+            ResultSet rSet = progOps.getPaymentType();
+            PrintWriter pw = new PrintWriter(new FileWriter("src/reports/paymentType.txt"));
             while (rSet.next()){
 
                 String paymentType = rSet.getString(1);
@@ -165,7 +164,7 @@ class FinancialReportsGUI extends JPanel implements ActionListener{
             int height=480;
             float quality=1; /* Quality factor */
                 /* Write Pie Chart as a JPEG file */
-            File PieChart=new File("SQL2PieChartPaymentMethod.png");
+            File PieChart=new File("src/reports/SQL2PieChartPaymentMethod.png");
             ChartUtilities.saveChartAsJPEG(PieChart, quality, PieChartObject, width, height);
         } catch (Exception e) {
             System.out.println(e);

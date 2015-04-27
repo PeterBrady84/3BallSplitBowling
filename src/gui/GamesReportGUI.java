@@ -26,13 +26,9 @@ import java.util.ArrayList;
  */
 public class GamesReportGUI extends JPanel implements ActionListener{
 
-    private JPanel p1, p2, p1a;
     private JButton charts,back;
-    private String header[] = new String[]{"Lane ID","Lane No", "Max Players"};
     private MainProgramOperations progOps;
-    private AdminTab at;
     private ResultSet rSet;
-    private JTable table;
     private DefaultTableModel model;
     private DefaultPieDataset pieDataset = new DefaultPieDataset();
 
@@ -40,17 +36,16 @@ public class GamesReportGUI extends JPanel implements ActionListener{
     public GamesReportGUI(AdminTab at, MainProgramOperations po) {
         System.out.println("Inside : GamesReportGUI");
         this.progOps = po;
-        this.at = at;
         this.setPreferredSize(new Dimension(780, 300));
         this.setLayout(new FlowLayout());
         ((FlowLayout)this.getLayout()).setVgap(0);
         this.setBackground(Color.WHITE);
 
-        p1 = new JPanel();
+        JPanel p1 = new JPanel();
         p1.setPreferredSize(new Dimension(200, 250));
         p1.setLayout(new BorderLayout());
         p1.setBackground(Color.WHITE);
-        p1a = new JPanel();
+        JPanel p1a = new JPanel();
         p1a.setPreferredSize(new Dimension(180, 200));
         p1a.setLayout(new BoxLayout(p1a, BoxLayout.Y_AXIS));
         p1a.setBackground(Color.WHITE);
@@ -70,15 +65,16 @@ public class GamesReportGUI extends JPanel implements ActionListener{
         add(p1, BorderLayout.WEST);
 
 
-        p2 = new JPanel();
+        JPanel p2 = new JPanel();
         p2.setPreferredSize(new Dimension(520, 295));
         p2.setBackground(Color.WHITE);
+        String[] header = new String[]{"Lane ID", "Lane No", "Max Players"};
         model = new DefaultTableModel(null, header) {
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        table = new JTable(model) {
+        JTable table = new JTable(model) {
             @Override
             public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
                 Component comp = super.prepareRenderer(renderer, row, column);
@@ -113,7 +109,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
 
         try {
             rSet = progOps.getLanes();
-            PrintWriter pw = new PrintWriter(new FileWriter("lanes.txt"));
+            PrintWriter pw = new PrintWriter(new FileWriter("src/reports/lanes.txt"));
             while (rSet.next()){
                 int laneID = rSet.getInt(1);
                 String laneName = rSet.getString(2);
@@ -134,7 +130,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
 
         try {
             rSet = progOps.getGameType();
-            PrintWriter pw = new PrintWriter(new FileWriter("gameType.txt"));
+            PrintWriter pw = new PrintWriter(new FileWriter("src/reports/gameType.txt"));
             while (rSet.next()){
                 //////////////for text file//////////////
                 String gameType = rSet.getString(1);
@@ -159,7 +155,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
             int height=480;
             float quality=1; /* Quality factor */
                 /* Write Pie Chart as a JPEG file */
-            File PieChart=new File("SQL2PieChartGameType.png");
+            File PieChart=new File("src/reports/SQL2PieChartGameType.png");
             ChartUtilities.saveChartAsJPEG(PieChart, quality, PieChartObject, width, height);
         } catch (Exception e) {
             System.out.println(e);

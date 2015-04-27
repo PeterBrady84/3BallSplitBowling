@@ -113,7 +113,7 @@ class StaffReportsGUI extends JPanel implements ActionListener {
 
         try {
             rSet = progOps.getStaffBookings();
-            PrintWriter pw = new PrintWriter(new FileWriter("staff.txt"));
+            PrintWriter pw = new PrintWriter(new FileWriter("src/reports/staff.txt"));
             while (rSet.next()){
                 int staffId = rSet.getInt(1);
                 String fname = rSet.getString(2);
@@ -158,7 +158,7 @@ class StaffReportsGUI extends JPanel implements ActionListener {
             int height=480;
             float quality=1; /* Quality factor */
                 /* Write Bar Chart as a JPEG file */
-            File BarChartStaffBookings=new File("BarChartStaffBookings.png");
+            File BarChartStaffBookings=new File("src/reports/BarChartStaffBookings.png");
             ChartUtilities.saveChartAsJPEG(BarChartStaffBookings, quality, chart, width, height);
 
         } catch (Exception e) {

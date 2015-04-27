@@ -54,19 +54,6 @@ public class AdminTab extends JPanel implements ActionListener {
         this.add(p1);
     }
 
-    /*public void fillCards() {
-        cards.add(card1, "Card 1");
-        cards.add(card2, "Card 2");
-        cards.add(card3, "Card 3");
-        then to flip to a different component:
-
-        CardLayout cardLayout = (CardLayout) cards.getLayout();
-        cardLayout.show(cards, "Card 2");
-        To navigate to the next component, you can use:
-
-        cardLayout.next(cards);
-    }*/
-
     @Override
     public void actionPerformed(ActionEvent e) {
         System.out.println("Inside : actionPerformed() in AdminTabGUI");

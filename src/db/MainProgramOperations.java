@@ -23,7 +23,6 @@ public class MainProgramOperations {
     private SimpleDateFormat format;
     private java.util.Date juDate;
     private DateTime dt;
-    private Date dateSelected;
     public static Staff user;
 
     public MainProgramOperations() {
@@ -108,23 +107,6 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public int getNumMems() {
-        System.out.println("Inside : getNumMembers() in MainProgramOperations");
-        int num = 0;
-        try {
-            String queryString = "SELECT count(*) FROM Members";
-
-            pStmt = conn.prepareStatement(queryString);
-            rSet = pStmt.executeQuery();
-            if (rSet.next()) {
-                num = rSet.getInt(1);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return num;
-    }
-
     public ResultSet getMemLastRow() {
         System.out.println("Inside : getMemberLastRow() in MainProgramOperations");
         String sqlStatement = "SELECT * FROM Members ORDER BY memberId";
@@ -204,9 +186,8 @@ public class MainProgramOperations {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
             if (rSet != null && rSet.next()) {
-                Member customer = new Member(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getString(4),
+                return new Member(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getString(4),
                         rSet.getString(5), rSet.getString(6), rSet.getString(7), rSet.getString(8));
-                return customer;
             }
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
@@ -330,7 +311,7 @@ public class MainProgramOperations {
     //used to populate the staffList which can be then used to fillTable
     public ResultSet getStaff() {
         System.out.println("Inside : getStaff() in MainProgramOperations");
-        dateSelected = MainScreen.dateSelected;
+        Date dateSelected = MainScreen.dateSelected;
         String date;
 
         if (dateSelected == null) {
@@ -357,23 +338,6 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public int getNumStaff() {
-        System.out.println("Inside : getNumStaff() in MainProgramOperations");
-        int num = 0;
-        try {
-            String queryString = "SELECT count(*) FROM Staff";
-
-            pStmt = conn.prepareStatement(queryString);
-            rSet = pStmt.executeQuery();
-            if (rSet.next()) {
-                num = rSet.getInt(1);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return num;
-    }
-
     public ResultSet getStaffLastRow() {
         System.out.println("Inside : getStaffLastRow() in MainProgramOperations");
         String sqlStatement = "SELECT * FROM Staff ORDER BY staffId";
@@ -393,17 +357,18 @@ public class MainProgramOperations {
         System.out.println("Inside : addStaff() in MainProgramOperations");
         try {
             String addsql = "INSERT INTO staff(staffId, lname, fname, bookings, phone, email, username," +
-                    "password, securityQuestion, securityAnswer) values(staffId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "password, securityQuestion, securityAnswer, admin) values(staffId_seq.nextVal, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             pStmt = conn.prepareStatement(addsql);
-            pStmt.setString(1, s.getlName());
-            pStmt.setString(2, s.getfName());
+            pStmt.setString(1, s.getfName());
+            pStmt.setString(2, s.getlName());
             pStmt.setInt(3, 0);// when adding a new staff member they have ZERO bookings
             pStmt.setString(4, s.getPhone());
-            pStmt.setString(5, s.getEmail());
-            pStmt.setString(6, s.getLogin());
+            pStmt.setString(5, s.getLogin());
+            pStmt.setString(6, s.getEmail());
             pStmt.setString(7, Arrays.toString(s.getPassword()));
             pStmt.setString(8, s.getSecQuestion());
             pStmt.setString(9, s.getSecAnswer());
+            pStmt.setString(10, "N");
             pStmt.executeUpdate();
 
             System.out.println("Staff added to DB");
@@ -475,7 +440,6 @@ public class MainProgramOperations {
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
-            ;
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
@@ -489,8 +453,7 @@ public class MainProgramOperations {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
             if (rSet != null && rSet.next()) {
-                Staff user = new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6));
-                return user;
+                return new Staff(rSet.getInt(1), rSet.getString(2), rSet.getString(3), rSet.getInt(4), rSet.getString(5), rSet.getString(6));
             }
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
@@ -683,21 +646,6 @@ public class MainProgramOperations {
         return rSet;
     }
 
-    public int getNumStock() {
-        int num = 0;
-        try {
-            String queryString = "SELECT count(*) FROM Stock";
-            pStmt = conn.prepareStatement(queryString);
-            rSet = pStmt.executeQuery();
-            if (rSet.next()) {
-                num = rSet.getInt(1);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return num;
-    }
-
     public ResultSet getStockLastRow() {
         System.out.println("Inside : getStockLastRow() in MainProgramOperations");
         String sqlStatement = "SELECT * FROM Stock ORDER BY stockId";
@@ -745,7 +693,6 @@ public class MainProgramOperations {
         try {
             pStmt = conn.prepareStatement(sqlStatement);
             rSet = pStmt.executeQuery();
-            ;
         } catch (Exception ex) {
             System.out.println("ERROR: " + ex.getMessage());
         }
@@ -782,21 +729,6 @@ public class MainProgramOperations {
         return num;
     }
 
-    public ResultSet getBookingLastRow() {
-        System.out.println("Inside : getBookingLastRow() in MainProgramOperations");
-        String sqlStatement = "SELECT * FROM Bookings ORDER BY bookingId";
-        try {
-            pStmt = conn.prepareStatement(sqlStatement,
-                    ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);
-            rSet = pStmt.executeQuery();
-            rSet.last();
-        } catch (Exception ex) {
-            System.out.println("ERROR: " + ex.getMessage());
-        }
-        return rSet;
-    }
-
     public int getBookingLastId() {
         System.out.println("Inside : getBookingLastRow() in MainProgramOperations");
         int last = 0;
@@ -813,9 +745,8 @@ public class MainProgramOperations {
     }
 
     public void addBooking(Booking b) {
-        Booking add = b;
         System.out.println("Inside : addBooking() in MainProgramOperations\n" +
-                "Booking = id is " + add.getId() + ", " + add.getMemId() + ", " + add.getStaffId());
+                "Booking = id is " + b.getId() + ", " + b.getMemId() + ", " + b.getStaffId());
         try {
             String addBooking = "INSERT INTO bookings(" +
                     "bookingId, " +

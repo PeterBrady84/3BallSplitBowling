@@ -22,9 +22,7 @@ class PaymentsGUI implements ActionListener {
     private MainScreen ms;
     private final Booking book;
     private Payment pay;
-    private BookingTab bt;
     private final ArrayList<BookingDetails> timeSlots;
-    private ArrayList<Payment> p;
     private JTextField depositTxt, remainingBalTxt;
     private final JRadioButton cash;
     private final JRadioButton card;
@@ -41,12 +39,11 @@ class PaymentsGUI implements ActionListener {
         this.ms = ms;
         this.progOps = po;
         BookingDetails detail = bd.get(0);
-        this.bt = bt;
         this.timeSlots = bd;
         this.quickPlay = qp;
 
         if (quickPlay == 1) {
-            p = new Alley(progOps).getPaymentsList();
+            ArrayList<Payment> p = new Alley(progOps).getPaymentsList();
             for (Payment aP : p) {
                 if (aP.getBookingId() == book.getId()) {
                     this.pay = aP;

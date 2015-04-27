@@ -19,7 +19,6 @@ class AddStaffGUI extends Thread implements ActionListener  {
     private final JDialog addD;
     private final MainProgramOperations progOps;
     private final StaffTab sTab;
-    private ArrayList<Staff> staffList = new ArrayList<>();
     private final GuiElements ge;
     private final JButton addB;
     private final JButton clearB;
@@ -28,7 +27,6 @@ class AddStaffGUI extends Thread implements ActionListener  {
     public AddStaffGUI(StaffTab st, MainProgramOperations po, ArrayList<Staff> s) {
         this.sTab = st;
         this.progOps = po;
-        this.staffList = s;
         System.out.println("Inside : AddStaffGUI");
 
         addD = new JDialog();
@@ -38,7 +36,7 @@ class AddStaffGUI extends Thread implements ActionListener  {
 
         ge = new GuiElements();
         JPanel addPanel = ge.staffGui();
-        ge.idTxt.setText(Integer.toString(staffList.size() + 1));
+        ge.idTxt.setText(Integer.toString(s.size() + 1));
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());

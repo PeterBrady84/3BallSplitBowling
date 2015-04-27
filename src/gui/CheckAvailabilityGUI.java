@@ -39,7 +39,6 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
     private BookingTab bt;
     private final Staff user;
     private UtilDateModel model;
-    private JDatePickerImpl datePicker;
     private final JFormattedTextField dateInTxt;
     private final JComboBox<String> startHr;
     private final JComboBox<String> startMin;
@@ -87,7 +86,7 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
         JLabel dateLbl = new JLabel("Date:");
         topPanel.add(dateLbl);
         JDatePanelImpl datePanel = new JDatePanelImpl(new UtilDateModel());
-        datePicker = new JDatePickerImpl(datePanel);
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
         dateInTxt = datePicker.getJFormattedTextField();
         dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
         dateInTxt.setBackground(Color.WHITE);

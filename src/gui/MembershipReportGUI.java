@@ -121,7 +121,7 @@ class MembershipReportGUI extends JPanel implements ActionListener {
 
         try {
             rSet = progOps.getMember();
-            PrintWriter pw = new PrintWriter(new FileWriter("members.txt"));
+            PrintWriter pw = new PrintWriter(new FileWriter("src/reports/members.txt"));
             while (rSet.next()){
                 String fname = rSet.getString(1);
                 String lname = rSet.getString(2);
@@ -165,7 +165,7 @@ class MembershipReportGUI extends JPanel implements ActionListener {
             int height=480;
             float quality=1; /* Quality factor */
                 /* Write Bar Chart as a JPEG file */
-            File BarChart=new File("SQL2BarChart.png");
+            File BarChart=new File("src/reports/SQL2BarChart.png");
             ChartUtilities.saveChartAsJPEG(BarChart, quality, chart,width,height);
 
         } catch (Exception e) {
@@ -179,7 +179,7 @@ class MembershipReportGUI extends JPanel implements ActionListener {
 
         try {
             rSet = progOps.getMemberGender();
-            PrintWriter pw = new PrintWriter(new FileWriter("genderBalance.txt"));
+            PrintWriter pw = new PrintWriter(new FileWriter("src/reports/genderBalance.txt"));
             while (rSet.next()){
                 //////////////for text file//////////////
                 String genderType = rSet.getString(1);
@@ -208,7 +208,7 @@ class MembershipReportGUI extends JPanel implements ActionListener {
         int height=480;
         float quality=1; /* Quality factor */
                 /* Write Pie Chart as a JPEG file */
-        File PieChart=new File("SQL2PieChart.png");
+        File PieChart=new File("src/reports/SQL2PieChart.png");
         ChartUtilities.saveChartAsJPEG(PieChart, quality, PieChartObject,width,height);
         } catch (Exception e) {
             System.out.println("HERE " + e);

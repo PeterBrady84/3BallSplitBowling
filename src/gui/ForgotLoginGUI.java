@@ -22,7 +22,6 @@ class ForgotLoginGUI implements ActionListener, ItemListener {
     private final JPasswordField passTxt, confPassTxt;
     private final JButton login, cancel;
     private final JComboBox <String> usersCombo;
-    private String username;
     private final MainProgramOperations progOps;
 
     public ForgotLoginGUI(MainProgramOperations po) {
@@ -114,7 +113,7 @@ class ForgotLoginGUI implements ActionListener, ItemListener {
 
     private void updatePass() {
         System.out.println("Inside : updatePass() in ForgotLoginGUI");
-        username = usersCombo.getSelectedItem().toString();
+        String username = usersCombo.getSelectedItem().toString();
         char[] password = passTxt.getPassword();
         char[] confPassword = confPassTxt.getPassword();
         String answer = ansTxt.getText();

@@ -33,24 +33,14 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
     private JDialog updateD;
     private MainProgramOperations progOps;
     private MainScreen ms;
-    private BookingTab bt;
-    private ArrayList<Booking> bookingList;
     private ArrayList<BookingDetails> timeslots;
     private ResultSet rSet;
-    private JDatePanelImpl datePanel;
-    private JDatePickerImpl datePicker;
     private JFormattedTextField dateInTxt;
-    private JLabel dateLbl, startTime, endTime, playerLbl, laneLbl;
     private JComboBox startHr, startMin, endHr, endMin, noLanes;
     private JTextField startTimeTxt, endTimeTxt, playerTxt;
     private JTextArea display;
-    private JPanel checkPanel, topPanel, bottomPanel;
     private final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
-    private final String [] HOURS = {"10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm",
-            "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
-    private final String [] MINUTES = {"00", "15", "30", "45"};
     private final int [] LANES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-    private int games_hours;
     private String s;
     private JButton updateB, clearB, cancel, checkB;
 
@@ -58,8 +48,6 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
         System.out.println("Inside : UpdateBookingGUI");
         this.progOps = po;
         this.ms = ms;
-        this.bt = bt;
-        this.bookingList = b;
 
         timeslots = new ArrayList<BookingDetails>();
 
@@ -68,35 +56,37 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
         updateD.setSize(new Dimension(300, 500));
         updateD.setLocationRelativeTo(null);
 
-        checkPanel = new JPanel();
+        JPanel checkPanel = new JPanel();
         checkPanel.setLayout(new BorderLayout());
 
         Border etched = BorderFactory.createEtchedBorder();
         Border titled = BorderFactory.createTitledBorder(etched, "Edit Booking Details");
         checkPanel.setBorder(titled);
 
-        topPanel = new JPanel();
+        JPanel topPanel = new JPanel();
         topPanel.setLayout(new GridLayout(9, 2));
         topPanel.setBackground(Color.white);
 
-        dateLbl = new JLabel("Date:");
+        JLabel dateLbl = new JLabel("Date:");
         topPanel.add(dateLbl);
-        datePanel = new JDatePanelImpl(new UtilDateModel());
-        datePicker = new JDatePickerImpl(datePanel);
+        JDatePanelImpl datePanel = new JDatePanelImpl(new UtilDateModel());
+        JDatePickerImpl datePicker = new JDatePickerImpl(datePanel);
         dateInTxt = datePicker.getJFormattedTextField();
         dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
         dateInTxt.setBackground(Color.WHITE);
         topPanel.add(datePicker);
 
-        startTime = new JLabel("Start Time:");
+        JLabel startTime = new JLabel("Start Time:");
         topPanel.add(startTime);
 
         startHr = new JComboBox<>();
         startHr.setBackground(Color.white);
         topPanel.add(startHr);
         // Populate the hourComboBox list
-        for (int i = 0; i < HOURS.length; i++) {
-            startHr.addItem(HOURS[i]);
+        String[] HOURS = {"10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm",
+                "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
+        for (String HOUR : HOURS) {
+            startHr.addItem(HOUR);
         }
         startHr.addItemListener(this);
 
@@ -107,8 +97,9 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
         startMin.setBackground(Color.white);
         topPanel.add(startMin);
         // Populate the hourComboBox list
-        for (int i = 0; i < MINUTES.length; i++) {
-            startMin.addItem(MINUTES[i]);
+        String[] MINUTES = {"00", "15", "30", "45"};
+        for (String MINUTE : MINUTES) {
+            startMin.addItem(MINUTE);
         }
         startMin.addItemListener(this);
 
@@ -119,15 +110,15 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
         startTimeTxt.setEditable(false);
         topPanel.add(startTimeTxt);
 
-        endTime = new JLabel("End Time:");
+        JLabel endTime = new JLabel("End Time:");
         topPanel.add(endTime);
 
         endHr = new JComboBox<>();
         endHr.setBackground(Color.white);
         topPanel.add(endHr);
         // Populate the hourComboBox list
-        for (int i = 0; i < HOURS.length; i++) {
-            endHr.addItem(HOURS[i]);
+        for (String HOUR : HOURS) {
+            endHr.addItem(HOUR);
         }
         endHr.addItemListener(this);
 
@@ -137,8 +128,8 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
         endMin.setBackground(Color.white);
         topPanel.add(endMin);
         // Populate the hourComboBox list
-        for (int i = 0; i < MINUTES.length; i++) {
-            endMin.addItem(MINUTES[i]);
+        for (String MINUTE : MINUTES) {
+            endMin.addItem(MINUTE);
         }
         endMin.addItemListener(this);
 
@@ -149,13 +140,13 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
         endTimeTxt.setEditable(false);
         topPanel.add(endTimeTxt);
 
-        playerLbl = new JLabel("No of Players:");
+        JLabel playerLbl = new JLabel("No of Players:");
         topPanel.add(playerLbl);
         playerTxt = new JTextField(15);
         playerTxt.setBackground(Color.white);
         topPanel.add(playerTxt);
 
-        laneLbl = new JLabel("No Of Lanes:");
+        JLabel laneLbl = new JLabel("No Of Lanes:");
         topPanel.add(laneLbl);
         noLanes = new JComboBox<>();
         noLanes.setBackground(Color.white);
@@ -191,7 +182,7 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
 
         checkPanel.add(midPanel, BorderLayout.CENTER);
 
-        bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
 
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -336,7 +327,7 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
 
                 for (int i = 0; i < (Integer) noLanes.getSelectedItem(); i++) {
                     int[] slots = progOps.getTimes(startTimeTxt.getText(), endTimeTxt.getText());
-                    games_hours = progOps.getNumHours(startTimeTxt.getText(), endTimeTxt.getText());
+                    int games_hours = progOps.getNumHours(startTimeTxt.getText(), endTimeTxt.getText());
                     for (int slot : slots) {
                         BookingDetails bd = new BookingDetails(id, freeLanes[i], slot, date);
                         timeslots.add(bd);

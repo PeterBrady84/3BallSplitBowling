@@ -23,7 +23,6 @@ import java.util.ArrayList;
  */
 class StaffTab extends JPanel implements ActionListener, ItemListener {
 
-    private final JToggleButton toggle;
     private final JButton create;
     private final JButton edit;
     private final JButton delete;
@@ -76,7 +75,7 @@ class StaffTab extends JPanel implements ActionListener, ItemListener {
 
         detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
 
-        toggle = new JToggleButton("View Contact Details", false);
+        JToggleButton toggle = new JToggleButton("View Contact Details", false);
         toggle.setFont(font1);
         detailsPanel.add(toggle);
         toggle.addItemListener(this);

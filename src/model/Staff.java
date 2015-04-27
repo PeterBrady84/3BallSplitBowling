@@ -35,9 +35,7 @@ public class Staff {
         this.password = password;
         this.secQuestion = secQuestion;
         this.secAnswer = secAnswer;
-        admin = false;
-        if(access.equals("Y"))
-            admin = true;
+        admin = access.equals("Y");
     }
 
     //constructor for updating Staff
@@ -65,9 +63,7 @@ public class Staff {
         this.password = pass;
         this.secQuestion = q;
         this.secAnswer = a;
-        admin = false;
-        if(access.equals("Y"))
-            admin = true;
+        admin = access.equals("Y");
     }
     //Constructor retrieving from DB
     public Staff(int id, String lName, String fName, int bookings, String start, String finish, String phone, String email) {
@@ -87,9 +83,7 @@ public class Staff {
         this.lName = lName;
         this.fName = fName;
         this.bookings = bookings;
-        admin = false;
-        if(access.equals("Y"))
-            admin = true;
+        admin = access.equals("Y");
         this.username = username;
     }
 

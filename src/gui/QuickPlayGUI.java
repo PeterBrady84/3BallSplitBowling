@@ -31,7 +31,6 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
     private MainScreen ms;
     private BookingTab bt;
     private final ArrayList<Booking> bookingList;
-    private final ArrayList<BookingDetails> bookingDetailsList;
     private final ArrayList<Member> memList;
     private final ArrayList<BookingDetails> timeslots;
     private final Staff user;
@@ -53,7 +52,6 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
             "7 pm", "8 pm", "9 pm", "10 pm", "11 pm"};
     private final int [] HRS24 = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
     private final int [] LANES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-    private int games_hours;
 
     public QuickPlayGUI(MainScreen ms, MainProgramOperations po, ArrayList<Booking> b, ArrayList<BookingDetails> bd, ArrayList<Member> m, Staff user) {
         System.out.println("Inside : QuickPlayGUI");
@@ -61,7 +59,6 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
         this.progOps = po;
         this.bookingList = b;
         this.bt = bt;
-        this.bookingDetailsList = bd;
         this.memList = m;
         this.user = user;
 
@@ -321,7 +318,7 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
             catch (Exception exc) {
                 System.out.println(exc);
             }
-            games_hours = progOps.getNumHours(startTimeTxt.getText(), endTimeTxt.getText());
+            int games_hours = progOps.getNumHours(startTimeTxt.getText(), endTimeTxt.getText());
             int bookingId = bookingList.size() + 1;
             Booking b = new Booking(bookingId, 1, user.getId(), lanes, games_hours, 1,
                     players, "Y", "Walk-In");
