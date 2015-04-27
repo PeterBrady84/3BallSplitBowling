@@ -1164,8 +1164,8 @@ public class MainProgramOperations {
                     "INNER JOIN bookings b ON bd.bookingId = b.bookingId\n" +
                     "INNER JOIN timeSlots ts ON bd.timeSlotid = ts.timeSlotid\n" +
                     "WHERE bd.bookingDate = '" + date + "'\n" +
-                    "GROUP BY bd.bookingId, bd.lanenumber, bd.bookingdate\n" +
-                    "ORDER BY bd.bookingId, l.laneNumber";
+                    "GROUP BY bd.bookingId, bd.laneNumber, bd.bookingDate\n" +
+                    "ORDER BY bd.bookingId, bd.laneNumber";
             pStmt = conn.prepareStatement(queryString);
             rSet = pStmt.executeQuery();
         } catch (Exception e) {

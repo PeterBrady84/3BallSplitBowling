@@ -253,7 +253,13 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
                             "Fields cannot be blank!\n" +
                                     "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
-                else if (selected.before(now)) {
+                else if (selected.before(now)){
+                    JOptionPane.showMessageDialog(null,
+                            "Selected date cannot be in the past!\n" +
+                                    "Please fix the date.", "ERROR", JOptionPane.WARNING_MESSAGE);
+                    dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
+                }
+                else if (endHr.getSelectedIndex() <= startHr.getSelectedIndex()) {
                     JOptionPane.showMessageDialog(null,
                             "END TIME cannot be the same, or before START TIME!\n" +
                                     "Please fix the times.", "ERROR", JOptionPane.WARNING_MESSAGE);

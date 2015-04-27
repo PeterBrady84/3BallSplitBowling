@@ -31,7 +31,7 @@ class AddStockGUI implements ActionListener {
 
         addD = new JDialog();
         addD.setTitle("Add Stock Items");
-        addD.setSize(new Dimension(300, 400));
+        addD.setSize(new Dimension(300, 220));
         addD.setLocationRelativeTo(null);
 
         ge = new GuiElements();

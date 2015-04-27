@@ -208,15 +208,11 @@ public class Alley {
         }
     }
 
-    public void addBooking()
-    {
-        System.out.println("Inside : addBooking() in AlleyModel");
-        rSet = progOps.getBookingLastRow();
-        try {
-            bookingList.add(new Booking(rSet.getInt(1), rSet.getInt(2), rSet.getInt(3), rSet.getInt(4), rSet.getInt(5),
-                    rSet.getInt(6), rSet.getInt(7), rSet.getString(8), rSet.getString(9)));
-        } catch (Exception e) {
-            System.out.println(e);
+    public void updateStock(Stock s) {
+        System.out.println("Inside : updateStaff() in AlleyModel");
+        for (int i = 0; i < stockList.size(); i++) {
+            if (stockList.get(i).getId() == (s.getId()))
+                stockList.set(i, s);
         }
     }
 }

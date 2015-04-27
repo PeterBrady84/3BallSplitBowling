@@ -154,18 +154,14 @@ class StockTab extends JPanel implements ActionListener{
         String query = "";
         NumberValidator numValidator = new NumberValidator();
         JTextField stockId = new JTextField();
-        JTextField stockName = new JTextField();
         Object[] options = {
-                "Please Enter -\nStock Id:", stockId,
-                "Or\nStaff Name:", stockName
+                "Please Enter -\nStock Id:", stockId
         };
 
         int option = JOptionPane.showConfirmDialog(null, options, "Search Stock", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             if (numValidator.isNumeric(stockId.getText())) {
                 query = "stockId = " + stockId.getText();
-            } else if (!numValidator.isNumeric(stockName.getText())) {
-                query = "shoeSize = '" + stockName.getText();
             } else {
                 throw new IllegalArgumentException("ID must be numeric!");
             }
@@ -178,7 +174,7 @@ class StockTab extends JPanel implements ActionListener{
 
     private void updateStock(String s) {
         System.out.println("Inside : updateStock() in StockTabGUI");
-        UpdateStockGUI us = new UpdateStockGUI(progOps, s);
+        UpdateStockGUI us = new UpdateStockGUI(this,(progOps), s);
     }
 
     public void actionPerformed(ActionEvent ae) {

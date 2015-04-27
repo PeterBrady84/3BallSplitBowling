@@ -57,7 +57,7 @@ class SetupOperations {
                     break;
                 // Dylan Byrne login
                 case "db":
-                    user = "Dylan Byrne's Username";
+                    user = "yrne's Username";
                     pass = "Dylan Byrne's Password";
                     break;
             }
