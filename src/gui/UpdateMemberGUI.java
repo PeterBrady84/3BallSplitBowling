@@ -119,8 +119,8 @@ class UpdateMemberGUI implements ActionListener{
                         Alley a = new Alley(progOps);
                         a.updateMember(new Member(fName, lName, gender, phone, email, add, town, co));
                         JOptionPane.showMessageDialog(null, "Updated Member Data Saved", "Member Updated", JOptionPane.WARNING_MESSAGE);
+                        updateD.dispose();
                         mTab.refreshTable();
-                        updateD.setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "Only Phone Field can be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);
@@ -131,7 +131,7 @@ class UpdateMemberGUI implements ActionListener{
             }
         }
         if (e.getSource().equals(cancel)) {
-            updateD.setVisible(false);
+            updateD.dispose();
         }
     }
 }

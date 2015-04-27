@@ -5,6 +5,7 @@ import model.*;
 import net.sourceforge.jdatepicker.impl.JDatePanelImpl;
 import net.sourceforge.jdatepicker.impl.JDatePickerImpl;
 import net.sourceforge.jdatepicker.impl.UtilDateModel;
+import org.joda.time.DateTime;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -35,9 +36,7 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
     private BookingTab bt;
     private ArrayList<Booking> bookingList;
     private ArrayList<BookingDetails> timeslots;
-    private Staff user;
     private ResultSet rSet;
-    private UtilDateModel model;
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
     private JFormattedTextField dateInTxt;
@@ -55,9 +54,10 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
     private String s;
     private JButton updateB, clearB, cancel, checkB;
 
-    public UpdateBookingGUI (BookingTab bt, MainProgramOperations po, ArrayList<Booking> b, String s) {
+    public UpdateBookingGUI (BookingTab bt, MainScreen ms, MainProgramOperations po, ArrayList<Booking> b, String s) {
         System.out.println("Inside : UpdateBookingGUI");
         this.progOps = po;
+        this.ms = ms;
         this.bt = bt;
         this.bookingList = b;
 
@@ -166,6 +166,11 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
         DefaultCaret caret = (DefaultCaret)display.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         display.setBackground(Color.WHITE);
+        Font font = new Font(Font.SERIF, Font.BOLD, 14);
+        display.setFont(font);
+        display.setText("\u2022 Please input number of players.\n\n" +
+                "\u2022 Then select 'Check'.\n\n" +
+                "\u2022 Calculates no of lanes required.");
 
         JPanel midPanel = new JPanel();
         midPanel.setBackground(Color.WHITE);
@@ -282,14 +287,16 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
                             while (rSet.next()) {
                                 available = rSet.getInt(1);
                             }
-                            display.setText("Lanes Available: " + available +
-                                    "\nLanes Required: " + noLanes.getSelectedItem() + "\n\n");
                             if (available >= (Integer)(noLanes.getSelectedItem())) {
-                                display.append("SUCCESS, there are lanes available!");
+                                display.setText("\u2022 SUCCESS.\n\n" +
+                                        "\u2022 Lanes Available: " + available + ".\n" +
+                                        "\u2022 Lanes Required: " + noLanes.getSelectedItem() + ".\n" +
+                                        "\u2022 Sufficient lanes available!");
                                 updateB.setVisible(true);
                             }
                             else {
-                                display.append("Insufficient Lanes available!");
+                                display.setText("\u2022 UNSUCCESSFUL.\n\n" +
+                                        "Insufficient Lanes available!");
                                 updateB.setVisible(false);
                             }
                         } catch (SQLException ex) {
@@ -307,7 +314,6 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
             }
         }
         else if (e.getSource().equals(updateB)) {
-
             int id = Integer.parseInt(s.replaceAll("[\\D]", ""));
             DateFormat formatter ;
             date = new Date();
@@ -346,7 +352,12 @@ public class UpdateBookingGUI implements ActionListener, ItemListener
                 }
                 JOptionPane.showMessageDialog(null, "Booking Details Updated", "Booking Updated",
                         JOptionPane.INFORMATION_MESSAGE);
-                bt.refreshTable();
+                Alley a = new Alley(progOps);
+                Date juDate = new Date();
+                DateTime dt = new DateTime(juDate);
+                Date dateSelected = dt.toDate();
+                ms.refreshTabbedPane(dateSelected);
+                ms.setIndex(1);
                 updateD.dispose();
 
             }catch (NumberFormatException nf) {

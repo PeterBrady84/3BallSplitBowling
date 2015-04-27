@@ -69,8 +69,8 @@ class UpdateStaffGUI implements ActionListener {
                 ge.fNameTxt.setText(rSet.getString(2));
                 ge.lNameTxt.setText(rSet.getString(3));
                 ge.phoneTxt.setText(rSet.getString(5));
-                ge.emailTxt.setText(rSet.getString(7));
-                ge.loginTxt.setText(rSet.getString(6));
+                ge.emailTxt.setText(rSet.getString(6));
+                ge.loginTxt.setText(rSet.getString(7));
             }
         } catch (Exception ignored) {
         }
@@ -115,7 +115,7 @@ class UpdateStaffGUI implements ActionListener {
                         ArrayList<Staff> sList = a.getStaffList();
                         JOptionPane.showMessageDialog(null, "Updated Staff Data Saved");
                         //progOps.getStaff();
-                        updateD.setVisible(false);
+                        updateD.dispose();
                         sTab.refreshTable();
                         sTab.fillTable(sList);
                     } else {

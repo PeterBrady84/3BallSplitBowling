@@ -331,11 +331,11 @@ class CheckAvailabilityGUI implements ActionListener, ItemListener {
             dateInTxt.setText(new java.text.SimpleDateFormat("dd-MMM-yyyy").format(new java.util.Date()));
             startHr.setSelectedIndex(0);
             startMin.setSelectedIndex(0);
-            startTimeTxt.setText("");
             endHr.setSelectedIndex(0);
             endMin.setSelectedIndex(0);
-            endTimeTxt.setText("");
             noLanes.removeAllItems();
+            startTimeTxt.setText("");
+            endTimeTxt.setText("");
             playerTxt.setText("");
             display.setText("\u2022 Please input number of players.\n\n" +
                     "\u2022 Then select 'Check'.\n\n" +

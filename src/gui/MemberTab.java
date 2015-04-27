@@ -190,18 +190,22 @@ class MemberTab extends JPanel implements ActionListener {
         System.out.println("Inside : actionPerformed() in MemberTabGUI");
         if (ae.getSource() == create) {
             AddMemberGUI am = new AddMemberGUI(this, progOps, memList);
-        }
-        else if (ae.getSource() == edit) {
+        } else if (ae.getSource() == edit) {
             String s = searchMember();
             if (!s.equals("cancel")) {
                 UpdateMemberGUI um = new UpdateMemberGUI(this, progOps, s);
             }
-        }
-        else if (ae.getSource() == delete) {
+        } else if (ae.getSource() == delete) {
             String s = searchMember();
-            if (!s.equals("cancel")) {
-                progOps.deleteMember(s);
-                refreshTable();
+            int option = JOptionPane.showConfirmDialog(null,
+                    "Deleting a member will also\ndelete ALL their bookings!!!\n\n Do you wish to continue?.",
+                    "WARNING", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                if (!s.equals("cancel")) {
+                    progOps.deleteMember(s);
+                    memList = new Alley(progOps).getMemberList();
+                    refreshTable();
+                }
             }
         }
     }

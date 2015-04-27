@@ -39,30 +39,38 @@ class SetupOperations {
             String val = in.nextLine();
             String user = "", pass = "";
 
-            // Peter Brady Login
             switch (val) {
                 case "pb":
                     user = "Peter";
                     pass = "database";
+                    ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
                     break;
                 // Luke Byrne Login
                 case "lb":
                     user = "system";
                     pass = "passhr";
+                    ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
                     break;
                 // Peter Connel Login
                 case "pc":
                     user = "hr";
                     pass = "passhr";
+                    ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
                     break;
                 // Dylan Byrne login
                 case "db":
-                    user = "yrne's Username";
-                    pass = "Dylan Byrne's Password";
+                    user = "x00112018";
+                    pass = "db08Mar96";
+                    ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
+                    break;
+                case "col":
+
+                    user = "x00115070";
+                    pass = "db29Jun84";
+                    ods.setURL("jdbc:oracle:thin:@//10.10.2.7:1521/global1");
                     break;
             }
 
-            ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
             ods.setUser(user);
             ods.setPassword(pass);
             conn = ods.getConnection();
@@ -789,7 +797,7 @@ class SetupOperations {
                     "numPlayers NUMBER(2), " +
                     "pricingPerHour VARCHAR(2), " +
                     "bookingType VARCHAR(7), " +
-                    "FOREIGN KEY (memberId) REFERENCES members (memberId)," +
+                    "FOREIGN KEY (memberId) REFERENCES members (memberId) ON DELETE CASCADE," +
                     "FOREIGN KEY (staffId) REFERENCES staff (staffId) on delete set null)";
             pStmt = conn.prepareStatement(create);
             pStmt.executeUpdate(create);
@@ -817,7 +825,7 @@ class SetupOperations {
                     "timeSlotId NUMBER(2), " +
                     "bookingDate DATE, " +
                     "PRIMARY KEY (bookingId, laneNumber, timeSlotId), " +
-                    "FOREIGN KEY (bookingId) REFERENCES bookings (bookingId), " +
+                    "FOREIGN KEY (bookingId) REFERENCES bookings (bookingId) ON DELETE CASCADE, " +
                     "FOREIGN KEY (laneNumber) REFERENCES lane (laneNumber), " +
                     "FOREIGN KEY (timeSlotId) REFERENCES timeSlots (timeSlotId))";
 
@@ -847,7 +855,7 @@ class SetupOperations {
                     "totalPrice DECIMAL(6, 2), " +
                     "fullyPaid VARCHAR(2), " +
                     "paymentMethod VARCHAR(12), " +
-                    "FOREIGN KEY (bookingId) REFERENCES bookings (bookingId))";
+                    "FOREIGN KEY (bookingId) REFERENCES bookings (bookingId) ON DELETE CASCADE)";
             pStmt = conn.prepareStatement(timeSlots);
             pStmt.executeUpdate(timeSlots);
             pStmt.close();

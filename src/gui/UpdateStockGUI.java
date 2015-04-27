@@ -93,8 +93,8 @@ public class UpdateStockGUI implements ActionListener {
                         Alley a = new Alley(progOps);
                         a.updateStock(new Stock(shoesize, quantity, details));
                         JOptionPane.showMessageDialog(null, "Updated Stock Data Saved");
+                        updateD.dispose();
                         sTab.refreshTable();
-                        updateD.setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "Only quantity Field can be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);

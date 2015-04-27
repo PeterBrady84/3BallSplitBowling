@@ -109,10 +109,10 @@ class AddStaffGUI extends Thread implements ActionListener  {
                         Alley a = new Alley(progOps);
                         a.addStaffLastRow();
                         String t = "contact";
-                        sTab.refreshTable();
-                        sTab.fillTableContact(staffList);
                         JOptionPane.showMessageDialog(null, "New Staff Data Saved");
-                        addD.setVisible(false);
+                        addD.dispose();
+                        sTab.refreshTable();
+                        sTab.fillTableContact(a.getStaffList());
                     } else {
                         JOptionPane.showMessageDialog(null,
                                 "Only Phone Field may be numeric", "ERROR", JOptionPane.WARNING_MESSAGE);

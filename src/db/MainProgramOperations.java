@@ -41,28 +41,38 @@ public class MainProgramOperations {
             String val = in.nextLine();
             String user = "", pass = "";
 
-            // Peter Brady Login
-            if (val.equals("pb")) {
-                user = "Peter";
-                pass = "database";
-            }
-            // Luke Byrne Login
-            else if (val.equals("lb")) {
-                user = "system";
-                pass = "passhr";
-            }
-            // Peter Connel Login
-            else if (val.equals("pc")) {
-                user = "hr";
-                pass = "passhr";
-            }
-            // Dylan Byrne login
-            else if (val.equals("db")) {
-                user = "Dylan Byrne's Username";
-                pass = "Dylan Byrne's Password";
+            switch (val) {
+                case "pb":
+                    user = "Peter";
+                    pass = "database";
+                    ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
+                    break;
+                // Luke Byrne Login
+                case "lb":
+                    user = "system";
+                    pass = "passhr";
+                    ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
+                    break;
+                // Peter Connel Login
+                case "pc":
+                    user = "hr";
+                    pass = "passhr";
+                    ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
+                    break;
+                // Dylan Byrne login
+                case "db":
+                    user = "x00112018";
+                    pass = "db08Mar96";
+                    ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
+                    break;
+                case "col":
+
+                    user = "x00115070";
+                    pass = "db29Jun84";
+                    ods.setURL("jdbc:oracle:thin:@//10.10.2.7:1521/global1");
+                    break;
             }
 
-            ods.setURL("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
             ods.setUser(user);
             ods.setPassword(pass);
             conn = ods.getConnection();
@@ -447,6 +457,18 @@ public class MainProgramOperations {
         }
     }
 
+    public void increaseBookingCount(int staff){
+        try{
+            System.out.println("Increase booking count");
+            String increaseBooking = "UPDATE Staff SET Bookings = Bookings + 1 WHERE staffid = "+staff;
+            pStmt = conn.prepareStatement(increaseBooking);
+            pStmt.executeUpdate();
+
+        }catch (Exception ex) {
+            System.out.println("ERROR: " + ex.getMessage());
+        }
+    }
+
     public ResultSet searchStaff(String s) {
         System.out.println("Inside : searchStaff() in MainProgramOperations");
         String sqlStatement = "SELECT * FROM Staff WHERE " + s;
@@ -816,6 +838,8 @@ public class MainProgramOperations {
             pStmt.setString(7, b.getPricingPerHour());
             pStmt.setString(8, b.getBookingType());
             pStmt.executeUpdate();
+            int staffid = b.getStaffId();
+            increaseBookingCount(staffid);
         } catch (Exception se) {
             System.out.println(se);
         }

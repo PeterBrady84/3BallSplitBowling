@@ -249,6 +249,10 @@ public class MainScreen extends JFrame implements ActionListener {
         p2.repaint();
     }
 
+    public void setIndex(int i) {
+        jtp.setSelectedIndex(i);
+    }
+
     public void setQuickPlay() {
         bookingList = (new Alley(progOps).getBookingList());
         NumberValidator numValidator = new NumberValidator();

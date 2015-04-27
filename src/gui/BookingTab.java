@@ -248,7 +248,7 @@ class BookingTab extends JPanel implements ActionListener {
         } else if (ae.getSource() == edit) {
             String s = searchBooking();
             if (!s.equals("cancel")) {
-                UpdateBookingGUI ub = new UpdateBookingGUI(this, progOps, bookingList, s);
+                UpdateBookingGUI ub = new UpdateBookingGUI(this, ms, progOps, bookingList, s);
             }
         } else if (ae.getSource() == delete) {
             i = 0;
