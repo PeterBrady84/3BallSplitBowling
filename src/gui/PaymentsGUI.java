@@ -129,7 +129,7 @@ class PaymentsGUI implements ActionListener {
         if (quickPlay == 0) {
             JLabel depositLbl = new JLabel("Deposit:   10%");
             topPanel.add(depositLbl);
-            JTextField depositTxt = new JTextField(15);
+            depositTxt = new JTextField(15);
             depositTxt.setBackground(Color.white);
             deposit = pay.getTotalPrice() / 10;
             depositTxt.setText("\u20ac " + String.format("%,.2f", deposit));
@@ -257,25 +257,31 @@ class PaymentsGUI implements ActionListener {
             payMethod = "Cash";
         if(e.getSource().equals(confirm)) {
             if (quickPlay == 0) {
-                if (deposit < (amount / 10)) {
+                if (deposit < (amount / 10) ) {
                     JOptionPane.showMessageDialog(null, "Deposit can not be less than 10% of total!\n" +
                             "Please correct deposit amount.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
-                pay.setDeposit(deposit);
-                if (deposit < amount)
-                    pay.setFullyPaid("N");
-                else if (deposit == amount)
-                    pay.setFullyPaid("Y");
-                progOps.addBooking(book);
-                i = progOps.getBookingLastId();
-                pay.setBookingId(i);
-                for (BookingDetails timeSlot : timeSlots) {
-                    progOps.addBookingDetails(i, timeSlot);
+                else if (depositTxt.getText() .equals("")) {
+                    JOptionPane.showMessageDialog(null, "Deposit field can not be empty.\n" +
+                            "Please correct deposit amount.", "ERROR", JOptionPane.WARNING_MESSAGE);
                 }
-                pay.setPaymentMethod(payMethod);
-                progOps.addPayment(pay);
+                else {
+                    pay.setDeposit(deposit);
+                    if (deposit < amount)
+                        pay.setFullyPaid("N");
+                    else if (deposit == amount)
+                        pay.setFullyPaid("Y");
+                    progOps.addBooking(book);
+                    i = progOps.getBookingLastId();
+                    pay.setBookingId(i);
+                    for (BookingDetails timeSlot : timeSlots) {
+                        progOps.addBookingDetails(i, timeSlot);
+                    }
+                    pay.setPaymentMethod(payMethod);
+                    progOps.addPayment(pay);
+                }
             }
-            if ((quickPlay == 1) || (quickPlay == 2)) {
+            else if ((quickPlay == 1) || (quickPlay == 2)) {
                 if (remainingBalTxt.getText().replaceAll("[\\D]", "").equals("")) {
                     JOptionPane.showMessageDialog(null, "Amount Tendered Cannot be Blank!\n" +
                             "Please input correct amount.", "ERROR", JOptionPane.WARNING_MESSAGE);

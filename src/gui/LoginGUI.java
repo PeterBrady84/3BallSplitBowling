@@ -179,7 +179,12 @@ public class LoginGUI extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
         System.out.println("Inside : actionPerformed() in LoginGUI");
         if(ae.getSource()==login) {
-            if(login()) {
+            if (userTxt.getText().equals("") || passTxt.getPassword().length == 0) {
+                JOptionPane.showMessageDialog(null,
+                        "Fields cannot be blank!\n" +
+                                "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
+            }
+            else if (login()) {
                 p1.setVisible(false);
                 int width = this.getWidth();
                 int height = this.getHeight();
@@ -190,7 +195,6 @@ public class LoginGUI extends JFrame implements ActionListener {
                 this.add(animation);
 
                 setVisible(true);
-
 
                 JOptionPane pane = new JOptionPane(null, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, new ImageIcon("src/lib/files/bowlingpins.png"));
                 pane.setMessage("Proceed");

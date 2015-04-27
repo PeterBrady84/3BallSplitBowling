@@ -88,7 +88,7 @@ class ForgotLoginGUI implements ActionListener, ItemListener {
         //p3.add(Box.createRigidArea(new Dimension(40, 0)));
         p3.setBackground(Color.WHITE);
 
-        login = new JButton("Login");
+        login = new JButton("Update Login");
         login.addActionListener(this);
         p3.add(login);
 
@@ -119,18 +119,23 @@ class ForgotLoginGUI implements ActionListener, ItemListener {
         char[] confPassword = confPassTxt.getPassword();
         String answer = ansTxt.getText();
         String ans = progOps.changePassword(password, username);
-        if (!Arrays.equals(password, confPassword)) {
+        if (ansTxt.getText().equals("") || passTxt.getPassword().length == 0 || confPassTxt.getPassword().length == 0) {
+            JOptionPane.showMessageDialog(null,
+                    "Fields cannot be blank!\n" +
+                            "Please input all details.", "ERROR", JOptionPane.WARNING_MESSAGE);
+        }
+        else if (!Arrays.equals(password, confPassword)) {
             JOptionPane.showMessageDialog(null,
                     "Passwords do not match", "ERROR", JOptionPane.WARNING_MESSAGE);
         }
         else if (!answer.equals(ans)) {
             JOptionPane.showMessageDialog(null,
-                    "Incorrect Answer!", "ERROR", JOptionPane.WARNING_MESSAGE);
+                    "Incorrect Security Question Answer!", "ERROR", JOptionPane.WARNING_MESSAGE);
         }
         else {
             progOps.changePassword(password, username);
             JOptionPane.showMessageDialog(null,"Password has been updated");
-            forgotD.setVisible(true);
+            forgotD.dispose();
         }
     }
 
@@ -139,7 +144,6 @@ class ForgotLoginGUI implements ActionListener, ItemListener {
         System.out.println("Inside : actionPerformed() in ForgotLoginGUI");
         if(ae.getSource()==login) {
             updatePass();
-            forgotD.dispose();
         }
         if(ae.getSource()==cancel) {
             forgotD.dispose();

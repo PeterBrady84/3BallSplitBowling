@@ -73,18 +73,21 @@ class MemberTab extends JPanel implements ActionListener {
         create = new JButton("Create New Member");
         create.setFont(font1);
         detailsPanel.add(create);
+        create.addActionListener(this);
 
         detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
 
         edit = new JButton("Edit Member Details");
         edit.setFont(font1);
         detailsPanel.add(edit);
+        edit.addActionListener(this);
 
         detailsPanel.add(Box.createRigidArea(new Dimension(100, 20)));
 
         delete = new JButton("Delete Member Details");
         delete.setFont(font1);
         detailsPanel.add(delete);
+        delete.addActionListener(this);
 
         buttonPanel.add(topPanel, BorderLayout.NORTH);
         buttonPanel.add(detailsPanel, BorderLayout.CENTER);

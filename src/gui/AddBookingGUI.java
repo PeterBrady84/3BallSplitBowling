@@ -31,7 +31,6 @@ class AddBookingGUI implements ActionListener {
     private JComboBox<String> county;
     private final JButton calcPrice;
     private final JButton cancelB;
-    private final JButton back;
     private String bookingType, isPerHour;
     private boolean isMember;
     private final int noLanes;
@@ -270,10 +269,6 @@ class AddBookingGUI implements ActionListener {
         calcPrice.addActionListener(this);
         bottomPanel.add(calcPrice);
 
-        back = new JButton("Back");
-        back.addActionListener(this);
-        bottomPanel.add(back);
-
         cancelB = new JButton("Cancel");
         cancelB.addActionListener(this);
         bottomPanel.add(cancelB);
@@ -289,10 +284,7 @@ class AddBookingGUI implements ActionListener {
         System.out.println("Inside : ActionPerformed() in AddBookingGUI");
         EmailValidator emailValidator = new EmailValidator();
         NumberValidator numValidator = new NumberValidator();
-        if (e.getSource().equals(back)) {
-            CheckAvailabilityGUI back = check;
-        }
-        else if (e.getSource().equals(calcPrice)) {
+        if (e.getSource().equals(calcPrice)) {
             if ((fNameTxt.getText().equals("")) || (lNameTxt.getText().equals("")) ||
                     ((phoneTxt.getText().equals("")) || (emailTxt.getText().equals("")))) {
                 JOptionPane.showMessageDialog(null, "Name, phone or email fields cannot be blank.", "ERROR", JOptionPane.WARNING_MESSAGE);

@@ -280,6 +280,7 @@ public class QuickPlayGUI implements ItemListener, ActionListener {
                                         "\u2022 Lanes Available: " + available + ".\n" +
                                         "\u2022 Lanes Required: " + noLanes.getSelectedItem() + ".\n" +
                                         "\u2022 Sufficient lanes available!");
+                                create.setVisible(true);
                             }
                             else {
                                 display.setText("\u2022 UNSUCCESSFUL.\n\n" +
