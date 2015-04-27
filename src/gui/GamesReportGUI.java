@@ -22,12 +22,12 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 /**
- * Created by Diarmuid on 24/03/2015.
+ * Created by Luke Byrne on 24/03/2015.
  */
 public class GamesReportGUI extends JPanel implements ActionListener{
 
     private JPanel p1, p2, p1a;
-    private JButton charts, gameStats, back;
+    private JButton charts,back;
     private String header[] = new String[]{"Lane ID","Lane No", "Max Players"};
     private MainProgramOperations progOps;
     private AdminTab at;
@@ -35,7 +35,7 @@ public class GamesReportGUI extends JPanel implements ActionListener{
     private JTable table;
     private DefaultTableModel model;
     private DefaultPieDataset pieDataset = new DefaultPieDataset();
-    private DefaultCategoryDataset barDataSet = new DefaultCategoryDataset();
+
 
     public GamesReportGUI(AdminTab at, MainProgramOperations po) {
         System.out.println("Inside : GamesReportGUI");
@@ -118,7 +118,6 @@ public class GamesReportGUI extends JPanel implements ActionListener{
                 int laneID = rSet.getInt(1);
                 String laneName = rSet.getString(2);
                 int maxPlayers = 6;
-                //String gender = rSet.getString(4);
                 model.addRow(new Object[]{laneID, laneName, 6});
                 pw.println("Lane ID: " + laneID);
                 pw.println("Lane Name: " + laneName);
@@ -176,7 +175,6 @@ public class GamesReportGUI extends JPanel implements ActionListener{
             this.removeAll();
             this.add(new AdminTab(progOps));//Adding to content pane, not to Frame
             this.revalidate();
-            //this.repaint();
             printAll(getGraphics());//Extort print all content
         }
         else if (e.getSource() == charts){
